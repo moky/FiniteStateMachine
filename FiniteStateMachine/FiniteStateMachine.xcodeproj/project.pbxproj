@@ -1,0 +1,606 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		E9AFAA7A223105F0001F95C6 /* FiniteStateMachine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9AFAA70223105F0001F95C6 /* FiniteStateMachine.framework */; };
+		E9AFAA7F223105F0001F95C6 /* FiniteStateMachineTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E9AFAA7E223105F0001F95C6 /* FiniteStateMachineTests.m */; };
+		E9AFAAA1223105FC001F95C6 /* FSMState.m in Sources */ = {isa = PBXBuildFile; fileRef = E9AFAA8B223105FC001F95C6 /* FSMState.m */; };
+		E9AFAAA2223105FC001F95C6 /* FSMMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AFAA8C223105FC001F95C6 /* FSMMachine.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E9AFAAA3223105FC001F95C6 /* FSMAutoMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AFAA8D223105FC001F95C6 /* FSMAutoMachine.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E9AFAAA4223105FC001F95C6 /* FSMTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = E9AFAA8E223105FC001F95C6 /* FSMTransition.m */; };
+		E9AFAAA5223105FC001F95C6 /* FSMBlockTransition.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AFAA8F223105FC001F95C6 /* FSMBlockTransition.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E9AFAAA6223105FC001F95C6 /* FSMFunctionTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = E9AFAA90223105FC001F95C6 /* FSMFunctionTransition.m */; };
+		E9AFAAA7223105FC001F95C6 /* FSMState.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AFAA91223105FC001F95C6 /* FSMState.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E9AFAAA8223105FC001F95C6 /* FSMAutoMachine.m in Sources */ = {isa = PBXBuildFile; fileRef = E9AFAA92223105FC001F95C6 /* FSMAutoMachine.m */; };
+		E9AFAAA9223105FC001F95C6 /* FSMMachine.m in Sources */ = {isa = PBXBuildFile; fileRef = E9AFAA93223105FC001F95C6 /* FSMMachine.m */; };
+		E9AFAAAA223105FC001F95C6 /* FSMFunctionTransition.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AFAA94223105FC001F95C6 /* FSMFunctionTransition.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E9AFAAAB223105FC001F95C6 /* FSMBlockTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = E9AFAA95223105FC001F95C6 /* FSMBlockTransition.m */; };
+		E9AFAAAC223105FC001F95C6 /* FSMTransition.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AFAA96223105FC001F95C6 /* FSMTransition.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E9AFAAAD223105FC001F95C6 /* fsm_transition.c in Sources */ = {isa = PBXBuildFile; fileRef = E9AFAA98223105FC001F95C6 /* fsm_transition.c */; };
+		E9AFAAAE223105FC001F95C6 /* fsm_chain_table.c in Sources */ = {isa = PBXBuildFile; fileRef = E9AFAA99223105FC001F95C6 /* fsm_chain_table.c */; };
+		E9AFAAAF223105FC001F95C6 /* fsm_machine.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AFAA9A223105FC001F95C6 /* fsm_machine.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E9AFAAB0223105FC001F95C6 /* fsm_state.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AFAA9B223105FC001F95C6 /* fsm_state.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E9AFAAB1223105FC001F95C6 /* fsm_chain_table.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AFAA9C223105FC001F95C6 /* fsm_chain_table.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E9AFAAB2223105FC001F95C6 /* fsm_machine.c in Sources */ = {isa = PBXBuildFile; fileRef = E9AFAA9D223105FC001F95C6 /* fsm_machine.c */; };
+		E9AFAAB3223105FC001F95C6 /* fsm_transition.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AFAA9E223105FC001F95C6 /* fsm_transition.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E9AFAAB4223105FC001F95C6 /* fsm_protocol.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AFAA9F223105FC001F95C6 /* fsm_protocol.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E9AFAAB5223105FC001F95C6 /* fsm_state.c in Sources */ = {isa = PBXBuildFile; fileRef = E9AFAAA0223105FC001F95C6 /* fsm_state.c */; };
+		E9AFAAB722310642001F95C6 /* FiniteStateMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AFAAB622310642001F95C6 /* FiniteStateMachine.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E9AFAAC32231067B001F95C6 /* ds_base.c in Sources */ = {isa = PBXBuildFile; fileRef = E9AFAAB92231067B001F95C6 /* ds_base.c */; };
+		E9AFAAC42231067B001F95C6 /* ds_queue.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AFAABA2231067B001F95C6 /* ds_queue.h */; };
+		E9AFAAC52231067B001F95C6 /* ds_chain.c in Sources */ = {isa = PBXBuildFile; fileRef = E9AFAABB2231067B001F95C6 /* ds_chain.c */; };
+		E9AFAAC62231067B001F95C6 /* ds_array.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AFAABC2231067B001F95C6 /* ds_array.h */; };
+		E9AFAAC72231067B001F95C6 /* ds_stack.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AFAABD2231067B001F95C6 /* ds_stack.h */; };
+		E9AFAAC82231067B001F95C6 /* ds_queue.c in Sources */ = {isa = PBXBuildFile; fileRef = E9AFAABE2231067B001F95C6 /* ds_queue.c */; };
+		E9AFAAC92231067B001F95C6 /* ds_base.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AFAABF2231067B001F95C6 /* ds_base.h */; };
+		E9AFAACA2231067B001F95C6 /* ds_chain.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AFAAC02231067B001F95C6 /* ds_chain.h */; };
+		E9AFAACB2231067B001F95C6 /* ds_array.c in Sources */ = {isa = PBXBuildFile; fileRef = E9AFAAC12231067B001F95C6 /* ds_array.c */; };
+		E9AFAACC2231067B001F95C6 /* ds_stack.c in Sources */ = {isa = PBXBuildFile; fileRef = E9AFAAC22231067B001F95C6 /* ds_stack.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		E9AFAA7B223105F0001F95C6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E9AFAA67223105F0001F95C6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E9AFAA6F223105F0001F95C6;
+			remoteInfo = FiniteStateMachine;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		E9AFAA70223105F0001F95C6 /* FiniteStateMachine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = FiniteStateMachine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E9AFAA74223105F0001F95C6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E9AFAA79223105F0001F95C6 /* FiniteStateMachineTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FiniteStateMachineTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E9AFAA7E223105F0001F95C6 /* FiniteStateMachineTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FiniteStateMachineTests.m; sourceTree = "<group>"; };
+		E9AFAA80223105F0001F95C6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E9AFAA8B223105FC001F95C6 /* FSMState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FSMState.m; sourceTree = "<group>"; };
+		E9AFAA8C223105FC001F95C6 /* FSMMachine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSMMachine.h; sourceTree = "<group>"; };
+		E9AFAA8D223105FC001F95C6 /* FSMAutoMachine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSMAutoMachine.h; sourceTree = "<group>"; };
+		E9AFAA8E223105FC001F95C6 /* FSMTransition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FSMTransition.m; sourceTree = "<group>"; };
+		E9AFAA8F223105FC001F95C6 /* FSMBlockTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSMBlockTransition.h; sourceTree = "<group>"; };
+		E9AFAA90223105FC001F95C6 /* FSMFunctionTransition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FSMFunctionTransition.m; sourceTree = "<group>"; };
+		E9AFAA91223105FC001F95C6 /* FSMState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSMState.h; sourceTree = "<group>"; };
+		E9AFAA92223105FC001F95C6 /* FSMAutoMachine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FSMAutoMachine.m; sourceTree = "<group>"; };
+		E9AFAA93223105FC001F95C6 /* FSMMachine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FSMMachine.m; sourceTree = "<group>"; };
+		E9AFAA94223105FC001F95C6 /* FSMFunctionTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSMFunctionTransition.h; sourceTree = "<group>"; };
+		E9AFAA95223105FC001F95C6 /* FSMBlockTransition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FSMBlockTransition.m; sourceTree = "<group>"; };
+		E9AFAA96223105FC001F95C6 /* FSMTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSMTransition.h; sourceTree = "<group>"; };
+		E9AFAA98223105FC001F95C6 /* fsm_transition.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fsm_transition.c; sourceTree = "<group>"; };
+		E9AFAA99223105FC001F95C6 /* fsm_chain_table.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fsm_chain_table.c; sourceTree = "<group>"; };
+		E9AFAA9A223105FC001F95C6 /* fsm_machine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fsm_machine.h; sourceTree = "<group>"; };
+		E9AFAA9B223105FC001F95C6 /* fsm_state.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fsm_state.h; sourceTree = "<group>"; };
+		E9AFAA9C223105FC001F95C6 /* fsm_chain_table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fsm_chain_table.h; sourceTree = "<group>"; };
+		E9AFAA9D223105FC001F95C6 /* fsm_machine.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fsm_machine.c; sourceTree = "<group>"; };
+		E9AFAA9E223105FC001F95C6 /* fsm_transition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fsm_transition.h; sourceTree = "<group>"; };
+		E9AFAA9F223105FC001F95C6 /* fsm_protocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fsm_protocol.h; sourceTree = "<group>"; };
+		E9AFAAA0223105FC001F95C6 /* fsm_state.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fsm_state.c; sourceTree = "<group>"; };
+		E9AFAAB622310642001F95C6 /* FiniteStateMachine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FiniteStateMachine.h; sourceTree = "<group>"; };
+		E9AFAAB92231067B001F95C6 /* ds_base.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ds_base.c; sourceTree = "<group>"; };
+		E9AFAABA2231067B001F95C6 /* ds_queue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ds_queue.h; sourceTree = "<group>"; };
+		E9AFAABB2231067B001F95C6 /* ds_chain.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ds_chain.c; sourceTree = "<group>"; };
+		E9AFAABC2231067B001F95C6 /* ds_array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ds_array.h; sourceTree = "<group>"; };
+		E9AFAABD2231067B001F95C6 /* ds_stack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ds_stack.h; sourceTree = "<group>"; };
+		E9AFAABE2231067B001F95C6 /* ds_queue.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ds_queue.c; sourceTree = "<group>"; };
+		E9AFAABF2231067B001F95C6 /* ds_base.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ds_base.h; sourceTree = "<group>"; };
+		E9AFAAC02231067B001F95C6 /* ds_chain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ds_chain.h; sourceTree = "<group>"; };
+		E9AFAAC12231067B001F95C6 /* ds_array.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ds_array.c; sourceTree = "<group>"; };
+		E9AFAAC22231067B001F95C6 /* ds_stack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ds_stack.c; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		E9AFAA6D223105F0001F95C6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E9AFAA76223105F0001F95C6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E9AFAA7A223105F0001F95C6 /* FiniteStateMachine.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		E9AFAA66223105F0001F95C6 = {
+			isa = PBXGroup;
+			children = (
+				E9AFAAB82231067B001F95C6 /* ds */,
+				E9AFAA97223105FC001F95C6 /* fsm */,
+				E9AFAA8A223105FC001F95C6 /* Classes */,
+				E9AFAA72223105F0001F95C6 /* FiniteStateMachine */,
+				E9AFAA7D223105F0001F95C6 /* FiniteStateMachineTests */,
+				E9AFAA71223105F0001F95C6 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		E9AFAA71223105F0001F95C6 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E9AFAA70223105F0001F95C6 /* FiniteStateMachine.framework */,
+				E9AFAA79223105F0001F95C6 /* FiniteStateMachineTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E9AFAA72223105F0001F95C6 /* FiniteStateMachine */ = {
+			isa = PBXGroup;
+			children = (
+				E9AFAA74223105F0001F95C6 /* Info.plist */,
+			);
+			path = FiniteStateMachine;
+			sourceTree = "<group>";
+		};
+		E9AFAA7D223105F0001F95C6 /* FiniteStateMachineTests */ = {
+			isa = PBXGroup;
+			children = (
+				E9AFAA7E223105F0001F95C6 /* FiniteStateMachineTests.m */,
+				E9AFAA80223105F0001F95C6 /* Info.plist */,
+			);
+			path = FiniteStateMachineTests;
+			sourceTree = "<group>";
+		};
+		E9AFAA8A223105FC001F95C6 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				E9AFAA96223105FC001F95C6 /* FSMTransition.h */,
+				E9AFAA8E223105FC001F95C6 /* FSMTransition.m */,
+				E9AFAA94223105FC001F95C6 /* FSMFunctionTransition.h */,
+				E9AFAA90223105FC001F95C6 /* FSMFunctionTransition.m */,
+				E9AFAA8F223105FC001F95C6 /* FSMBlockTransition.h */,
+				E9AFAA95223105FC001F95C6 /* FSMBlockTransition.m */,
+				E9AFAA91223105FC001F95C6 /* FSMState.h */,
+				E9AFAA8B223105FC001F95C6 /* FSMState.m */,
+				E9AFAA8C223105FC001F95C6 /* FSMMachine.h */,
+				E9AFAA93223105FC001F95C6 /* FSMMachine.m */,
+				E9AFAA8D223105FC001F95C6 /* FSMAutoMachine.h */,
+				E9AFAA92223105FC001F95C6 /* FSMAutoMachine.m */,
+				E9AFAAB622310642001F95C6 /* FiniteStateMachine.h */,
+			);
+			name = Classes;
+			path = ../Classes;
+			sourceTree = "<group>";
+		};
+		E9AFAA97223105FC001F95C6 /* fsm */ = {
+			isa = PBXGroup;
+			children = (
+				E9AFAA9F223105FC001F95C6 /* fsm_protocol.h */,
+				E9AFAA9C223105FC001F95C6 /* fsm_chain_table.h */,
+				E9AFAA99223105FC001F95C6 /* fsm_chain_table.c */,
+				E9AFAA9E223105FC001F95C6 /* fsm_transition.h */,
+				E9AFAA98223105FC001F95C6 /* fsm_transition.c */,
+				E9AFAA9B223105FC001F95C6 /* fsm_state.h */,
+				E9AFAAA0223105FC001F95C6 /* fsm_state.c */,
+				E9AFAA9A223105FC001F95C6 /* fsm_machine.h */,
+				E9AFAA9D223105FC001F95C6 /* fsm_machine.c */,
+			);
+			name = fsm;
+			path = ../fsm;
+			sourceTree = "<group>";
+		};
+		E9AFAAB82231067B001F95C6 /* ds */ = {
+			isa = PBXGroup;
+			children = (
+				E9AFAABF2231067B001F95C6 /* ds_base.h */,
+				E9AFAAB92231067B001F95C6 /* ds_base.c */,
+				E9AFAABC2231067B001F95C6 /* ds_array.h */,
+				E9AFAAC12231067B001F95C6 /* ds_array.c */,
+				E9AFAABD2231067B001F95C6 /* ds_stack.h */,
+				E9AFAAC22231067B001F95C6 /* ds_stack.c */,
+				E9AFAAC02231067B001F95C6 /* ds_chain.h */,
+				E9AFAABB2231067B001F95C6 /* ds_chain.c */,
+				E9AFAABA2231067B001F95C6 /* ds_queue.h */,
+				E9AFAABE2231067B001F95C6 /* ds_queue.c */,
+			);
+			name = ds;
+			path = ../ds;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		E9AFAA6B223105F0001F95C6 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E9AFAAAC223105FC001F95C6 /* FSMTransition.h in Headers */,
+				E9AFAAAA223105FC001F95C6 /* FSMFunctionTransition.h in Headers */,
+				E9AFAAA5223105FC001F95C6 /* FSMBlockTransition.h in Headers */,
+				E9AFAAA7223105FC001F95C6 /* FSMState.h in Headers */,
+				E9AFAAA2223105FC001F95C6 /* FSMMachine.h in Headers */,
+				E9AFAAA3223105FC001F95C6 /* FSMAutoMachine.h in Headers */,
+				E9AFAAB722310642001F95C6 /* FiniteStateMachine.h in Headers */,
+				E9AFAAB4223105FC001F95C6 /* fsm_protocol.h in Headers */,
+				E9AFAAB1223105FC001F95C6 /* fsm_chain_table.h in Headers */,
+				E9AFAAB3223105FC001F95C6 /* fsm_transition.h in Headers */,
+				E9AFAAB0223105FC001F95C6 /* fsm_state.h in Headers */,
+				E9AFAAAF223105FC001F95C6 /* fsm_machine.h in Headers */,
+				E9AFAAC92231067B001F95C6 /* ds_base.h in Headers */,
+				E9AFAAC62231067B001F95C6 /* ds_array.h in Headers */,
+				E9AFAAC72231067B001F95C6 /* ds_stack.h in Headers */,
+				E9AFAACA2231067B001F95C6 /* ds_chain.h in Headers */,
+				E9AFAAC42231067B001F95C6 /* ds_queue.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		E9AFAA6F223105F0001F95C6 /* FiniteStateMachine */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E9AFAA84223105F0001F95C6 /* Build configuration list for PBXNativeTarget "FiniteStateMachine" */;
+			buildPhases = (
+				E9AFAA6B223105F0001F95C6 /* Headers */,
+				E9AFAA6C223105F0001F95C6 /* Sources */,
+				E9AFAA6D223105F0001F95C6 /* Frameworks */,
+				E9AFAA6E223105F0001F95C6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FiniteStateMachine;
+			productName = FiniteStateMachine;
+			productReference = E9AFAA70223105F0001F95C6 /* FiniteStateMachine.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		E9AFAA78223105F0001F95C6 /* FiniteStateMachineTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E9AFAA87223105F0001F95C6 /* Build configuration list for PBXNativeTarget "FiniteStateMachineTests" */;
+			buildPhases = (
+				E9AFAA75223105F0001F95C6 /* Sources */,
+				E9AFAA76223105F0001F95C6 /* Frameworks */,
+				E9AFAA77223105F0001F95C6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E9AFAA7C223105F0001F95C6 /* PBXTargetDependency */,
+			);
+			name = FiniteStateMachineTests;
+			productName = FiniteStateMachineTests;
+			productReference = E9AFAA79223105F0001F95C6 /* FiniteStateMachineTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E9AFAA67223105F0001F95C6 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1010;
+				ORGANIZATIONNAME = "DIM Group";
+				TargetAttributes = {
+					E9AFAA6F223105F0001F95C6 = {
+						CreatedOnToolsVersion = 10.1;
+					};
+					E9AFAA78223105F0001F95C6 = {
+						CreatedOnToolsVersion = 10.1;
+					};
+				};
+			};
+			buildConfigurationList = E9AFAA6A223105F0001F95C6 /* Build configuration list for PBXProject "FiniteStateMachine" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = E9AFAA66223105F0001F95C6;
+			productRefGroup = E9AFAA71223105F0001F95C6 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E9AFAA6F223105F0001F95C6 /* FiniteStateMachine */,
+				E9AFAA78223105F0001F95C6 /* FiniteStateMachineTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		E9AFAA6E223105F0001F95C6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E9AFAA77223105F0001F95C6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		E9AFAA6C223105F0001F95C6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E9AFAAA1223105FC001F95C6 /* FSMState.m in Sources */,
+				E9AFAAC32231067B001F95C6 /* ds_base.c in Sources */,
+				E9AFAACB2231067B001F95C6 /* ds_array.c in Sources */,
+				E9AFAAAE223105FC001F95C6 /* fsm_chain_table.c in Sources */,
+				E9AFAAB5223105FC001F95C6 /* fsm_state.c in Sources */,
+				E9AFAACC2231067B001F95C6 /* ds_stack.c in Sources */,
+				E9AFAAA9223105FC001F95C6 /* FSMMachine.m in Sources */,
+				E9AFAAB2223105FC001F95C6 /* fsm_machine.c in Sources */,
+				E9AFAAA6223105FC001F95C6 /* FSMFunctionTransition.m in Sources */,
+				E9AFAAA4223105FC001F95C6 /* FSMTransition.m in Sources */,
+				E9AFAAC52231067B001F95C6 /* ds_chain.c in Sources */,
+				E9AFAAA8223105FC001F95C6 /* FSMAutoMachine.m in Sources */,
+				E9AFAAAB223105FC001F95C6 /* FSMBlockTransition.m in Sources */,
+				E9AFAAAD223105FC001F95C6 /* fsm_transition.c in Sources */,
+				E9AFAAC82231067B001F95C6 /* ds_queue.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E9AFAA75223105F0001F95C6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E9AFAA7F223105F0001F95C6 /* FiniteStateMachineTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		E9AFAA7C223105F0001F95C6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E9AFAA6F223105F0001F95C6 /* FiniteStateMachine */;
+			targetProxy = E9AFAA7B223105F0001F95C6 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		E9AFAA82223105F0001F95C6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		E9AFAA83223105F0001F95C6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		E9AFAA85223105F0001F95C6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = JUVC7SZJE7;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = FiniteStateMachine/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = DIM.FiniteStateMachine;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		E9AFAA86223105F0001F95C6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = JUVC7SZJE7;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = FiniteStateMachine/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = DIM.FiniteStateMachine;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		E9AFAA88223105F0001F95C6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = JUVC7SZJE7;
+				INFOPLIST_FILE = FiniteStateMachineTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = DIM.FiniteStateMachineTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		E9AFAA89223105F0001F95C6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = JUVC7SZJE7;
+				INFOPLIST_FILE = FiniteStateMachineTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = DIM.FiniteStateMachineTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		E9AFAA6A223105F0001F95C6 /* Build configuration list for PBXProject "FiniteStateMachine" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E9AFAA82223105F0001F95C6 /* Debug */,
+				E9AFAA83223105F0001F95C6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E9AFAA84223105F0001F95C6 /* Build configuration list for PBXNativeTarget "FiniteStateMachine" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E9AFAA85223105F0001F95C6 /* Debug */,
+				E9AFAA86223105F0001F95C6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E9AFAA87223105F0001F95C6 /* Build configuration list for PBXNativeTarget "FiniteStateMachineTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E9AFAA88223105F0001F95C6 /* Debug */,
+				E9AFAA89223105F0001F95C6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = E9AFAA67223105F0001F95C6 /* Project object */;
+}
