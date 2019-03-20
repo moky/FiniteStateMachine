@@ -130,7 +130,9 @@ typedef NS_ENUM(NSUInteger, FSMStatus) {
 - (void) tick
 {
 	@synchronized(self) {
-		fsm_machine_tick(_innerMachine);
+        if (_status == FSMMachineStatusRunning) {
+            fsm_machine_tick(_innerMachine);
+        }
 	}
 }
 
