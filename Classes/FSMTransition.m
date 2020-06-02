@@ -12,6 +12,11 @@
 //#import "FSMState.h"
 #import "FSMTransition.h"
 
+// compare strings
+#define NSStringEquals(str1, str2)          (str1 == nil ? str2.length == 0 :  \
+                                             (str2 == nil ? str1.length == 0 : \
+                                              [str1 isEqualToString:str2]))
+
 static fsm_bool _evaluate(const fsm_machine * m, const fsm_state * s, const fsm_transition * t)
 {
 	FSMMachine * machine = m->object;
@@ -75,7 +80,7 @@ static fsm_bool _evaluate(const fsm_machine * m, const fsm_state * s, const fsm_
 
 - (void) setTargetStateName:(NSString *)targetStateName
 {
-	if (![_targetStateName isEqualToString:targetStateName]) {
+	if (!NSStringEquals(_targetStateName, targetStateName)) {
 		[targetStateName retain];
 		[_targetStateName release];
 		_targetStateName = targetStateName;

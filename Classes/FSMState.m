@@ -12,6 +12,11 @@
 #import "FSMTransition.h"
 #import "FSMState.h"
 
+// compare strings
+#define NSStringEquals(str1, str2)          (str1 == nil ? str2.length == 0 :  \
+                                             (str2 == nil ? str1.length == 0 : \
+                                              [str1 isEqualToString:str2]))
+
 extern fsm_transition * inner_transition(const FSMTransition * transition);
 
 @interface FSMState ()
@@ -76,7 +81,7 @@ extern fsm_transition * inner_transition(const FSMTransition * transition);
 
 - (void) setName:(NSString *)name
 {
-	if (![_name isEqualToString:name]) {
+	if (!NSStringEquals(_name, name)) {
 		[name retain];
 		[_name release];
 		_name = name;
@@ -98,22 +103,22 @@ extern fsm_transition * inner_transition(const FSMTransition * transition);
 
 - (void) onEnter:(FSMMachine *)machine
 {
-	NSLog(@"[FSM] state name: %@, machine: %@", _name, machine);
+	NSLog(@"[FSM] enter state '%@', machine: %@", _name, machine);
 }
 
 - (void) onExit:(FSMMachine *)machine
 {
-	NSLog(@"[FSM] state name: %@, machine: %@", _name, machine);
+	NSLog(@"[FSM] exit state '%@', machine: %@", _name, machine);
 }
 
 - (void) onPause:(FSMMachine *)machine
 {
-	NSLog(@"[FSM] state name: %@, machine: %@", _name, machine);
+	NSLog(@"[FSM] pause state '%@', machine: %@", _name, machine);
 }
 
 - (void) onResume:(FSMMachine *)machine
 {
-	NSLog(@"[FSM] state name: %@, machine: %@", _name, machine);
+	NSLog(@"[FSM] resume state '%@', machine: %@", _name, machine);
 }
 
 @end
