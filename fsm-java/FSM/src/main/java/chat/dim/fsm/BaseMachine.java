@@ -58,6 +58,10 @@ public abstract class BaseMachine<C extends Context,
     public void addState(String name, S state) {
         stateMap.put(name, state);
     }
+    public S getState(String name) {
+        return stateMap.get(name);
+    }
+
     @Override
     public S getDefaultState() {
         return stateMap.get(defaultStateName);
