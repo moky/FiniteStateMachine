@@ -28,43 +28,12 @@
  * SOFTWARE.
  * ==============================================================================
  */
-package chat.dim.fsm;
+package chat.dim.threading;
 
-/**
- *  State Machine Delegate
- *  ~~~~~~~~~~~~~~~~~~~~~~
- */
-public interface Delegate<C extends Context, T extends Transition<C>, S extends State<C, T>> {
+public interface Ticker {
 
     /**
-     *  Called before enter state
-     *
-     * @param state   - new state
-     * @param ctx     - context (machine)
+     *  Drive current thread forward
      */
-    void enterState(S state, C ctx);
-
-    /**
-     *  Called before exit state
-     *
-     * @param state   - old state
-     * @param ctx     - context (machine)
-     */
-    void exitState(S state, C ctx);
-
-    /**
-     *  Called before pause state
-     *
-     * @param state   - current state
-     * @param ctx     - context (machine)
-     */
-    void pauseState(S state, C ctx);
-
-    /**
-     *  Called before resume state
-     *
-     * @param state   - current state
-     * @param ctx     - context (machine)
-     */
-    void resumeState(S state, C ctx);
+    void tick();
 }

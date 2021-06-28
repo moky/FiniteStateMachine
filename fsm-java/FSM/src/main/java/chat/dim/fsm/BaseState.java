@@ -33,6 +33,9 @@ package chat.dim.fsm;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *  State with transitions
+ */
 public abstract class BaseState<C extends Context, T extends Transition<C>> implements State<C, T> {
 
     private final List<T> transitionList = new ArrayList<>();

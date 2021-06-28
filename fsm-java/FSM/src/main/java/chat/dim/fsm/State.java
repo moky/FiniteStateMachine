@@ -30,18 +30,48 @@
  */
 package chat.dim.fsm;
 
+/**
+ *  Finite State
+ *  ~~~~~~~~~~~~
+ *
+ * @param <C> - context
+ * @param <T> - transition
+ */
 public interface State<C extends Context, T extends Transition<C>> {
 
-    // call after entered
+    /**
+     *  Called after entered
+     *
+     * @param ctx - context (machine)
+     */
     void onEnter(C ctx);
-    // call after exited
+
+    /**
+     *  Called after exited
+     *
+     * @param ctx - context (machine)
+     */
     void onExit(C ctx);
 
-    // call after paused
+    /**
+     *  Called after paused
+     *
+     * @param ctx - context (machine)
+     */
     void onPause(C ctx);
-    // call after resume
+
+    /**
+     *  Called after resumed
+     *
+     * @param ctx - context (machine)
+     */
     void onResume(C ctx);
 
-    // called by machine.tick() to evaluate each transitions
+    /**
+     *  Called by machine.tick() to evaluate each transitions
+     *
+     * @param ctx - context (machine)
+     * @return success transaction, or null to stay the current state
+     */
     T evaluate(C ctx);
 }

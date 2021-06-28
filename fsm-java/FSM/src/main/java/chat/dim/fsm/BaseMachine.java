@@ -34,14 +34,12 @@ import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class BaseMachine<C extends Context,
-        T extends BaseTransition<C>,
-        S extends State<C, T>,
-        D extends Delegate<C, T, S>> implements Machine<C, T, S, D> {
+public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>, S extends State<C, T>>
+        implements Machine<C, T, S> {
 
     private Status status = Status.Stopped;
 
-    private WeakReference<D> delegateRef = null;
+    private WeakReference<Delegate<C, T, S>> delegateRef = null;
 
     private final Map<String, S> stateMap = new HashMap<>();
     private final String defaultStateName;
@@ -51,6 +49,23 @@ public abstract class BaseMachine<C extends Context,
         super();
         defaultStateName = defaultState;
     }
+
+    public void setDelegate(Delegate<C, T, S> delegate) {
+        if (delegate == null) {
+            delegateRef = null;
+        } else {
+            delegateRef = new WeakReference<>(delegate);
+        }
+    }
+    public Delegate<C, T, S> getDelegate() {
+        if (delegateRef == null) {
+            return null;
+        } else {
+            return delegateRef.get();
+        }
+    }
+
+    protected abstract C getContext();
 
     //
     //  States
@@ -75,30 +90,15 @@ public abstract class BaseMachine<C extends Context,
         return currentState;
     }
     @Override
-    public void setCurrentState(S currentState) {
-        this.currentState = currentState;
-    }
-
-    public D getDelegate() {
-        if (delegateRef == null) {
-            return null;
-        } else {
-            return delegateRef.get();
-        }
-    }
-    public void setDelegate(D delegate) {
-        if (delegate == null) {
-            delegateRef = null;
-        } else {
-            delegateRef = new WeakReference<>(delegate);
-        }
+    public void setCurrentState(S newState) {
+        currentState = newState;
     }
 
     @Override
     public void changeState(S newState) {
         C ctx = getContext();
         S oldState = getCurrentState();
-        D delegate = getDelegate();
+        Delegate<C, T, S> delegate = getDelegate();
 
         // events before state changed
         if (delegate != null) {
@@ -122,9 +122,14 @@ public abstract class BaseMachine<C extends Context,
         }
     }
 
+    //
+    //  Actions
+    //
+
     /**
      *  start machine from default state
      */
+    @Override
     public void start() {
         changeState(getDefaultState());
         status = Status.Running;
@@ -133,6 +138,7 @@ public abstract class BaseMachine<C extends Context,
     /**
      *  stop machine and set current state to null
      */
+    @Override
     public void stop() {
         status = Status.Stopped;
         changeState(null);
@@ -141,10 +147,11 @@ public abstract class BaseMachine<C extends Context,
     /**
      *  pause machine, current state not change
      */
+    @Override
     public void pause() {
         C ctx = getContext();
         S currentState = getCurrentState();
-        D delegate = getDelegate();
+        Delegate<C, T, S> delegate = getDelegate();
         if (delegate != null) {
             delegate.pauseState(currentState, ctx);
         }
@@ -155,10 +162,11 @@ public abstract class BaseMachine<C extends Context,
     /**
      *  resume machine with current state
      */
+    @Override
     public void resume() {
         C ctx = getContext();
         S currentState = getCurrentState();
-        D delegate = getDelegate();
+        Delegate<C, T, S> delegate = getDelegate();
         if (delegate != null) {
             delegate.resumeState(currentState, ctx);
         }
@@ -166,9 +174,14 @@ public abstract class BaseMachine<C extends Context,
         currentState.onResume(ctx);
     }
 
+    //
+    //  Ticker
+    //
+
     /**
      *  Drive the machine running forward
      */
+    @Override
     public void tick() {
         C ctx = getContext();
         S state = getCurrentState();

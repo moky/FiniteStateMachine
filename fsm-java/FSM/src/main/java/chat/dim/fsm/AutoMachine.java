@@ -31,7 +31,7 @@
 package chat.dim.fsm;
 
 public abstract class AutoMachine<C extends Context, T extends BaseTransition<C>, S extends State<C, T>>
-        extends BaseMachine<C, T, S, Delegate<C, T, S>> implements Runnable {
+        extends BaseMachine<C, T, S> implements Runnable {
 
     private Thread thread = null;
 

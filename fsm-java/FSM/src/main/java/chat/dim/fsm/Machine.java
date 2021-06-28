@@ -30,41 +30,49 @@
  */
 package chat.dim.fsm;
 
+import chat.dim.threading.Ticker;
+
 /**
  *  State machine
  *  ~~~~~~~~~~~~~
  *
  * @param <S> - state
  * @param <C> - context
- * @param <U> - delegate
  * @param <T> - transition
  */
-public interface Machine<C extends Context, T extends Transition<C>, S extends State<C, T>, U extends Delegate<C, T, S>> {
+public interface Machine<C extends Context, T extends Transition<C>, S extends State<C, T>>
+        extends Ticker {
 
-    C getContext();
-
-    U getDelegate();
-
-    //
-    //  States
-    //
     S getDefaultState();
     S getTargetState(T transition);
 
     S getCurrentState();
     void setCurrentState(S newState);
 
+    /**
+     *  Exit current state, and enter new state
+     *
+     * @param newState - next state
+     */
     void changeState(S newState);
 
-    //
-    //  Actions
-    //
-    void start();   // change current state to 'default'
-    void stop();    // change current state to null
+    /**
+     *  Change current state to 'default'
+     */
+    void start();
 
-    void pause();   // pause machine, current state not change
-    void resume();  // resume machine with current state
+    /**
+     *  Change current state to null
+     */
+    void stop();
 
-    // drive the machine running forward
-    void tick();
+    /**
+     *  Pause machine, current state not change
+     */
+    void pause();
+
+    /**
+     *  Resume machine with current state
+     */
+    void resume();
 }

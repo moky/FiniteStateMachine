@@ -30,6 +30,9 @@
  */
 package chat.dim.fsm;
 
+/**
+ *  Transition with the name of target state
+ */
 public abstract class BaseTransition<C extends Context> implements Transition<C> {
 
     public final String target; // target state name

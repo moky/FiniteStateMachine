@@ -30,8 +30,12 @@
  */
 package chat.dim.fsm;
 
+/**
+ *  State Machine Context
+ *  ~~~~~~~~~~~~~~~~~~~~~
+ */
 public interface Context {
-    // context for state machine
+
 }
 
 enum Status {

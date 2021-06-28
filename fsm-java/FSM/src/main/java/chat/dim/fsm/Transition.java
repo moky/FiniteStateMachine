@@ -30,12 +30,18 @@
  */
 package chat.dim.fsm;
 
+/**
+ *  State Transition
+ *  ~~~~~~~~~~~~~~~~
+ *
+ * @param <C> - context
+ */
 public interface Transition<C extends Context> {
 
     /**
      *  Evaluate the current state
      *
-     * @param ctx - context
+     * @param ctx - context (machine)
      * @return true when current state should be changed
      */
     boolean evaluate(C ctx);
