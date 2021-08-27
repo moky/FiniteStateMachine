@@ -40,7 +40,8 @@ package chat.dim.fsm;
 public interface State<C extends Context, T extends Transition<C>> {
 
     /**
-     *  Called after entered
+     *  Called before entered
+     *  (get current state from context)
      *
      * @param ctx - context (machine)
      */
@@ -48,13 +49,14 @@ public interface State<C extends Context, T extends Transition<C>> {
 
     /**
      *  Called after exited
+     *  (get current state from context)
      *
      * @param ctx - context (machine)
      */
     void onExit(C ctx);
 
     /**
-     *  Called after paused
+     *  Called before paused
      *
      * @param ctx - context (machine)
      */
@@ -71,7 +73,7 @@ public interface State<C extends Context, T extends Transition<C>> {
      *  Called by machine.tick() to evaluate each transitions
      *
      * @param ctx - context (machine)
-     * @return success transaction, or null to stay the current state
+     * @return success transition, or null to stay the current state
      */
     T evaluate(C ctx);
 }

@@ -16,7 +16,13 @@ plugins {
 
 group 'chat.dim'
 //version '1.0-SNAPSHOT'
-version '0.1.5'
+version '0.1.6'
+
+def mod = 'FSM'
+def desc = 'Finite State Machine'
+
+def gitUrl = 'https://github.com/moky/FiniteStateMachine.git'
+def siteUrl = 'https://github.com/moky/FiniteStateMachine'
 
 sourceCompatibility = 1.8
 
@@ -40,17 +46,14 @@ tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
 
-def gitUrl = 'https://github.com/moky/FiniteStateMachine.git'
-def siteUrl = 'https://github.com/moky/FiniteStateMachine'
-
 install {
     repositories.mavenInstaller {
         // This generates POM.xml with proper parameters
         pom {
             project {
                 packaging 'jar'
-                name 'FSM'
-                description 'Finite State Machine'
+                name mod
+                description desc
                 url siteUrl
                 licenses {
                     license {
@@ -129,8 +132,8 @@ uploadArchives {
 
             pom.project {
                 packaging 'jar'
-                name 'FSM'
-                description 'Finite State Machine'
+                name mod
+                description desc
                 url siteUrl
                 licenses {
                     license {
