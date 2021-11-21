@@ -43,7 +43,7 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
 
     private final Map<String, S> stateMap = new HashMap<>();
     private final String defaultStateName;
-    private S currentState;
+    private S currentState = null;
 
     public BaseMachine(String defaultState) {
         super();

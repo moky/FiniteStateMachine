@@ -34,20 +34,31 @@ public abstract class AutoMachine<C extends Context, T extends BaseTransition<C>
         extends BaseMachine<C, T, S> implements Runnable {
 
     private Thread thread = null;
+    private boolean running = false;
 
     public AutoMachine(String defaultState) {
         super(defaultState);
     }
 
+    public boolean isRunning() {
+        return running;
+    }
+
     @Override
     public void start() {
+        restart();
         super.start();
+    }
+
+    private void restart() {
         forceStop();
+        running = true;
         thread = new Thread(this);
         thread.start();
     }
 
     private void forceStop() {
+        running = false;
         if (thread != null && thread.isAlive()) {
             thread.interrupt();
         }
@@ -70,16 +81,16 @@ public abstract class AutoMachine<C extends Context, T extends BaseTransition<C>
         }
     }
 
-    protected void setup() {
+    public void setup() {
         // prepare for running
     }
-    protected void handle() {
-        while (getCurrentState() != null) {
+    public void handle() {
+        while (isRunning()) {
             tick();
             idle();
         }
     }
-    protected void finish() {
+    public void finish() {
         // clean up after running
     }
 
