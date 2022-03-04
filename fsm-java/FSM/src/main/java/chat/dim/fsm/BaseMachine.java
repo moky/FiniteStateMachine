@@ -70,7 +70,7 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
     //
     //  States
     //
-    public void addState(String name, S state) {
+    public void setState(String name, S state) {
         stateMap.put(name, state);
     }
     public S getState(String name) {
@@ -95,9 +95,19 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
     }
 
     @Override
-    public void changeState(S newState) {
-        C ctx = getContext();
+    public boolean changeState(S newState) {
         S oldState = getCurrentState();
+        if (oldState == null) {
+            if (newState == null) {
+                // state not chang
+                return false;
+            }
+        } else if (oldState.equals(newState)) {
+            // state not chang
+            return false;
+        }
+
+        C ctx = getContext();
         Delegate<C, T, S> delegate = getDelegate();
 
         // events before state changed
@@ -118,6 +128,7 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
         if (oldState != null) {
             oldState.onExit(ctx);
         }
+        return true;
     }
 
     //

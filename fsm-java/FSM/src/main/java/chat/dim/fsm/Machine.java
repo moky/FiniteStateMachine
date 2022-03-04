@@ -54,7 +54,7 @@ public interface Machine<C extends Context, T extends Transition<C>, S extends S
      *
      * @param newState - next state
      */
-    void changeState(S newState);
+    boolean changeState(S newState);
 
     /**
      *  Change current state to 'default'

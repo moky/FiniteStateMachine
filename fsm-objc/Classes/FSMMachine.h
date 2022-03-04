@@ -27,8 +27,8 @@
 
 @property(nonatomic, assign) id<FSMDelegate> delegate;
 
-@property(nonatomic, retain) NSString * defaultStateName; // default is "default"
-@property(nonatomic, readonly) FSMState * currentState;
+@property(nonatomic, retain) NSString *defaultStateName; // default is "default"
+@property(nonatomic, readonly) __kindof FSMState *currentState;
 
 - (instancetype) initWithDefaultStateName:(NSString *)name capacity:(NSUInteger)capacity NS_DESIGNATED_INITIALIZER;
 

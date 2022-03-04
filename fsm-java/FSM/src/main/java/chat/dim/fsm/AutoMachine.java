@@ -35,6 +35,12 @@ public abstract class AutoMachine<C extends Context, T extends BaseTransition<C>
 
     private Thread thread = null;
     private boolean running = false;
+    private boolean daemon = false;
+
+    public AutoMachine(String defaultState, boolean isDaemon) {
+        super(defaultState);
+        daemon = isDaemon;
+    }
 
     public AutoMachine(String defaultState) {
         super(defaultState);
@@ -53,16 +59,23 @@ public abstract class AutoMachine<C extends Context, T extends BaseTransition<C>
     private void restart() {
         forceStop();
         running = true;
-        thread = new Thread(this);
-        thread.start();
+        Thread thr = new Thread(this);
+        thread = thr;
+        thr.setDaemon(daemon);
+        thr.start();
     }
 
     private void forceStop() {
         running = false;
-        if (thread != null && thread.isAlive()) {
-            thread.interrupt();
+        Thread thr = thread;
+        if (thr != null) {
+            thread = null;
+            // waiting 2 seconds for stopping the thread
+            //thr.join(2000);
+            if (thr.isAlive()) {
+                thr.interrupt();
+            }
         }
-        thread = null;
     }
 
     @Override
