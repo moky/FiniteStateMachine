@@ -30,52 +30,44 @@
  */
 package chat.dim.fsm;
 
+import chat.dim.threading.Daemon;
+
 public abstract class AutoMachine<C extends Context, T extends BaseTransition<C>, S extends State<C, T>>
         extends BaseMachine<C, T, S> implements Runnable {
 
-    private Thread thread = null;
-    private boolean running = false;
-    private boolean daemon = false;
+    private final Daemon daemon;
+    private boolean running;
 
     public AutoMachine(String defaultState, boolean isDaemon) {
         super(defaultState);
-        daemon = isDaemon;
+        daemon = new Daemon(this, isDaemon);
+        running = false;
     }
 
     public AutoMachine(String defaultState) {
         super(defaultState);
+        daemon = new Daemon(this);
+        running = false;
     }
 
     public boolean isRunning() {
         return running;
     }
 
+    private void forceStop() {
+        running = false;
+        daemon.stop();
+    }
+    private void restart() {
+        forceStop();
+        running = true;
+        daemon.start();
+    }
+
     @Override
     public void start() {
         restart();
         super.start();
-    }
-
-    private void restart() {
-        forceStop();
-        running = true;
-        Thread thr = new Thread(this);
-        thread = thr;
-        thr.setDaemon(daemon);
-        thr.start();
-    }
-
-    private void forceStop() {
-        running = false;
-        Thread thr = thread;
-        if (thr != null) {
-            thread = null;
-            // waiting 2 seconds for stopping the thread
-            //thr.join(2000);
-            if (thr.isAlive()) {
-                thr.interrupt();
-            }
-        }
     }
 
     @Override

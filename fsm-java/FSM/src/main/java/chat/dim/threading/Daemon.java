@@ -2,12 +2,12 @@
  *
  *  Finite State Machine
  *
- *                                Written in 2019 by Moky <albert.moky@gmail.com>
+ *                                Written in 2022 by Moky <albert.moky@gmail.com>
  *
  * ==============================================================================
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 Albert Moky
+ * Copyright (c) 2022 Albert Moky
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,24 +28,38 @@
  * SOFTWARE.
  * ==============================================================================
  */
-package chat.dim.fsm;
+package chat.dim.threading;
 
-/**
- *  State Machine Context
- *  ~~~~~~~~~~~~~~~~~~~~~
- */
-public interface Context {
+public class Daemon {
 
-}
+    private final Thread thread;
 
-enum Status {
-    Stopped(0),
-    Running(1),
-    Paused(2);
+    public Daemon(Runnable target, boolean on) {
+        super();
+        thread = new Thread(target);
+        thread.setDaemon(on);
+    }
+    public Daemon(Runnable target) {
+        this(target, true);
+    }
 
-    final int value;
+    public boolean isAlive() {
+        return thread.isAlive();
+    }
 
-    Status(int status) {
-        value = status;
+    public Thread start() {
+        if (isAlive()) {
+            stop();
+        }
+        thread.start();
+        return thread;
+    }
+
+    public void stop() {
+        try {
+            thread.join(1024);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
