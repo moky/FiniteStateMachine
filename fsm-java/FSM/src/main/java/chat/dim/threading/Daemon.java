@@ -32,34 +32,48 @@ package chat.dim.threading;
 
 public class Daemon {
 
-    private final Thread thread;
+    private final Runnable runnable;
+    private final boolean daemonic;
+
+    private Thread thread;
 
     public Daemon(Runnable target, boolean on) {
         super();
-        thread = new Thread(target);
-        thread.setDaemon(on);
+        runnable = target;
+        daemonic = on;
+        thread = null;
     }
     public Daemon(Runnable target) {
         this(target, true);
     }
 
     public boolean isAlive() {
-        return thread.isAlive();
+        Thread thr = thread;
+        return thr != null && thr.isAlive();
     }
 
     public Thread start() {
-        if (isAlive()) {
-            stop();
+        forceStop();
+        Thread thr = new Thread(runnable);
+        thr.setDaemon(daemonic);
+        thread = thr;
+        thr.start();
+        return thr;
+    }
+
+    private void forceStop() {
+        Thread thr = thread;
+        if (thr != null) {
+            thread = null;
+            try {
+                thr.join(1024);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
-        thread.start();
-        return thread;
     }
 
     public void stop() {
-        try {
-            thread.join(1024);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        forceStop();
     }
 }

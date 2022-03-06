@@ -45,9 +45,7 @@ public abstract class AutoMachine<C extends Context, T extends BaseTransition<C>
     }
 
     public AutoMachine(String defaultState) {
-        super(defaultState);
-        daemon = new Daemon(this);
-        running = false;
+        this(defaultState, true);
     }
 
     public boolean isRunning() {
