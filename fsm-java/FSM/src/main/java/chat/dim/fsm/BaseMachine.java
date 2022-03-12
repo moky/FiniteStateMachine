@@ -37,34 +37,29 @@ import java.util.Map;
 public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>, S extends State<C, T>>
         implements Machine<C, T, S> {
 
-    private Status status = Status.Stopped;
-
-    private WeakReference<Delegate<C, T, S>> delegateRef = null;
-
     private final Map<String, S> stateMap = new HashMap<>();
     private final String defaultStateName;
-    private S currentState = null;
+    private S currentState;
+
+    private Status status;
+    private WeakReference<Delegate<C, T, S>> delegateRef;
 
     public BaseMachine(String defaultState) {
         super();
         defaultStateName = defaultState;
+        currentState = null;
+        status = Status.Stopped;
+        delegateRef = new WeakReference<>(null);
     }
 
     public void setDelegate(Delegate<C, T, S> delegate) {
-        if (delegate == null) {
-            delegateRef = null;
-        } else {
-            delegateRef = new WeakReference<>(delegate);
-        }
+        delegateRef = new WeakReference<>(delegate);
     }
-    public Delegate<C, T, S> getDelegate() {
-        if (delegateRef == null) {
-            return null;
-        } else {
-            return delegateRef.get();
-        }
+    protected Delegate<C, T, S> getDelegate() {
+        return delegateRef.get();
     }
 
+    // the machine
     protected abstract C getContext();
 
     //
@@ -195,7 +190,7 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
      *  Drive the machine running forward
      */
     @Override
-    public void tick() {
+    public void tick(long now, long delta) {
         C ctx = getContext();
         S state = getCurrentState();
         if (state != null && status == Status.Running) {

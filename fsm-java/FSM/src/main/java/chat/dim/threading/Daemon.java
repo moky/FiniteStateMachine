@@ -32,6 +32,10 @@ package chat.dim.threading;
 
 public class Daemon {
 
+    // Waits at most milliseconds for this thread to die.
+    // A timeout of 0 means to wait forever.
+    public long WAITING_TIME = 1024;
+
     private final Runnable runnable;
     private final boolean daemonic;
 
@@ -66,7 +70,7 @@ public class Daemon {
         if (thr != null) {
             thread = null;
             try {
-                thr.join(1024);
+                thr.join(WAITING_TIME);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

@@ -30,78 +30,26 @@
  */
 package chat.dim.fsm;
 
-import chat.dim.threading.Daemon;
+import chat.dim.threading.Metronome;
 
 public abstract class AutoMachine<C extends Context, T extends BaseTransition<C>, S extends State<C, T>>
-        extends BaseMachine<C, T, S> implements Runnable {
-
-    private final Daemon daemon;
-    private boolean running;
-
-    public AutoMachine(String defaultState, boolean isDaemon) {
-        super(defaultState);
-        daemon = new Daemon(this, isDaemon);
-        running = false;
-    }
+        extends BaseMachine<C, T, S> {
 
     public AutoMachine(String defaultState) {
-        this(defaultState, true);
-    }
-
-    public boolean isRunning() {
-        return running;
-    }
-
-    private void forceStop() {
-        running = false;
-        daemon.stop();
-    }
-    private void restart() {
-        forceStop();
-        running = true;
-        daemon.start();
+        super(defaultState);
     }
 
     @Override
     public void start() {
-        restart();
         super.start();
+        Metronome timer = Metronome.getInstance();
+        timer.add(this);
     }
 
     @Override
     public void stop() {
+        Metronome timer = Metronome.getInstance();
+        timer.remove(this);
         super.stop();
-        forceStop();
-    }
-
-    @Override
-    public void run() {
-        setup();
-        try {
-            handle();
-        } finally {
-            finish();
-        }
-    }
-
-    public void setup() {
-        // prepare for running
-    }
-    public void handle() {
-        while (isRunning()) {
-            tick();
-            idle();
-        }
-    }
-    public void finish() {
-        // clean up after running
-    }
-
-    protected void idle() {
-        try {
-            Thread.sleep(128);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 }
