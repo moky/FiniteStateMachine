@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FiniteStateMachine Test Cases</title>
+    <link href="../../Crypto/tests/test.css" type="text/css" rel="stylesheet" />
+    <script src="../../Crypto/libs/loader.js"></script>
+    <script src="../../Crypto/libs/runner.js"></script>
+    <script src="../../Crypto/libs/utils.js"></script>
+
+    <script src="../../Crypto/dist/crypto.js"></script>
+
+    <script>
+        !function (ns) {
+            var sources = [
+                'src/namespace.js',
+
+                'src/threading/runnable.js',
+                'src/threading/thread.js',
+                'src/threading/ticker.js',
+                'src/threading/metronome.js',
+
+                'src/skywalker/handler.js',
+                'src/skywalker/processor.js',
+                'src/skywalker/runner.js',
+
+                'src/fsm/transition.js',
+                'src/fsm/state.js',
+                'src/fsm/machine.js',
+                'src/fsm/delegate.js',
+                'src/fsm/base.js',
+                'src/fsm/auto.js',
+                null
+            ];
+            var dist = 'dist/fsm.js';
+
+            var tests = [
+                '../../Crypto/tests/crypto_tests.js',
+                'tests/fsm_tests.js',
+                null
+            ];
+
+            var base = window.location.href;
+            base = base.substring(0, base.indexOf('tests/test.html'));
+            var loader = new Loader(base);
+
+            for (var i = 0; i < sources.length; ++i) {
+                loader.importJS(sources[i]);
+            }
+            for (var j = 0; j < tests.length; ++j) {
+                loader.importJS(tests[j]);
+            }
+
+            ns.sources = sources;
+            ns.dist = dist;
+        }(window);
+
+        $(function () {
+            var runner = new Runner('crypto_tests');
+            runner.run(crypto_tests);
+        });
+
+        $(function () {
+            var runner = new Runner('fsm_tests');
+            runner.run(fsm_tests);
+        });
+    </script>
+</head>
+<body>
+
+<h2>Crypto Tests</h2>
+<div id="crypto_tests">Testing ...</div>
+<div>&nbsp;</div>
+
+<h2>FiniteStateMachine Tests</h2>
+<div id="fsm_tests">Testing ...</div>
+<div>&nbsp;</div>
+
+<h2>Makefile</h2>
+<p class="console">
+    <script>
+        !(function () {
+            var text = 'cat';
+            var file;
+            for (var i = 0; i < sources.length; ++i) {
+                file = sources[i];
+                if (!file) {
+                    continue;
+                }
+                text += ' ' + file;
+            }
+            text += ' >> ' + dist;
+            document.writeln(text);
+        }());
+    </script>
+</p>
+</body>
+</html>
