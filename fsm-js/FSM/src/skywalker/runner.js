@@ -33,8 +33,8 @@
     'use strict';
 
     var Thread = ns.threading.Thread;
-    var Handler = ns.threading.Handler;
-    var Processor = ns.threading.Processor;
+    var Handler = ns.skywalker.Handler;
+    var Processor = ns.skywalker.Processor;
 
     var STAGE_INIT = 0;      // calling setup()
     var STAGE_HANDLING = 1;  // calling handle()

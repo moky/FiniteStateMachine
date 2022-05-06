@@ -9,12 +9,10 @@
 if (typeof FiniteStateMachine !== "object") {
     FiniteStateMachine = new MONKEY.Namespace();
 }
-
 if (typeof FiniteStateMachine.assert !== "function") {
     FiniteStateMachine.assert = console.assert;
 }
-
-(function(ns) {
+(function (ns) {
     ns.fsm = FiniteStateMachine;
     if (typeof ns.skywalker !== "object") {
         ns.skywalker = new ns.Namespace();
@@ -25,21 +23,19 @@ if (typeof FiniteStateMachine.assert !== "function") {
     ns.registers("skywalker");
     ns.registers("threading");
 })(MONKEY);
-
-(function(ns) {
-    var Runnable = function() {};
+(function (ns) {
+    var Runnable = function () {};
     ns.Interface(Runnable, null);
-    Runnable.prototype.run = function() {
+    Runnable.prototype.run = function () {
         ns.assert(false, "implement me!");
         return false;
     };
     ns.threading.Runnable = Runnable;
     ns.threading.registers("Runnable");
 })(MONKEY);
-
-(function(ns) {
+(function (ns) {
     var Runnable = ns.threading.Runnable;
-    var Thread = function() {
+    var Thread = function () {
         Object.call(this);
         if (arguments.length === 0) {
             this.__target = null;
@@ -61,35 +57,35 @@ if (typeof FiniteStateMachine.assert !== "function") {
         this.__running = false;
         this.__thread_id = 0;
     };
-    ns.Class(Thread, Object, [ Runnable ], null);
-    Thread.prototype.start = function() {
+    ns.Class(Thread, Object, [Runnable], null);
+    Thread.prototype.start = function () {
         this.__running = true;
         var thread = this;
-        this.__thread_id = setInterval(function() {
+        this.__thread_id = setInterval(function () {
             var ran = thread.isRunning() && thread.run();
             if (!ran) {
                 stop(thread);
             }
         }, this.getInterval());
     };
-    var stop = function(thread) {
+    var stop = function (thread) {
         var tid = thread.__thread_id;
         if (tid > 0) {
             thread.__thread_id = 0;
             clearInterval(tid);
         }
     };
-    Thread.prototype.stop = function() {
+    Thread.prototype.stop = function () {
         this.__running = false;
         stop(this);
     };
-    Thread.prototype.isRunning = function() {
+    Thread.prototype.isRunning = function () {
         return this.__running;
     };
-    Thread.prototype.getInterval = function() {
+    Thread.prototype.getInterval = function () {
         return this.__interval;
     };
-    Thread.prototype.run = function() {
+    Thread.prototype.run = function () {
         var target = this.__target;
         if (!target || target === this) {
             throw new SyntaxError("Thread::run() > override me!");
@@ -100,42 +96,40 @@ if (typeof FiniteStateMachine.assert !== "function") {
     ns.threading.Thread = Thread;
     ns.threading.registers("Thread");
 })(MONKEY);
-
-(function(ns) {
-    var Ticker = function() {};
+(function (ns) {
+    var Ticker = function () {};
     ns.Interface(Ticker, null);
-    Ticker.prototype.tick = function(now, delta) {
+    Ticker.prototype.tick = function (now, delta) {
         ns.assert(false, "implement me!");
     };
     ns.threading.Ticker = Ticker;
     ns.threading.registers("Ticker");
 })(MONKEY);
-
-(function(ns) {
+(function (ns) {
     var Runnable = ns.threading.Runnable;
     var Thread = ns.threading.Thread;
-    var Metronome = function() {
+    var Metronome = function () {
         Object.call(this);
         this.__tickers = [];
         this.__last_time = 0;
         this.__thread = null;
     };
-    ns.Class(Metronome, Object, [ Runnable ], null);
+    ns.Class(Metronome, Object, [Runnable], null);
     Metronome.MIN_DELTA = 100;
-    Metronome.prototype.start = function() {
+    Metronome.prototype.start = function () {
         this.__last_time = new Date().getTime();
         var thread = new Thread(this);
         this.__thread = thread;
         thread.start();
     };
-    Metronome.prototype.stop = function() {
+    Metronome.prototype.stop = function () {
         var thread = this.__thread;
         if (thread) {
             this.__thread = null;
             thread.stop();
         }
     };
-    Metronome.prototype.run = function() {
+    Metronome.prototype.run = function () {
         var now = new Date().getTime();
         var delta = now - this.__last_time;
         if (delta > Metronome.MIN_DELTA) {
@@ -149,7 +143,7 @@ if (typeof FiniteStateMachine.assert !== "function") {
         }
         return true;
     };
-    var drive = function(tickers, now, delta) {
+    var drive = function (tickers, now, delta) {
         for (var index = 0; index < tickers.length; ++index) {
             try {
                 tickers[index].tick(now, delta);
@@ -158,20 +152,20 @@ if (typeof FiniteStateMachine.assert !== "function") {
             }
         }
     };
-    Metronome.prototype.addTicker = function(ticker) {
+    Metronome.prototype.addTicker = function (ticker) {
         if (this.__tickers.indexOf(ticker) < 0) {
             this.__tickers.push(ticker);
         } else {
             throw new Error("ticker exists: " + ticker);
         }
     };
-    Metronome.prototype.removeTicker = function(ticker) {
+    Metronome.prototype.removeTicker = function (ticker) {
         var index = this.__tickers.indexOf(ticker);
         if (index >= 0) {
             this.__tickers.splice(index, 1);
         }
     };
-    Metronome.getInstance = function() {
+    Metronome.getInstance = function () {
         if (!sharedMetronome) {
             sharedMetronome = new Metronome();
             sharedMetronome.start();
@@ -182,46 +176,43 @@ if (typeof FiniteStateMachine.assert !== "function") {
     ns.threading.Metronome = Metronome;
     ns.threading.registers("Metronome");
 })(MONKEY);
-
-(function(ns) {
-    var Handler = function() {};
+(function (ns) {
+    var Handler = function () {};
     ns.Interface(Handler, null);
-    Handler.prototype.setup = function() {
+    Handler.prototype.setup = function () {
         ns.assert(false, "implement me!");
         return false;
     };
-    Handler.prototype.handle = function() {
+    Handler.prototype.handle = function () {
         ns.assert(false, "implement me!");
         return false;
     };
-    Handler.prototype.finish = function() {
+    Handler.prototype.finish = function () {
         ns.assert(false, "implement me!");
         return false;
     };
     ns.skywalker.Handler = Handler;
     ns.skywalker.registers("Handler");
 })(MONKEY);
-
-(function(ns) {
-    var Processor = function() {};
+(function (ns) {
+    var Processor = function () {};
     ns.Interface(Processor, null);
-    Processor.prototype.process = function() {
+    Processor.prototype.process = function () {
         ns.assert(false, "implement me!");
         return false;
     };
     ns.skywalker.Processor = Processor;
     ns.skywalker.registers("Processor");
 })(MONKEY);
-
-(function(ns) {
+(function (ns) {
     var Thread = ns.threading.Thread;
-    var Handler = ns.threading.Handler;
-    var Processor = ns.threading.Processor;
+    var Handler = ns.skywalker.Handler;
+    var Processor = ns.skywalker.Processor;
     var STAGE_INIT = 0;
     var STAGE_HANDLING = 1;
     var STAGE_CLEANING = 2;
     var STAGE_STOPPED = 3;
-    var Runner = function() {
+    var Runner = function () {
         if (arguments.length === 0) {
             Thread.call(this);
             this.__processor = null;
@@ -241,8 +232,8 @@ if (typeof FiniteStateMachine.assert !== "function") {
         }
         this.__stage = STAGE_INIT;
     };
-    ns.Class(Runner, Thread, [ Handler, Processor ], {
-        run:function() {
+    ns.Class(Runner, Thread, [Handler, Processor], {
+        run: function () {
             if (this.__stage === STAGE_INIT) {
                 if (this.setup()) {
                     return true;
@@ -267,21 +258,22 @@ if (typeof FiniteStateMachine.assert !== "function") {
             }
             return false;
         },
-        setup:function() {
+        setup: function () {
             return false;
         },
-        handle:function() {
+        handle: function () {
             while (this.isRunning()) {
-                if (this.process()) {} else {
+                if (this.process()) {
+                } else {
                     return true;
                 }
             }
             return false;
         },
-        finish:function() {
+        finish: function () {
             return false;
         },
-        process:function() {
+        process: function () {
             var processor = this.__processor;
             if (!processor || processor === this) {
                 throw new SyntaxError("Runner::process() > override me!");
@@ -293,34 +285,28 @@ if (typeof FiniteStateMachine.assert !== "function") {
     ns.skywalker.Runner = Runner;
     ns.skywalker.registers("Runner");
 })(MONKEY);
-
-(function(ns, sys) {
-    var Context = function() {};
+(function (ns, sys) {
+    var Context = function () {};
     sys.Interface(Context, null);
-    var Status = sys.type.Enum(null, {
-        Stopped:0,
-        Running:1,
-        Paused:2
-    });
+    var Status = sys.type.Enum(null, { Stopped: 0, Running: 1, Paused: 2 });
     ns.Context = Context;
     ns.Status = Status;
     ns.registers("Context");
     ns.registers("Status");
 })(FiniteStateMachine, MONKEY);
-
-(function(ns, sys) {
-    var Transition = function() {};
+(function (ns, sys) {
+    var Transition = function () {};
     sys.Interface(Transition, null);
-    Transition.prototype.evaluate = function(machine) {
+    Transition.prototype.evaluate = function (machine) {
         ns.assert(false, "implement me!");
         return false;
     };
-    var BaseTransition = function(targetStateName) {
+    var BaseTransition = function (targetStateName) {
         Object.call(this);
         this.__target = targetStateName;
     };
-    sys.Class(BaseTransition, Object, [ Transition ], null);
-    BaseTransition.prototype.getTarget = function() {
+    sys.Class(BaseTransition, Object, [Transition], null);
+    BaseTransition.prototype.getTarget = function () {
         return this.__target;
     };
     ns.Transition = Transition;
@@ -328,39 +314,39 @@ if (typeof FiniteStateMachine.assert !== "function") {
     ns.registers("Transition");
     ns.registers("BaseTransition");
 })(FiniteStateMachine, MONKEY);
-
-(function(ns, sys) {
-    var State = function() {};
-    sys.Interface(State, [ sys.type.Object ]);
-    State.prototype.onEnter = function(machine) {
+(function (ns, sys) {
+    var BaseObject = sys.type.BaseObject;
+    var State = function () {};
+    sys.Interface(State, [sys.type.Object]);
+    State.prototype.onEnter = function (machine) {
         ns.assert(false, "implement me!");
     };
-    State.prototype.onExit = function(machine) {
+    State.prototype.onExit = function (machine) {
         ns.assert(false, "implement me!");
     };
-    State.prototype.onPause = function(machine) {
+    State.prototype.onPause = function (machine) {
         ns.assert(false, "implement me!");
     };
-    State.prototype.onResume = function(machine) {
+    State.prototype.onResume = function (machine) {
         ns.assert(false, "implement me!");
     };
-    State.prototype.evaluate = function(machine) {
+    State.prototype.evaluate = function (machine) {
         ns.assert(false, "implement me!");
         return null;
     };
-    var BaseState = function() {
-        Object.call(this);
+    var BaseState = function () {
+        BaseObject.call(this);
         this.__transitions = [];
     };
-    sys.Class(BaseState, Object, null, null);
-    BaseState.prototype.addTransition = function(transition) {
+    sys.Class(BaseState, BaseObject, [State], null);
+    BaseState.prototype.addTransition = function (transition) {
         if (this.__transitions.indexOf(transition) < 0) {
             this.__transitions.push(transition);
         } else {
             throw new Error("transition exists: " + transition);
         }
     };
-    BaseState.prototype.evaluate = function(machine) {
+    BaseState.prototype.evaluate = function (machine) {
         var transition;
         for (var index = 0; index < this.__transitions.length; ++index) {
             transition = this.__transitions[index];
@@ -374,105 +360,102 @@ if (typeof FiniteStateMachine.assert !== "function") {
     ns.registers("State");
     ns.registers("BaseState");
 })(FiniteStateMachine, MONKEY);
-
-(function(ns, sys) {
-    var Ticker = ns.threading.Ticker;
-    var Machine = function() {};
-    sys.Interface(Machine, [ Ticker ]);
-    Machine.prototype.getDefaultState = function() {
+(function (ns, sys) {
+    var Ticker = sys.threading.Ticker;
+    var Machine = function () {};
+    sys.Interface(Machine, [Ticker]);
+    Machine.prototype.getDefaultState = function () {
         ns.assert(false, "implement me!");
         return null;
     };
-    Machine.prototype.getTargetState = function(transition) {
+    Machine.prototype.getTargetState = function (transition) {
         ns.assert(false, "implement me!");
         return null;
     };
-    Machine.prototype.getCurrentState = function() {
+    Machine.prototype.getCurrentState = function () {
         ns.assert(false, "implement me!");
         return null;
     };
-    Machine.prototype.setCurrentState = function(state) {
+    Machine.prototype.setCurrentState = function (state) {
         ns.assert(false, "implement me!");
     };
-    Machine.prototype.changeState = function(state) {
+    Machine.prototype.changeState = function (state) {
         ns.assert(false, "implement me!");
     };
-    Machine.prototype.start = function() {
+    Machine.prototype.start = function () {
         ns.assert(false, "implement me!");
     };
-    Machine.prototype.stop = function() {
+    Machine.prototype.stop = function () {
         ns.assert(false, "implement me!");
     };
-    Machine.prototype.pause = function() {
+    Machine.prototype.pause = function () {
         ns.assert(false, "implement me!");
     };
-    Machine.prototype.resume = function() {
+    Machine.prototype.resume = function () {
         ns.assert(false, "implement me!");
     };
     ns.Machine = Machine;
     ns.registers("Machine");
 })(FiniteStateMachine, MONKEY);
-
-(function(ns, sys) {
-    var Delegate = function() {};
+(function (ns, sys) {
+    var Delegate = function () {};
     sys.Interface(Delegate, null);
-    Delegate.prototype.enterState = function(next, machine) {
+    Delegate.prototype.enterState = function (next, machine) {
         ns.assert(false, "implement me!");
     };
-    Delegate.prototype.exitState = function(previous, machine) {
+    Delegate.prototype.exitState = function (previous, machine) {
         ns.assert(false, "implement me!");
     };
-    Delegate.prototype.pauseState = function(current, machine) {
+    Delegate.prototype.pauseState = function (current, machine) {
         ns.assert(false, "implement me!");
     };
-    Delegate.prototype.resumeState = function(current, machine) {
+    Delegate.prototype.resumeState = function (current, machine) {
         ns.assert(false, "implement me!");
     };
     ns.Delegate = Delegate;
     ns.registers("Delegate");
 })(FiniteStateMachine, MONKEY);
-
-(function(ns, sys) {
+(function (ns, sys) {
     var Status = ns.Status;
     var Machine = ns.Machine;
-    var BaseMachine = function(defaultStateName) {
+    var BaseMachine = function (defaultStateName) {
         Object.call(this);
-        this.__default = defaultStateName ? defaultStateName :"default";
+        this.__default = defaultStateName ? defaultStateName : "default";
         this.__current = null;
         this.__status = Status.Stopped;
         this.__delegate = null;
         this.__stateMap = {};
     };
-    sys.Class(BaseMachine, Object, [ Machine ], null);
-    BaseMachine.prototype.setDelegate = function(delegate) {
+    sys.Class(BaseMachine, Object, [Machine], null);
+    BaseMachine.prototype.setDelegate = function (delegate) {
         this.__delegate = delegate;
     };
-    BaseMachine.prototype.getDelegate = function() {
+    BaseMachine.prototype.getDelegate = function () {
         return this.__delegate;
     };
-    BaseMachine.prototype.getContext = function() {
+    BaseMachine.prototype.getContext = function () {
         ns.assert(false, "implement me!");
         return null;
     };
-    BaseMachine.prototype.setState = function(state, name) {
+    BaseMachine.prototype.setState = function (name, state) {
         this.__stateMap[name] = state;
     };
-    BaseMachine.prototype.getState = function(name) {
+    BaseMachine.prototype.getState = function (name) {
         return this.__stateMap[name];
     };
-    BaseMachine.prototype.getDefaultState = function() {
+    BaseMachine.prototype.getDefaultState = function () {
         return this.__stateMap[this.__default];
     };
-    BaseMachine.prototype.getTargetState = function(transition) {
+    BaseMachine.prototype.getTargetState = function (transition) {
         return this.__stateMap[transition.getTarget()];
     };
-    BaseMachine.prototype.getCurrentState = function() {
+    BaseMachine.prototype.getCurrentState = function () {
         return this.__current;
     };
-    BaseMachine.prototype.setCurrentState = function(state) {
-        return this.__current = state;
+    BaseMachine.prototype.setCurrentState = function (state) {
+        return (this.__current = state);
     };
-    BaseMachine.prototype.changeState = function(newState) {
+    BaseMachine.prototype.changeState = function (newState) {
         var oldState = this.getCurrentState();
         if (!oldState) {
             if (!newState) {
@@ -500,15 +483,15 @@ if (typeof FiniteStateMachine.assert !== "function") {
         }
         return true;
     };
-    BaseMachine.prototype.start = function() {
+    BaseMachine.prototype.start = function () {
         this.changeState(this.getDefaultState());
         this.__status = Status.Running;
     };
-    BaseMachine.prototype.stop = function() {
+    BaseMachine.prototype.stop = function () {
         this.__status = Status.Stopped;
         this.changeState(null);
     };
-    BaseMachine.prototype.pause = function() {
+    BaseMachine.prototype.pause = function () {
         var machine = this.getContext();
         var current = this.getCurrentState();
         var delegate = this.getDelegate();
@@ -518,7 +501,7 @@ if (typeof FiniteStateMachine.assert !== "function") {
         current.onPause(machine);
         this.__status = Status.Paused;
     };
-    BaseMachine.prototype.resume = function() {
+    BaseMachine.prototype.resume = function () {
         var machine = this.getContext();
         var current = this.getCurrentState();
         this.__status = Status.Running;
@@ -528,7 +511,7 @@ if (typeof FiniteStateMachine.assert !== "function") {
         }
         current.onResume(machine);
     };
-    BaseMachine.prototype.tick = function(now, delta) {
+    BaseMachine.prototype.tick = function (now, delta) {
         var machine = this.getContext();
         var current = this.getCurrentState();
         if (current && Status.Running.equals(this.__status)) {
@@ -542,20 +525,19 @@ if (typeof FiniteStateMachine.assert !== "function") {
     ns.BaseMachine = BaseMachine;
     ns.registers("BaseMachine");
 })(FiniteStateMachine, MONKEY);
-
-(function(ns, sys) {
+(function (ns, sys) {
     var Metronome = sys.threading.Metronome;
     var BaseMachine = ns.BaseMachine;
-    var AutoMachine = function(defaultStateName) {
+    var AutoMachine = function (defaultStateName) {
         BaseMachine.call(this, defaultStateName);
     };
     sys.Class(AutoMachine, BaseMachine, null, {
-        start:function() {
+        start: function () {
             BaseMachine.prototype.start.call(this);
             var timer = Metronome.getInstance();
             timer.addTicker(this);
         },
-        stop:function() {
+        stop: function () {
             var timer = Metronome.getInstance();
             timer.removeTicker(this);
             BaseMachine.prototype.stop.call(this);

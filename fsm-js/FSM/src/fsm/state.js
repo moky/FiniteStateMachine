@@ -35,6 +35,8 @@
 (function (ns, sys) {
     "use strict";
 
+    var BaseObject = sys.type.BaseObject;
+
     /**
      *  Finite State
      *  ~~~~~~~~~~~~
@@ -95,10 +97,10 @@
      *  ~~~~~~~~~~~~~~~~~~~~~~
      */
     var BaseState = function () {
-        Object.call(this);
+        BaseObject.call(this);
         this.__transitions = [];
     };
-    sys.Class(BaseState, Object, null, null);
+    sys.Class(BaseState, BaseObject, [State], null);
 
     /**
      *  Append a transition for this state

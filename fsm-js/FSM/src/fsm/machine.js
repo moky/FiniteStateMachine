@@ -37,7 +37,7 @@
 (function (ns, sys) {
     "use strict";
 
-    var Ticker = ns.threading.Ticker;
+    var Ticker = sys.threading.Ticker;
 
     var Machine = function () {};
     sys.Interface(Machine, [Ticker]);

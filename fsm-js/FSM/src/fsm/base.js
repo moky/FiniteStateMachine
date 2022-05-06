@@ -79,10 +79,10 @@
     /**
      *  Add state with name
      *
-     * @param {State} state
      * @param {String} name
+     * @param {State} state
      */
-    BaseMachine.prototype.setState = function (state, name) {
+    BaseMachine.prototype.setState = function (name, state) {
         this.__stateMap[name] = state;
     };
     BaseMachine.prototype.getState = function (name) {
