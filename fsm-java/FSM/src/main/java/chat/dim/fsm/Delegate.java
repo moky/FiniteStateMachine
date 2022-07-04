@@ -37,7 +37,7 @@ package chat.dim.fsm;
 public interface Delegate<C extends Context, T extends Transition<C>, S extends State<C, T>> {
 
     /**
-     *  Called before enter new state
+     *  Called before new state entered
      *  (get current state from context)
      *
      * @param next     - new state
@@ -46,7 +46,7 @@ public interface Delegate<C extends Context, T extends Transition<C>, S extends 
     void enterState(S next, C ctx);
 
     /**
-     *  Called after exit old state
+     *  Called after old state exited
      *  (get current state from context)
      *
      * @param previous - old state
@@ -55,7 +55,7 @@ public interface Delegate<C extends Context, T extends Transition<C>, S extends 
     void exitState(S previous, C ctx);
 
     /**
-     *  Called before pause this state
+     *  Called after current state paused
      *
      * @param current  - current state
      * @param ctx      - context (machine)
@@ -63,7 +63,7 @@ public interface Delegate<C extends Context, T extends Transition<C>, S extends 
     void pauseState(S current, C ctx);
 
     /**
-     *  Called after resume this state
+     *  Called before current state resumed
      *
      * @param current  - current state
      * @param ctx      - context (machine)

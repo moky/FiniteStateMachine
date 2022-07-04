@@ -40,30 +40,30 @@ package chat.dim.fsm;
 public interface State<C extends Context, T extends Transition<C>> {
 
     /**
-     *  Called before entered
-     *  (get current state from context)
+     *  Called after new state entered
      *
-     * @param ctx - context (machine)
+     * @param previous - old state
+     * @param ctx      - context (machine)
      */
-    void onEnter(C ctx);
+    void onEnter(State<C, T> previous, C ctx);
 
     /**
-     *  Called after exited
-     *  (get current state from context)
+     *  Called before old state exited
      *
-     * @param ctx - context (machine)
+     * @param next - new state
+     * @param ctx  - context (machine)
      */
-    void onExit(C ctx);
+    void onExit(State<C, T> next, C ctx);
 
     /**
-     *  Called before paused
+     *  Called before current state paused
      *
      * @param ctx - context (machine)
      */
     void onPause(C ctx);
 
     /**
-     *  Called after resumed
+     *  Called after current state resumed
      *
      * @param ctx - context (machine)
      */

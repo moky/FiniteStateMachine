@@ -105,24 +105,35 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
         C ctx = getContext();
         Delegate<C, T, S> delegate = getDelegate();
 
-        // events before state changed
+        //
+        //  Events before state changed
+        //
+        if (oldState != null) {
+            oldState.onExit(newState, ctx);
+        }
         if (delegate != null) {
+            // prepare for changing current state to the new one,
+            // the delegate can get old state via ctx if need
             delegate.enterState(newState, ctx);
         }
-        if (newState != null) {
-            newState.onEnter(ctx);
-        }
 
-        // change state
+        //
+        //  Change current state
+        //
         setCurrentState(newState);
 
-        // events after state changed
+        //
+        //  Events after state changed
+        //
         if (delegate != null) {
+            // handle after the current state changed,
+            // the delegate can get new state via ctx if need
             delegate.exitState(oldState, ctx);
         }
-        if (oldState != null) {
-            oldState.onExit(ctx);
+        if (newState != null) {
+            newState.onEnter(oldState, ctx);
         }
+
         return true;
     }
 
@@ -154,15 +165,24 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
     @Override
     public void pause() {
         C ctx = getContext();
-        S currentState = getCurrentState();
-        // events before state paused
+        S current = getCurrentState();
         Delegate<C, T, S> delegate = getDelegate();
-        if (delegate != null) {
-            delegate.pauseState(currentState, ctx);
+        //
+        //  Events before state paused
+        //
+        if (current != null) {
+            current.onPause(ctx);
         }
-        currentState.onPause(ctx);
-        // pause state
+        //
+        //  Pause current state
+        //
         status = Status.Paused;
+        //
+        //  Events after state paused
+        //
+        if (delegate != null) {
+            delegate.pauseState(current, ctx);
+        }
     }
 
     /**
@@ -171,15 +191,24 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
     @Override
     public void resume() {
         C ctx = getContext();
-        S currentState = getCurrentState();
-        // reuse state
-        status = Status.Running;
-        // events after state resumed
+        S current = getCurrentState();
         Delegate<C, T, S> delegate = getDelegate();
+        //
+        //  Events before state resumed
+        //
         if (delegate != null) {
-            delegate.resumeState(currentState, ctx);
+            delegate.resumeState(current, ctx);
         }
-        currentState.onResume(ctx);
+        //
+        //  Resume current state
+        //
+        status = Status.Running;
+        //
+        //  Events after state resumed
+        //
+        if (current != null) {
+            current.onResume(ctx);
+        }
     }
 
     //
