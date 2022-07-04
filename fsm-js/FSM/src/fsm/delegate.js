@@ -44,7 +44,7 @@
     sys.Interface(Delegate, null);
 
     /**
-     *  Called before enter new state
+     *  Called before new state entered
      *  (get current state from context)
      *
      * @param {State} next - new state
@@ -55,7 +55,7 @@
     };
 
     /**
-     *  Called after exit old state
+     *  Called after old state exited
      *  (get current state from context)
      *
      * @param {State} previous - old state
@@ -66,7 +66,7 @@
     };
 
     /**
-     *  Called before pause this state
+     *  Called after current state paused
      *
      * @param {State} current - current state
      * @param {Context} machine
@@ -76,7 +76,7 @@
     };
 
     /**
-     *  Called after resume this state
+     *  Called before current state resumed
      *
      * @param {State} current - current state
      * @param {Context} machine

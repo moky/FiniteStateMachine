@@ -96,7 +96,8 @@
 
     // Override
     BaseMachine.prototype.getTargetState = function (transition) {
-        return this.__stateMap[transition.getTarget()];
+        var name = transition.getTarget();
+        return this.__stateMap[name];
     };
 
     // Override
@@ -125,24 +126,35 @@
         var machine = this.getContext();
         var delegate = this.getDelegate();
 
-        // events before state changed
+        //
+        //  Events before state changed
+        //
+        if (oldState) {
+            oldState.onExit(newState, machine);
+        }
         if (delegate) {
+            // prepare for changing current state to the new one,
+            // the delegate can get old state via ctx if need
             delegate.enterState(newState, machine);
         }
-        if (newState) {
-            newState.onEnter(machine);
-        }
 
-        // change state
+        //
+        //  Change current state
+        //
         this.setCurrentState(newState);
 
-        // events after state changed
+        //
+        //  Events after state changed
+        //
         if (delegate) {
+            // handle after the current state changed,
+            // the delegate can get new state via ctx if need
             delegate.exitState(oldState, machine);
         }
-        if (oldState) {
-            oldState.onExit(machine);
+        if (newState) {
+            newState.onEnter(oldState, machine);
         }
+
         return true;
     };
 
@@ -173,14 +185,23 @@
     BaseMachine.prototype.pause = function () {
         var machine = this.getContext();
         var current = this.getCurrentState();
-        // events before state paused
         var delegate = this.getDelegate();
+        //
+        //  Events before state paused
+        //
+        if (current) {
+            current.onPause(machine);
+        }
+        //
+        //  Pause current state
+        //
+        this.__status = Status.Paused;
+        //
+        //  Events after state paused
+        //
         if (delegate) {
             delegate.pauseState(current, machine);
         }
-        current.onPause(machine);
-        // pause state
-        this.__status = Status.Paused;
     };
 
     /**
@@ -190,13 +211,20 @@
     BaseMachine.prototype.resume = function () {
         var machine = this.getContext();
         var current = this.getCurrentState();
-        // resume state
-        this.__status = Status.Running;
-        // events after state resumed
         var delegate = this.getDelegate();
+        //
+        //  Events before state resumed
+        //
         if (delegate) {
             delegate.resumeState(current, machine);
         }
+        //
+        //  Resume current state
+        //
+        this.__status = Status.Running;
+        //
+        //  Events after state resumed
+        //
         current.onResume(machine);
     };
 

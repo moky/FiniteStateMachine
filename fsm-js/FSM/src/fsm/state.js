@@ -35,35 +35,35 @@
 (function (ns, sys) {
     "use strict";
 
-    var BaseObject = sys.type.BaseObject;
-
     /**
      *  Finite State
      *  ~~~~~~~~~~~~
      */
     var State = function () {};
-    sys.Interface(State, [sys.type.Object]);
+    sys.Interface(State, null);
 
     /**
-     *  Callback when enter state
+     *  Called after new state entered
      *
+     * @param {State} previous - old state
      * @param {Context} machine
      */
-    State.prototype.onEnter = function (machine) {
+    State.prototype.onEnter = function (previous, machine) {
         ns.assert(false, 'implement me!');
     };
 
     /**
-     *  Callback when exit state
+     *  Called before old state exited
      *
+     * @param {State} next - new state
      * @param {Context} machine
      */
-    State.prototype.onExit = function (machine) {
+    State.prototype.onExit = function (next, machine) {
         ns.assert(false, 'implement me!');
     };
 
     /**
-     *  Callback when state paused
+     *  Called before current state paused
      *
      * @param {Context} machine
      */
@@ -72,7 +72,7 @@
     };
 
     /**
-     *  Callback when state resumed
+     *  Called after current state resumed
      *
      * @param {Context} machine
      */
@@ -97,10 +97,14 @@
      *  ~~~~~~~~~~~~~~~~~~~~~~
      */
     var BaseState = function () {
-        BaseObject.call(this);
+        Object.call(this);
         this.__transitions = [];
     };
-    sys.Class(BaseState, BaseObject, [State], null);
+    sys.Class(BaseState, Object, [State], null);
+
+    BaseState.prototype.equals = function (other) {
+        return this === other;
+    };
 
     /**
      *  Append a transition for this state
@@ -108,11 +112,10 @@
      * @param {Transition} transition
      */
     BaseState.prototype.addTransition = function (transition) {
-        if (this.__transitions.indexOf(transition) < 0) {
-            this.__transitions.push(transition);
-        } else {
+        if (this.__transitions.indexOf(transition) >= 0) {
             throw new Error('transition exists: ' + transition);
         }
+        this.__transitions.push(transition);
     };
 
     // Override

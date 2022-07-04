@@ -96,7 +96,7 @@
     /**
      *  Get name of target state
      *
-     * @return {String}
+     * @return {String} state name
      */
     BaseTransition.prototype.getTarget = function () {
         return this.__target;
