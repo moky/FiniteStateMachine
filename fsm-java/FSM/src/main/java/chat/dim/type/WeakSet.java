@@ -28,61 +28,81 @@
  * SOFTWARE.
  * ==============================================================================
  */
-package chat.dim.threading;
+package chat.dim.type;
 
-public class Daemon {
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.WeakHashMap;
 
-    private final Runnable runnable;
-    private final boolean daemonic;
+public class WeakSet<E> implements Set<E> {
 
-    private Thread thread;
+    private final Set<E> hashSet = Collections.newSetFromMap(new WeakHashMap<>());
 
-    public Daemon(Runnable target, boolean on) {
-        super();
-        runnable = target;
-        daemonic = on;
-        thread = null;
-    }
-    public Daemon(Runnable target) {
-        this(target, true);
+    @Override
+    public int size() {
+        return hashSet.size();
     }
 
-    public boolean isAlive() {
-        Thread thr = thread;
-        return thr != null && thr.isAlive();
+    @Override
+    public boolean isEmpty() {
+        return hashSet.isEmpty();
     }
 
-    public void start() {
-        forceStop();
-        Thread thr = new Thread(runnable);
-        thr.setDaemon(daemonic);
-        thr.start();
-        thread = thr;
+    @Override
+    public boolean contains(Object o) {
+        return hashSet.contains(o);
     }
 
-    public void stop() {
-        forceStop();
+    @Override
+    public Iterator<E> iterator() {
+        return hashSet.iterator();
     }
 
-    private void forceStop() {
-        Thread thr = thread;
-        if (thr != null) {
-            thread = null;
-            join(thr);
-        }
+    @Override
+    public Object[] toArray() {
+        return hashSet.toArray();
     }
 
-    protected void join(Thread thr) {
-        // Waits at most milliseconds for this thread to die.
-        // A timeout of 0 means to wait forever.
-        join(thr, 1024);
+    @SuppressWarnings("SuspiciousToArrayCall")
+    @Override
+    public <T> T[] toArray(T[] a) {
+        return hashSet.toArray(a);
     }
 
-    public static void join(Thread thr, long millis) {
-        try {
-            thr.join(millis);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    @Override
+    public boolean add(E e) {
+        return hashSet.add(e);
+    }
+
+    @Override
+    public boolean remove(Object o) {
+        return hashSet.remove(o);
+    }
+
+    @Override
+    public boolean containsAll(Collection<?> c) {
+        return hashSet.containsAll(c);
+    }
+
+    @Override
+    public boolean addAll(Collection<? extends E> c) {
+        return hashSet.addAll(c);
+    }
+
+    @Override
+    public boolean retainAll(Collection<?> c) {
+        return hashSet.retainAll(c);
+    }
+
+    @Override
+    public boolean removeAll(Collection<?> c) {
+        return hashSet.removeAll(c);
+    }
+
+    @Override
+    public void clear() {
+        hashSet.clear();
     }
 }

@@ -35,8 +35,8 @@ public interface Ticker {
     /**
      *  Drive current thread forward
      *
-     * @param now   - current time (milliseconds, from Jan 1, 1970 UTC)
-     * @param delta - milliseconds from last call
+     * @param now     - current time (milliseconds, from Jan 1, 1970 UTC)
+     * @param elapsed - milliseconds from previous tick
      */
-    void tick(long now, long delta);
+    void tick(long now, long elapsed);
 }

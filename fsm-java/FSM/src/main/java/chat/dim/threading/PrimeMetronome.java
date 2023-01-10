@@ -2,12 +2,12 @@
  *
  *  Finite State Machine
  *
- *                                Written in 2020 by Moky <albert.moky@gmail.com>
+ *                                Written in 2022 by Moky <albert.moky@gmail.com>
  *
  * ==============================================================================
  * The MIT License (MIT)
  *
- * Copyright (c) 2020 Albert Moky
+ * Copyright (c) 2022 Albert Moky
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,28 +28,28 @@
  * SOFTWARE.
  * ==============================================================================
  */
-package chat.dim.fsm;
+package chat.dim.threading;
 
-import chat.dim.threading.PrimeMetronome;
+public enum PrimeMetronome {
 
-public abstract class AutoMachine<C extends Context, T extends BaseTransition<C>, S extends State<C, T>>
-        extends BaseMachine<C, T, S> {
+    INSTANCE;
 
-    public AutoMachine(String defaultState) {
-        super(defaultState);
+    public static PrimeMetronome getInstance() {
+        return INSTANCE;
     }
 
-    @Override
-    public void start() {
-        super.start();
-        PrimeMetronome timer = PrimeMetronome.getInstance();
-        timer.addTicker(this);
+    private final Metronome metronome;
+
+    PrimeMetronome() {
+        metronome = new Metronome(200);
+        metronome.start();
     }
 
-    @Override
-    public void stop() {
-        PrimeMetronome timer = PrimeMetronome.getInstance();
-        timer.removeTicker(this);
-        super.stop();
+    public void addTicker(Ticker ticker) {
+        metronome.addTicker(ticker);
+    }
+
+    public void removeTicker(Ticker ticker) {
+        metronome.removeTicker(ticker);
     }
 }

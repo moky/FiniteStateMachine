@@ -30,155 +30,111 @@
  */
 package chat.dim.threading;
 
-import java.util.Collections;
 import java.util.Set;
-import java.util.WeakHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-class WeakSet {
-    static <E> Set<E> newSet() {
-        return Collections.newSetFromMap(new WeakHashMap<>());
-    }
-}
+import chat.dim.skywalker.Runner;
+import chat.dim.type.WeakSet;
 
-public class Metronome implements Runnable {
+public class Metronome extends Runner {
 
-    //
-    //  Singleton
-    //
-    public static Metronome getInstance() {
-        return SingletonInstance.INSTANCE;
-    }
-    private static class SingletonInstance {
-        private static final Metronome INSTANCE;
-        static {
-            INSTANCE = new Metronome();
-            INSTANCE.start();
-        }
-    }
-    private Metronome() {
+    // at least wait 0.1 second
+    public static long MIN_INTERVAL = 100;
+
+    private final long interval;
+    private long lastTime;
+
+    private final Daemon daemon;
+
+    private final ReadWriteLock lock;
+    private final Set<Ticker> allTickers;
+
+    public Metronome(long millis) {
         super();
-    }
-
-    //
-    //  Running as daemon
-    //
-    private final Daemon daemon = new Daemon(this);
-    private boolean running = false;
-
-    public void start() {
-        if (!running) {
-            running = true;
-            daemon.start();
-        }
-    }
-    public void stop() {
-        if (running) {
-            running = false;
-            daemon.stop();
-        }
-    }
-
-    //
-    //  Lock for adding/removing ticker
-    //
-    private final ReadWriteLock lock = new ReentrantReadWriteLock();
-
-    private final Set<Ticker> adding = WeakSet.newSet();
-    private final Set<Ticker> removing = WeakSet.newSet();
-
-    private final Set<Ticker> tickers = WeakSet.newSet();
-
-    public void add(Ticker ticker) {
-        Lock writeLock = lock.writeLock();
-        writeLock.lock();
-        try {
-            removing.remove(ticker);
-            adding.add(ticker);
-        } finally {
-            writeLock.unlock();
-        }
-    }
-
-    public void remove(Ticker ticker) {
-        Lock writeLock = lock.writeLock();
-        writeLock.lock();
-        try {
-            adding.remove(ticker);
-            removing.add(ticker);
-        } finally {
-            writeLock.unlock();
-        }
-    }
-
-    private Set<Ticker> getTickers() {
-        Lock writeLock = lock.writeLock();
-        writeLock.lock();
-        try {
-            if (adding.size() > 0) {
-                tickers.addAll(adding);
-                adding.clear();
-            }
-            if (removing.size() > 0) {
-                tickers.removeAll(removing);
-                removing.clear();
-            }
-        } finally {
-            writeLock.unlock();
-        }
-        // OK
-        return tickers;
-    }
-
-    //
-    //  Drive
-    //
-
-    private void drive(long now, long delta) {
-        Set<Ticker> candidates = getTickers();
-        for (Ticker item : candidates) {
-            try {
-                item.tick(now, delta);
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-        }
+        assert millis > 0 : "interval error: " + millis;
+        interval = millis;
+        lastTime = 0;
+        daemon = new Daemon(this);
+        lock = new ReentrantReadWriteLock();
+        allTickers = new WeakSet<>();
     }
 
     @Override
-    public void run() {
+    public void setup() {
+        super.setup();
+        lastTime = System.currentTimeMillis();
+    }
+
+    @Override
+    public boolean process() {
+        Ticker[] tickers = getTickers();
+        if (tickers.length == 0) {
+            // nothing to do now,
+            // return false to have a rest ^_^
+            return false;
+        }
+        // 1. check time
         long now = System.currentTimeMillis();
-        long last;
-        long delta = 0;
-        while (running) {
-            // 1. drive all tickers with timestamp
+        long elapsed = now - lastTime;
+        long waiting = interval - elapsed;
+        if (waiting < MIN_INTERVAL) {
+            waiting = MIN_INTERVAL;
+        }
+        idle(waiting);
+        now += waiting;
+        elapsed += waiting;
+        // 2. drive tickers
+        for (Ticker item : tickers) {
             try {
-                drive(now, delta);
+                item.tick(now, elapsed);
             } catch (Throwable e) {
                 e.printStackTrace();
             }
-            // 2. get new timestamp
-            last = now;
-            now = System.currentTimeMillis();
-            delta = now - last;
-            if (delta < MIN_DELTA) {
-                // 3. too frequently
-                idle(MAX_DELTA - delta);
-                now = System.currentTimeMillis();
-                delta = now - last;
-            }
         }
+        // 3. update last time
+        lastTime = now;
+        return true;
     }
-    private static void idle(long millis) {
+
+    private Ticker[] getTickers() {
+        Ticker[] tickers;
+        Lock writeLock = lock.writeLock();
+        writeLock.lock();
         try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            tickers = allTickers.toArray(new Ticker[0]);
+        } finally {
+            writeLock.unlock();
+        }
+        return tickers;
+    }
+
+    public void addTicker(Ticker ticker) {
+        Lock writeLock = lock.writeLock();
+        writeLock.lock();
+        try {
+            allTickers.add(ticker);
+        } finally {
+            writeLock.unlock();
         }
     }
 
-    public long MIN_DELTA = 100;
-    public long MAX_DELTA = 128;
+    public void removeTicker(Ticker ticker) {
+        Lock writeLock = lock.writeLock();
+        writeLock.lock();
+        try {
+            allTickers.remove(ticker);
+        } finally {
+            writeLock.unlock();
+        }
+    }
+
+    public void start() {
+        daemon.start();
+    }
+    public void stop() {
+        super.stop();
+        daemon.stop();
+    }
 }

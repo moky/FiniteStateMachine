@@ -39,7 +39,7 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
 
     private final Map<String, S> stateMap = new HashMap<>();
     private final String defaultStateName;
-    private S currentState;
+    private WeakReference<S> currentStateRef;
 
     private Status status;
     private WeakReference<Delegate<C, T, S>> delegateRef;
@@ -47,19 +47,20 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
     public BaseMachine(String defaultState) {
         super();
         defaultStateName = defaultState;
-        currentState = null;
+        currentStateRef = null;
         status = Status.Stopped;
         delegateRef = new WeakReference<>(null);
     }
 
     public void setDelegate(Delegate<C, T, S> delegate) {
-        delegateRef = new WeakReference<>(delegate);
+        delegateRef = delegate == null ? null : new WeakReference<>(delegate);
     }
     protected Delegate<C, T, S> getDelegate() {
-        return delegateRef.get();
+        WeakReference<Delegate<C, T, S>> ref = delegateRef;
+        return ref == null ? null : ref.get();
     }
 
-    // the machine
+    // the machine itself
     protected abstract C getContext();
 
     //
@@ -72,25 +73,28 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
         return stateMap.get(name);
     }
 
-    @Override
-    public S getDefaultState() {
+    protected S getDefaultState() {
         return stateMap.get(defaultStateName);
     }
-    @Override
-    public S getTargetState(T transition) {
+    protected S getTargetState(T transition) {
+        // Get target state of this transition
         return stateMap.get(transition.target);
     }
     @Override
     public S getCurrentState() {
-        return currentState;
+        WeakReference<S> ref = currentStateRef;
+        return ref == null ? null : ref.get();
     }
-    @Override
-    public void setCurrentState(S newState) {
-        currentState = newState;
+    private void setCurrentState(S newState) {
+        currentStateRef = newState == null ? null : new WeakReference<>(newState);
     }
 
-    @Override
-    public boolean changeState(S newState) {
+    /**
+     *  Exit current state, and enter new state
+     *
+     * @param newState - next state
+     */
+    private boolean changeState(S newState) {
         S oldState = getCurrentState();
         if (oldState == null) {
             if (newState == null) {
@@ -146,7 +150,8 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
      */
     @Override
     public void start() {
-        changeState(getDefaultState());
+        boolean ok = changeState(getDefaultState());
+        assert ok : "failed to change default state";
         status = Status.Running;
     }
 
@@ -219,7 +224,7 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
      *  Drive the machine running forward
      */
     @Override
-    public void tick(long now, long delta) {
+    public void tick(long now, long elapsed) {
         C ctx = getContext();
         S state = getCurrentState();
         if (state != null && status == Status.Running) {

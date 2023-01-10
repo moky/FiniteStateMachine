@@ -43,18 +43,7 @@ import chat.dim.threading.Ticker;
 public interface Machine<C extends Context, T extends Transition<C>, S extends State<C, T>>
         extends Ticker {
 
-    S getDefaultState();
-    S getTargetState(T transition);
-
     S getCurrentState();
-    void setCurrentState(S newState);
-
-    /**
-     *  Exit current state, and enter new state
-     *
-     * @param newState - next state
-     */
-    boolean changeState(S newState);
 
     /**
      *  Change current state to 'default'
