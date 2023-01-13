@@ -94,7 +94,7 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
      *
      * @param newState - next state
      */
-    private boolean changeState(S newState) {
+    private boolean changeState(S newState, long now, long elapsed) {
         S oldState = getCurrentState();
         if (oldState == null) {
             if (newState == null) {
@@ -112,13 +112,13 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
         //
         //  Events before state changed
         //
-        if (oldState != null) {
-            oldState.onExit(newState, ctx);
-        }
         if (delegate != null) {
             // prepare for changing current state to the new one,
             // the delegate can get old state via ctx if need
             delegate.enterState(newState, ctx);
+        }
+        if (oldState != null) {
+            oldState.onExit(newState, ctx, now, elapsed);
         }
 
         //
@@ -129,13 +129,13 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
         //
         //  Events after state changed
         //
+        if (newState != null) {
+            newState.onEnter(oldState, ctx, now, elapsed);
+        }
         if (delegate != null) {
             // handle after the current state changed,
             // the delegate can get new state via ctx if need
             delegate.exitState(oldState, ctx);
-        }
-        if (newState != null) {
-            newState.onEnter(oldState, ctx);
         }
 
         return true;
@@ -150,7 +150,8 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
      */
     @Override
     public void start() {
-        boolean ok = changeState(getDefaultState());
+        long now = System.currentTimeMillis();
+        boolean ok = changeState(getDefaultState(), now, 0);
         assert ok : "failed to change default state";
         status = Status.Running;
     }
@@ -161,7 +162,7 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
     @Override
     public void stop() {
         status = Status.Stopped;
-        changeState(null);
+        changeState(null, 0, 0);  // force current state to null
     }
 
     /**
@@ -228,11 +229,11 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
         C ctx = getContext();
         S state = getCurrentState();
         if (state != null && status == Status.Running) {
-            T transition = state.evaluate(ctx);
+            T transition = state.evaluate(ctx, now, elapsed);
             if (transition != null) {
                 state = getTargetState(transition);
                 assert state != null : "state error: " + transition;
-                changeState(state);
+                changeState(state, now, elapsed);
             }
         }
     }
