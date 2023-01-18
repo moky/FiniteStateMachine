@@ -48,9 +48,9 @@ public abstract class BaseState<C extends Context, T extends Transition<C>> impl
     }
 
     @Override
-    public T evaluate(C ctx, long now, long elapsed) {
+    public T evaluate(C ctx, long now) {
         for (T transition : transitionList) {
-            if (transition.evaluate(ctx, now, elapsed)) {
+            if (transition.evaluate(ctx, now)) {
                 // OK, get target state from this transition
                 return transition;
             }

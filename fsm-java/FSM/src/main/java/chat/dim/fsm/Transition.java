@@ -43,8 +43,7 @@ public interface Transition<C extends Context> {
      *
      * @param ctx     - context (machine)
      * @param now     - current time (milliseconds, from Jan 1, 1970 UTC)
-     * @param elapsed - milliseconds from previous tick
      * @return true when current state should be changed
      */
-    boolean evaluate(C ctx, long now, long elapsed);
+    boolean evaluate(C ctx, long now);
 }

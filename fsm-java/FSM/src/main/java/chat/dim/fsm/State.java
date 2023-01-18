@@ -45,9 +45,8 @@ public interface State<C extends Context, T extends Transition<C>> {
      * @param previous - old state
      * @param ctx      - context (machine)
      * @param now      - current time (milliseconds, from Jan 1, 1970 UTC)
-     * @param elapsed  - milliseconds from previous tick
      */
-    void onEnter(State<C, T> previous, C ctx, long now, long elapsed);
+    void onEnter(State<C, T> previous, C ctx, long now);
 
     /**
      *  Called before old state exited
@@ -55,9 +54,8 @@ public interface State<C extends Context, T extends Transition<C>> {
      * @param next    - new state
      * @param ctx     - context (machine)
      * @param now     - current time (milliseconds, from Jan 1, 1970 UTC)
-     * @param elapsed - milliseconds from previous tick
      */
-    void onExit(State<C, T> next, C ctx, long now, long elapsed);
+    void onExit(State<C, T> next, C ctx, long now);
 
     /**
      *  Called before current state paused
@@ -78,8 +76,7 @@ public interface State<C extends Context, T extends Transition<C>> {
      *
      * @param ctx     - context (machine)
      * @param now     - current time (milliseconds, from Jan 1, 1970 UTC)
-     * @param elapsed - milliseconds from previous tick
      * @return success transition, or null to stay the current state
      */
-    T evaluate(C ctx, long now, long elapsed);
+    T evaluate(C ctx, long now);
 }

@@ -93,8 +93,9 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
      *  Exit current state, and enter new state
      *
      * @param newState - next state
+     * @param now     - current time (milliseconds, from Jan 1, 1970 UTC)
      */
-    private boolean changeState(S newState, long now, long elapsed) {
+    private boolean changeState(S newState, long now) {
         S oldState = getCurrentState();
         if (oldState == null) {
             if (newState == null) {
@@ -118,7 +119,7 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
             delegate.enterState(newState, ctx);
         }
         if (oldState != null) {
-            oldState.onExit(newState, ctx, now, elapsed);
+            oldState.onExit(newState, ctx, now);
         }
 
         //
@@ -130,7 +131,7 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
         //  Events after state changed
         //
         if (newState != null) {
-            newState.onEnter(oldState, ctx, now, elapsed);
+            newState.onEnter(oldState, ctx, now);
         }
         if (delegate != null) {
             // handle after the current state changed,
@@ -151,7 +152,7 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
     @Override
     public void start() {
         long now = System.currentTimeMillis();
-        boolean ok = changeState(getDefaultState(), now, 0);
+        boolean ok = changeState(getDefaultState(), now);
         assert ok : "failed to change default state";
         status = Status.Running;
     }
@@ -162,7 +163,8 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
     @Override
     public void stop() {
         status = Status.Stopped;
-        changeState(null, 0, 0);  // force current state to null
+        long now = System.currentTimeMillis();
+        changeState(null, now);  // force current state to null
     }
 
     /**
@@ -229,11 +231,11 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
         C ctx = getContext();
         S state = getCurrentState();
         if (state != null && status == Status.Running) {
-            T transition = state.evaluate(ctx, now, elapsed);
+            T transition = state.evaluate(ctx, now);
             if (transition != null) {
                 state = getTargetState(transition);
                 assert state != null : "state error: " + transition;
-                changeState(state, now, elapsed);
+                changeState(state, now);
             }
         }
     }
