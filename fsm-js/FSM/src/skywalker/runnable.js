@@ -27,11 +27,12 @@
 
 //! require 'namespace.js'
 
-(function (ns) {
+(function (ns, sys) {
     'use strict';
 
-    var Runnable = function () {};
-    ns.Interface(Runnable, null);
+    var Interface = sys.type.Interface;
+
+    var Runnable = Interface(null, null);
 
     /**
      *  Run
@@ -39,13 +40,10 @@
      * @return {boolean} false on finished, true on continuous
      */
     Runnable.prototype.run = function () {
-        ns.assert(false, 'implement me!');
-        return false;
+        throw new Error('NotImplemented');
     };
 
     //-------- namespace --------
-    ns.threading.Runnable = Runnable;
+    ns.skywalker.Runnable = Runnable;
 
-    ns.threading.registers('Runnable');
-
-})(MONKEY);
+})(FiniteStateMachine, MONKEY);

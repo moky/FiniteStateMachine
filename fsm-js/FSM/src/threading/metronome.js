@@ -25,75 +25,92 @@
 // =============================================================================
 //
 
-//! require 'namespace.js'
+//! require 'runner.js'
+//! require 'ticker.js'
+//! require 'thread.js'
 
-(function (ns) {
+(function (ns, sys) {
     'use strict';
 
-    var Runnable = ns.threading.Runnable;
+    var Class = sys.type.Class;
+
+    var Runner = ns.skywalker.Runner;
+    var Ticker = ns.threading.Ticker;
     var Thread = ns.threading.Thread;
 
-    var Metronome = function () {
-        Object.call(this);
-        this.__tickers = [];
+    var Metronome = function (millis) {
+        Runner.call(this);
+        if (millis < Metronome.MIN_INTERVAL) {
+            millis = Metronome.MIN_INTERVAL;
+        }
+        this.__interval = millis;
         this.__last_time = 0;  // milliseconds
-        this.__thread = null;
+        this.__thread = new Thread(this);
+        this.__tickers = [];   // WeakSet<Ticker>
     };
-    ns.Class(Metronome, Object, [Runnable], null);
+    Class(Metronome, Runner, null, null);
 
-    Metronome.MIN_DELTA = 100;
+    // at least wait 0.1 second
+    Metronome.MIN_INTERVAL = 100;
 
     Metronome.prototype.start = function () {
-        this.__last_time = (new Date()).getTime();
-        var thread = new Thread(this);
-        this.__thread = thread;
-        thread.start();
+        this.__thread.start();
     };
 
     Metronome.prototype.stop = function () {
-        var thread = this.__thread;
-        if (thread) {
-            this.__thread = null;
-            thread.stop();
-        }
+        this.__thread.stop();
     };
 
     // Override
-    Metronome.prototype.run = function () {
-        var now = (new Date()).getTime();
-        var delta = now - this.__last_time;
-        if (delta > Metronome.MIN_DELTA) {
-            try {
-                var tickers = new Array(this.__tickers);
-                drive(tickers, now, delta);
-            } catch (e) {
-                ns.error('Metronome::run()', e);
-            }
-            this.__last_time = now;
-        }
-        return true;  // true for continuous
+    Metronome.prototype.setup = function () {
+        this.__last_time = (new Date()).getTime();
+        return false;
     };
 
-    var drive = function (tickers, now, delta) {
-        for (var index = 0; index < tickers.length; ++index) {
+    // Override
+    Metronome.prototype.process = function () {
+        var tickers = this.getTickers();
+        if (tickers.length === 0) {
+            // nothing to do now,
+            // return false to have a rest ^_^
+            return false;
+        }
+        // 1. check time
+        var now = (new Date()).getTime();
+        var elapsed = now - this.__last_time;
+        if (elapsed < this.__interval) {
+            // idle(waiting);
+            return false;
+        }
+        // 2. drive all tickers
+        for (var i = tickers.length - 1; i >= 0; --i) {
             try {
-                tickers[index].tick(now, delta);
+                tickers[i].tick(now, elapsed);
             } catch (e) {
-                ns.error('Ticker::tick()', e);
+                //console.error('Metronome::process() error', this, e);
             }
         }
+        // 3. update last time
+        this.__last_time = now;
+        return true;
+    };
+
+    Metronome.prototype.getTickers = function () {
+        return new Array(this.__tickers);
     };
 
     /**
      *  Append ticker
      *
      * @param {Ticker} ticker
+     * @return {boolean} false on already exists
      */
     Metronome.prototype.addTicker = function (ticker) {
         if (this.__tickers.indexOf(ticker) < 0) {
             this.__tickers.push(ticker);
+            return true;
         } else {
-            throw new Error('ticker exists: ' + ticker);
+            return false;
         }
     };
 
@@ -101,29 +118,59 @@
      *  Remove ticker
      *
      * @param {Ticker} ticker
+     * @return {boolean} false on not exists
      */
     Metronome.prototype.removeTicker = function (ticker) {
         var index = this.__tickers.indexOf(ticker);
-        if (index >= 0) {
+        if (index < 0) {
+            return false;
+        } else {
             this.__tickers.splice(index, 1);
+            return true;
         }
     };
 
     //
     //  Singleton
     //
-    Metronome.getInstance = function () {
-        if (!sharedMetronome) {
-            sharedMetronome = new Metronome();
-            sharedMetronome.start();
-        }
-        return sharedMetronome;
+    var PrimeMetronome = {
+
+        /**
+         *  Append ticker
+         *
+         * @param {Ticker} ticker
+         * @return {boolean} false on already exists
+         */
+        addTicker: function (ticker) {
+            var metronome = this.getInstance();
+            return metronome.addTicker(ticker);
+        },
+
+        /**
+         *  Remove ticker
+         *
+         * @param {Ticker} ticker
+         * @return {boolean} false on not exists
+         */
+        removeTicker: function (ticker) {
+            var metronome = this.getInstance();
+            return metronome.removeTicker(ticker);
+        },
+
+        getInstance: function () {
+            var metronome = this.__sharedMetronome;
+            if (metronome === null) {
+                metronome = new Metronome(200);
+                metronome.start();
+                this.__sharedMetronome = metronome;
+            }
+            return metronome;
+        },
+        __sharedMetronome: null
     };
-    var sharedMetronome = null;
 
     //-------- namespace --------
     ns.threading.Metronome = Metronome;
+    ns.threading.PrimeMetronome = PrimeMetronome;
 
-    ns.threading.registers('Metronome');
-
-})(MONKEY);
+})(FiniteStateMachine, MONKEY);

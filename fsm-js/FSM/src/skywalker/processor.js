@@ -27,11 +27,12 @@
 
 //! require 'namespace.js'
 
-(function (ns) {
+(function (ns, sys) {
     'use strict';
 
-    var Processor = function () {};
-    ns.Interface(Processor, null);
+    var Interface = sys.type.Interface;
+
+    var Processor = Interface(null, null);
 
     /**
      *  Do the job
@@ -40,13 +41,10 @@
      * @return false to have a rest (nothing to do now)
      */
     Processor.prototype.process = function () {
-        ns.assert(false, 'implement me!');
-        return false;
+        throw new Error('NotImplemented');
     };
 
     //-------- namespace --------
     ns.skywalker.Processor = Processor;
 
-    ns.skywalker.registers('Processor');
-
-})(MONKEY);
+})(FiniteStateMachine, MONKEY);

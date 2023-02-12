@@ -35,61 +35,66 @@
 (function (ns, sys) {
     "use strict";
 
+    var Interface = sys.type.Interface;
+    var Class = sys.type.Class;
+    var BaseObject = sys.type.BaseObject;
+
     /**
      *  Finite State
      *  ~~~~~~~~~~~~
      */
-    var State = function () {};
-    sys.Interface(State, null);
+    var State = Interface(null, null);
 
     /**
      *  Called after new state entered
      *
-     * @param {State} previous - old state
-     * @param {Context} machine
+     * @param {State} previous  - old state
+     * @param {Context} machine - context
+     * @param {number} now      - current time (milliseconds, from Jan 1, 1970 UTC)
      */
-    State.prototype.onEnter = function (previous, machine) {
-        ns.assert(false, 'implement me!');
+    State.prototype.onEnter = function (previous, machine, now) {
+        throw new Error('NotImplemented');
     };
 
     /**
      *  Called before old state exited
      *
-     * @param {State} next - new state
-     * @param {Context} machine
+     * @param {State} next      - new state
+     * @param {Context} machine - context
+     * @param {number} now      - current time (milliseconds, from Jan 1, 1970 UTC)
      */
-    State.prototype.onExit = function (next, machine) {
-        ns.assert(false, 'implement me!');
+    State.prototype.onExit = function (next, machine, now) {
+        throw new Error('NotImplemented');
     };
 
     /**
      *  Called before current state paused
      *
-     * @param {Context} machine
+     * @param {Context} machine - context
      */
     State.prototype.onPause = function (machine) {
-        ns.assert(false, 'implement me!');
+        throw new Error('NotImplemented');
     };
 
     /**
      *  Called after current state resumed
      *
-     * @param {Context} machine
+     * @param {Context} machine - context
      */
     State.prototype.onResume = function (machine) {
-        ns.assert(false, 'implement me!');
+        throw new Error('NotImplemented');
     };
 
     /**
      *  Evaluate all transitions for this state
      *  (called by machine.tick)
      *
-     * @param {Context} machine
+     * @param {Context} machine - context
+     * @param {number} now      - current time (milliseconds, from Jan 1, 1970 UTC)
      * @returns {Transition} success transition, or null to stay the current state
      */
-    State.prototype.evaluate = function (machine) {
-        ns.assert(false, 'implement me!');
-        return null;
+    State.prototype.evaluate = function (machine, now) {
+        throw new Error('NotImplemented');
     };
 
     /**
@@ -97,14 +102,10 @@
      *  ~~~~~~~~~~~~~~~~~~~~~~
      */
     var BaseState = function () {
-        Object.call(this);
+        BaseObject.call(this);
         this.__transitions = [];
     };
-    sys.Class(BaseState, Object, [State], null);
-
-    BaseState.prototype.equals = function (other) {
-        return this === other;
-    };
+    Class(BaseState, BaseObject, [State], null);
 
     /**
      *  Append a transition for this state
@@ -119,11 +120,11 @@
     };
 
     // Override
-    BaseState.prototype.evaluate = function (machine) {
+    BaseState.prototype.evaluate = function (machine, now) {
         var transition;
         for (var index = 0; index < this.__transitions.length; ++index) {
             transition = this.__transitions[index];
-            if (transition.evaluate(machine)) {
+            if (transition.evaluate(machine, now)) {
                 // OK, get target state from this transition
                 return transition;
             }
@@ -133,8 +134,5 @@
     //-------- namespace --------
     ns.State = State;
     ns.BaseState = BaseState;
-
-    ns.registers('State');
-    ns.registers('BaseState');
 
 })(FiniteStateMachine, MONKEY);

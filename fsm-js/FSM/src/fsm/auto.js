@@ -36,7 +36,10 @@
 (function (ns, sys) {
     "use strict";
 
-    var Metronome = sys.threading.Metronome;
+    var Class = sys.type.Class;
+
+    var PrimeMetronome = ns.threading.PrimeMetronome;
+
     var BaseMachine = ns.BaseMachine;
 
     /**
@@ -47,18 +50,18 @@
     var AutoMachine = function (defaultStateName) {
         BaseMachine.call(this, defaultStateName);
     };
-    sys.Class(AutoMachine, BaseMachine, null, {
+    Class(AutoMachine, BaseMachine, null, {
 
         // Override
         start: function () {
             BaseMachine.prototype.start.call(this);
-            var timer = Metronome.getInstance();
+            var timer = PrimeMetronome.getInstance();
             timer.addTicker(this);
         },
 
         // Override
         stop: function () {
-            var timer = Metronome.getInstance();
+            var timer = PrimeMetronome.getInstance();
             timer.removeTicker(this);
             BaseMachine.prototype.stop.call(this);
         }
@@ -66,7 +69,5 @@
 
     //-------- namespace --------
     ns.AutoMachine = AutoMachine;
-
-    ns.registers('AutoMachine');
 
 })(FiniteStateMachine, MONKEY);

@@ -33,27 +33,18 @@
 //! require <crypto.js>
 
 if (typeof FiniteStateMachine !== 'object') {
-    FiniteStateMachine = new MONKEY.Namespace();
-}
-
-if (typeof FiniteStateMachine.assert !== 'function') {
-    FiniteStateMachine.assert = console.assert;
+    FiniteStateMachine = {};
 }
 
 (function (ns) {
     'use strict';
 
-    ns.fsm = FiniteStateMachine;
-
     //-------- namespace --------
     if (typeof ns.skywalker !== 'object') {
-        ns.skywalker = new ns.Namespace();
+        ns.skywalker = {};
     }
     if (typeof ns.threading !== 'object') {
-        ns.threading = new ns.Namespace();
+        ns.threading = {};
     }
 
-    ns.registers('skywalker');
-    ns.registers('threading');
-
-})(MONKEY);
+})(FiniteStateMachine);

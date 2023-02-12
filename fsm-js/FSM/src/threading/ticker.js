@@ -27,25 +27,24 @@
 
 //! require 'namespace.js'
 
-(function (ns) {
+(function (ns, sys) {
     'use strict';
 
-    var Ticker = function () {};
-    ns.Interface(Ticker, null);
+    var Interface = sys.type.Interface;
+
+    var Ticker = Interface(null, null);
 
     /**
      *  Drive current thread forward
      *
-     * @param {number} now   - current time (milliseconds, from Jan 1, 1970 UTC)
-     * @param {number} delta - milliseconds from last call
+     * @param {number} now     - current time (milliseconds, from Jan 1, 1970 UTC)
+     * @param {number} elapsed - milliseconds from previous tick
      */
-    Ticker.prototype.tick = function (now, delta) {
-        ns.assert(false, 'implement me!');
+    Ticker.prototype.tick = function (now, elapsed) {
+        throw new Error('NotImplemented');
     };
 
     //-------- namespace --------
     ns.threading.Ticker = Ticker;
 
-    ns.threading.registers('Ticker');
-
-})(MONKEY);
+})(FiniteStateMachine, MONKEY);

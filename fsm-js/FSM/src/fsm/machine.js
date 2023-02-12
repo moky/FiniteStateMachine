@@ -37,31 +37,69 @@
 (function (ns, sys) {
     "use strict";
 
-    var Ticker = sys.threading.Ticker;
-
-    var Machine = function () {};
-    sys.Interface(Machine, [Ticker]);
+    var Interface = sys.type.Interface;
 
     /**
-     *  Get default state
-     *
-     * @return {State}
+     *  State Machine Delegate
+     *  ~~~~~~~~~~~~~~~~~~~~~~
      */
-    Machine.prototype.getDefaultState = function () {
-        ns.assert(false, 'implement me!');
-        return null;
+    var Delegate = Interface(null, null);
+
+    /**
+     *  Called before new state entered
+     *  (get current state from context)
+     *
+     * @param {State} next - new state
+     * @param {Context} machine
+     */
+    Delegate.prototype.enterState = function (next, machine) {
+        throw new Error('NotImplemented');
     };
 
     /**
-     *  Get target state of transition
+     *  Called after old state exited
+     *  (get current state from context)
      *
-     * @param {Transition} transition - success transition
-     * @return {State}
+     * @param {State} previous - old state
+     * @param {Context} machine
      */
-    Machine.prototype.getTargetState = function (transition) {
-        ns.assert(false, 'implement me!');
-        return null;
+    Delegate.prototype.exitState = function (previous, machine) {
+        throw new Error('NotImplemented');
     };
+
+    /**
+     *  Called after current state paused
+     *
+     * @param {State} current - current state
+     * @param {Context} machine
+     */
+    Delegate.prototype.pauseState = function (current, machine) {
+        throw new Error('NotImplemented');
+    };
+
+    /**
+     *  Called before current state resumed
+     *
+     * @param {State} current - current state
+     * @param {Context} machine
+     */
+    Delegate.prototype.resumeState = function (current, machine) {
+        throw new Error('NotImplemented');
+    };
+
+    //-------- namespace --------
+    ns.Delegate = Delegate;
+
+})(FiniteStateMachine, MONKEY);
+
+(function (ns, sys) {
+    "use strict";
+
+    var Interface = sys.type.Interface;
+
+    var Ticker = ns.threading.Ticker;
+
+    var Machine = Interface(null, [Ticker]);
 
     /**
      *  Get current state
@@ -69,60 +107,38 @@
      * @return {State}
      */
     Machine.prototype.getCurrentState = function () {
-        ns.assert(false, 'implement me!');
-        return null;
-    };
-
-    /**
-     *  Set current state
-     *
-     * @param {State} state - new state
-     */
-    Machine.prototype.setCurrentState = function (state) {
-        ns.assert(false, 'implement me!');
-    };
-
-    /**
-     *  Exit current state, and enter new state
-     *
-     * @param {State} state - next state
-     * @return {boolean} true on state changed
-     */
-    Machine.prototype.changeState = function (state) {
-        ns.assert(false, 'implement me!');
+        throw new Error('NotImplemented');
     };
 
     /**
      *  Change current state to 'default'
      */
     Machine.prototype.start = function () {
-        ns.assert(false, 'implement me!');
+        throw new Error('NotImplemented');
     };
 
     /**
      *  Change current state to null
      */
     Machine.prototype.stop = function () {
-        ns.assert(false, 'implement me!');
+        throw new Error('NotImplemented');
     };
 
     /**
      *  Pause machine, current state not change
      */
     Machine.prototype.pause = function () {
-        ns.assert(false, 'implement me!');
+        throw new Error('NotImplemented');
     };
 
     /**
      *  Resume machine with current state
      */
     Machine.prototype.resume = function () {
-        ns.assert(false, 'implement me!');
+        throw new Error('NotImplemented');
     };
 
     //-------- namespace --------
     ns.Machine = Machine;
-
-    ns.registers('Machine');
 
 })(FiniteStateMachine, MONKEY);

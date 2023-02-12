@@ -35,18 +35,20 @@
 (function (ns, sys) {
     "use strict";
 
+    var Interface = sys.type.Interface;
+    var Enum = sys.type.Enum;
+
     /**
      *  State Machine Context
      *  ~~~~~~~~~~~~~~~~~~~~~
      */
-    var Context = function () {};
-    sys.Interface(Context, null);
+    var Context = Interface(null, null);
 
     /**
      *  Machine Status
      *  ~~~~~~~~~~~~~~
      */
-    var Status = sys.type.Enum(null, {
+    var Status = Enum(null, {
         Stopped: 0,
         Running: 1,
         Paused: 2
@@ -56,30 +58,29 @@
     ns.Context = Context;
     ns.Status = Status;
 
-    ns.registers('Context');
-    ns.registers('Status');
-
 })(FiniteStateMachine, MONKEY);
 
 (function (ns, sys) {
     "use strict";
 
+    var Interface = sys.type.Interface;
+    var Class = sys.type.Class;
+
     /**
      *  State Transition
      *  ~~~~~~~~~~~~~~~~
      */
-    var Transition = function () {};
-    sys.Interface(Transition, null);
+    var Transition = Interface(null, null);
 
     /**
      *  Evaluate the current state
      *
-     * @param {Context} machine
+     * @param {Context} machine - context
+     * @param {number} now      - current time
      * @returns {boolean}
      */
-    Transition.prototype.evaluate = function (machine) {
-        ns.assert(false, 'implement me!');
-        return false;
+    Transition.prototype.evaluate = function (machine, now) {
+        throw new Error('NotImplemented');
     };
 
     /**
@@ -91,7 +92,7 @@
         Object.call(this);
         this.__target = targetStateName;
     };
-    sys.Class(BaseTransition, Object, [Transition], null);
+    Class(BaseTransition, Object, [Transition], null);
 
     /**
      *  Get name of target state
@@ -105,8 +106,5 @@
     //-------- namespace --------
     ns.Transition = Transition;
     ns.BaseTransition = BaseTransition;
-
-    ns.registers('Transition');
-    ns.registers('BaseTransition');
 
 })(FiniteStateMachine, MONKEY);

@@ -27,11 +27,12 @@
 
 //! require 'namespace.js'
 
-(function (ns) {
+(function (ns, sys) {
     'use strict';
 
-    var Handler = function () {};
-    ns.Interface(Handler, null);
+    var Interface = sys.type.Interface;
+
+    var Handler = Interface(null, null);
 
     /**
      *  Prepare for handling
@@ -40,8 +41,7 @@
      * @return {boolean} false on job done
      */
     Handler.prototype.setup = function () {
-        ns.assert(false, 'implement me!');
-        return false;
+        throw new Error('NotImplemented');
     };
 
     /**
@@ -51,8 +51,7 @@
      * @return {boolean} false on job done
      */
     Handler.prototype.handle = function () {
-        ns.assert(false, 'implement me!');
-        return false;
+        throw new Error('NotImplemented');
     };
 
     /**
@@ -62,13 +61,10 @@
      * @return {boolean} false on job done
      */
     Handler.prototype.finish = function () {
-        ns.assert(false, 'implement me!');
-        return false;
+        throw new Error('NotImplemented');
     };
 
     //-------- namespace --------
     ns.skywalker.Handler = Handler;
 
-    ns.skywalker.registers('Handler');
-
-})(MONKEY);
+})(FiniteStateMachine, MONKEY);

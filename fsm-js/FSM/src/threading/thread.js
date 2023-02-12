@@ -27,10 +27,13 @@
 
 //! require 'runnable.js'
 
-(function (ns) {
+(function (ns, sys) {
     'use strict';
 
-    var Runnable = ns.threading.Runnable;
+    var Interface = sys.type.Interface;
+    var Class = sys.type.Class;
+
+    var Runnable = ns.skywalker.Runnable;
 
     /**
      *  Create Thread for runnable target
@@ -38,60 +41,35 @@
      *  Usages:
      *      1. new Thread();
      *      2. new Thread(runnable);
-     *      3. new Thread(interval);
-     *      4. new Thread(runnable, interval);
      */
     var Thread = function () {
         Object.call(this);
         if (arguments.length === 0) {
             // new Thread();
             this.__target = null;
-            this.__interval = 128;
-        } else if (arguments.length === 2) {
-            // new Thread(runnable, interval);
-            this.__target = arguments[0];
-            this.__interval = arguments[1];
-        } else if (typeof arguments[0] === 'number') {
-            // new Thread(interval);
-            this.__target = null;
-            this.__interval = arguments[0];
         } else {
             // new Thread(runnable);
             this.__target = arguments[0];
-            this.__interval = 128;
         }
         this.__running = false;
-        this.__thread_id = 0;
     };
-    ns.Class(Thread, Object, [Runnable], null);
+    Class(Thread, Object, [Runnable], null);
+
+    Thread.INTERVAL = 256;  // milliseconds
 
     /**
      *  Start running
      */
     Thread.prototype.start = function () {
         this.__running = true;
-        var thread = this;
-        this.__thread_id = setInterval(function () {
-            var ran = thread.isRunning() && thread.run();
-            if (!ran) {
-                stop(thread);
-            }
-        }, this.getInterval());
+        run(this);
     };
-    var stop = function (thread) {
-        var tid = thread.__thread_id;
-        if (tid > 0) {
-            thread.__thread_id = 0;
-            clearInterval(tid);
+    var run = function (thread) {
+        var running = thread.isRunning() && thread.run();
+        if (running) {
+            // next step
+            setTimeout(function () { run(thread); }, Thread.INTERVAL);
         }
-    }
-    /**
-     *  Stop running
-     */
-    Thread.prototype.stop = function () {
-        this.__running = false;
-        // force to stop immediately
-        stop(this);
     };
 
     /**
@@ -103,28 +81,29 @@
         return this.__running;
     };
 
-    /**
-     *  Get idle interval
-     *
-     * @return {number} milliseconds
-     */
-    Thread.prototype.getInterval = function () {
-        return this.__interval;
-    };
-
     // return true for sleeping a while to continued
+    // false to stop
     Thread.prototype.run = function () {
         var target = this.__target;
         if (!target || target === this) {
             throw new SyntaxError('Thread::run() > override me!');
-        } else {
+        } else if (typeof target === 'function') {
+            return target();
+        } else if (Interface.conforms(target, Runnable)) {
             return target.run();
+        } else {
+            throw new SyntaxError('Thread::run() > target is not runnable: ' + target);
         }
+    };
+
+    /**
+     *  Stop running
+     */
+    Thread.prototype.stop = function () {
+        this.__running = false;
     };
 
     //-------- namespace --------
     ns.threading.Thread = Thread;
 
-    ns.threading.registers('Thread');
-
-})(MONKEY);
+})(FiniteStateMachine, MONKEY);

@@ -36,6 +36,8 @@
 (function (ns, sys) {
     "use strict";
 
+    var Class = sys.type.Class;
+
     var Status = ns.Status;
     var Machine = ns.Machine;
 
@@ -50,9 +52,9 @@
         this.__current = null;  // current state
         this.__status = Status.Stopped;
         this.__delegate = null;
-        this.__stateMap = {};  // String => State
+        this.__states = {};  // String => State
     };
-    sys.Class(BaseMachine, Object, [Machine], null);
+    Class(BaseMachine, Object, [Machine], null);
 
     /**
      *  Set machine delegate
@@ -66,12 +68,10 @@
         return this.__delegate;
     };
 
-    // protected
+    // protected: the machine itself
     BaseMachine.prototype.getContext = function () {
-        // context is the machine
+        throw new Error('NotImplemented');
         // return this;
-        ns.assert(false, 'implement me!');
-        return null;
     };
 
     //-------- States
@@ -83,21 +83,30 @@
      * @param {State} state
      */
     BaseMachine.prototype.setState = function (name, state) {
-        this.__stateMap[name] = state;
+        this.__states[name] = state;
     };
     BaseMachine.prototype.getState = function (name) {
-        return this.__stateMap[name];
+        return this.__states[name];
     };
 
-    // Override
+    /**
+     *  Get default state
+     *
+     * @return {State}
+     */
     BaseMachine.prototype.getDefaultState = function () {
-        return this.__stateMap[this.__default];
+        return this.__states[this.__default];
     };
 
-    // Override
+    /**
+     *  Get target state of transition
+     *
+     * @param {Transition|BaseTransition} transition - success transition
+     * @return {State}
+     */
     BaseMachine.prototype.getTargetState = function (transition) {
         var name = transition.getTarget();
-        return this.__stateMap[name];
+        return this.__states[name];
     };
 
     // Override
@@ -105,20 +114,38 @@
         return this.__current;
     };
 
-    // Override
+    /**
+     *  Set current state
+     *
+     * @param {State} state - new state
+     */
     BaseMachine.prototype.setCurrentState = function (state) {
         return this.__current = state;
     };
 
-    // Override
-    BaseMachine.prototype.changeState = function (newState) {
-        var oldState = this.getCurrentState();
+    var states_changed = function (oldState, newState) {
         if (!oldState) {
             if (!newState) {
                 // state not change
                 return false;
             }
         } else if (oldState.equals(newState)) {
+            // state not change
+            return false;
+        }
+        return true;
+    };
+
+    /**
+     *  Exit current state, and enter new state
+     *
+     * @param {State} newState - next state
+     * @param {number} now     - current time (milliseconds, from Jan 1, 1970 UTC)
+     * @return {boolean} true on state changed
+     */
+    BaseMachine.prototype.changeState = function (newState, now) {
+        var oldState = this.getCurrentState();
+        if (!states_changed(oldState, newState)) {
             // state not change
             return false;
         }
@@ -129,13 +156,13 @@
         //
         //  Events before state changed
         //
-        if (oldState) {
-            oldState.onExit(newState, machine);
-        }
         if (delegate) {
             // prepare for changing current state to the new one,
             // the delegate can get old state via ctx if need
             delegate.enterState(newState, machine);
+        }
+        if (oldState) {
+            oldState.onExit(newState, machine, now);
         }
 
         //
@@ -146,13 +173,13 @@
         //
         //  Events after state changed
         //
+        if (newState) {
+            newState.onEnter(oldState, machine, now);
+        }
         if (delegate) {
             // handle after the current state changed,
             // the delegate can get new state via ctx if need
             delegate.exitState(oldState, machine);
-        }
-        if (newState) {
-            newState.onEnter(oldState, machine);
         }
 
         return true;
@@ -165,7 +192,8 @@
      */
     // Override
     BaseMachine.prototype.start = function () {
-        this.changeState(this.getDefaultState());
+        var now = (new Date()).getTime();
+        this.changeState(this.getDefaultState(), now);
         this.__status = Status.Running;
     };
 
@@ -175,7 +203,8 @@
     // Override
     BaseMachine.prototype.stop = function () {
         this.__status = Status.Stopped;
-        this.changeState(null);
+        var now = (new Date()).getTime();
+        this.changeState(null, now);  // force current state to null
     };
 
     /**
@@ -234,21 +263,19 @@
      *  Drive the machine running forward
      */
     // Override
-    BaseMachine.prototype.tick = function (now, delta) {
+    BaseMachine.prototype.tick = function (now, elapsed) {
         var machine = this.getContext();
         var current = this.getCurrentState();
         if (current && Status.Running.equals(this.__status)) {
-            var transition = current.evaluate(machine);
+            var transition = current.evaluate(machine, now);
             if (transition) {
                 var next = this.getTargetState(transition);
-                this.changeState(next);
+                this.changeState(next, now);
             }
         }
     };
 
     //-------- namespace --------
     ns.BaseMachine = BaseMachine;
-
-    ns.registers('BaseMachine');
 
 })(FiniteStateMachine, MONKEY);
