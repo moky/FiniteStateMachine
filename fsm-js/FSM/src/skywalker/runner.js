@@ -95,6 +95,7 @@
         // Override
         setup: function () {
             // TODO: override for preparing
+            this.__running = true;
             return false;
         },
 
@@ -121,6 +122,14 @@
             return false;
         }
     });
+
+    Runner.prototype.isRunning = function () {
+        return this.__running;
+    };
+
+    Runner.prototype.stop = function () {
+        this.__running = false;
+    };
 
     //-------- namespace --------
     ns.skywalker.Runner = Runner;

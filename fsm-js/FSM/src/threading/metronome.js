@@ -35,7 +35,6 @@
     var Class = sys.type.Class;
 
     var Runner = ns.skywalker.Runner;
-    var Ticker = ns.threading.Ticker;
     var Thread = ns.threading.Thread;
 
     var Metronome = function (millis) {
@@ -96,7 +95,7 @@
     };
 
     Metronome.prototype.getTickers = function () {
-        return new Array(this.__tickers);
+        return this.__tickers.slice();
     };
 
     /**

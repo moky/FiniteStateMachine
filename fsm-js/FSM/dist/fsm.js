@@ -86,6 +86,7 @@ if (typeof FiniteStateMachine !== "object") {
             return false;
         },
         setup: function () {
+            this.__running = true;
             return false;
         },
         handle: function () {
@@ -101,6 +102,12 @@ if (typeof FiniteStateMachine !== "object") {
             return false;
         }
     });
+    Runner.prototype.isRunning = function () {
+        return this.__running;
+    };
+    Runner.prototype.stop = function () {
+        this.__running = false;
+    };
     ns.skywalker.Runner = Runner;
 })(FiniteStateMachine, MONKEY);
 (function (ns, sys) {
@@ -167,7 +174,6 @@ if (typeof FiniteStateMachine !== "object") {
 (function (ns, sys) {
     var Class = sys.type.Class;
     var Runner = ns.skywalker.Runner;
-    var Ticker = ns.threading.Ticker;
     var Thread = ns.threading.Thread;
     var Metronome = function (millis) {
         Runner.call(this);
@@ -210,7 +216,7 @@ if (typeof FiniteStateMachine !== "object") {
         return true;
     };
     Metronome.prototype.getTickers = function () {
-        return new Array(this.__tickers);
+        return this.__tickers.slice();
     };
     Metronome.prototype.addTicker = function (ticker) {
         if (this.__tickers.indexOf(ticker) < 0) {
