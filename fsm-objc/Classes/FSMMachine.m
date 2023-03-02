@@ -6,92 +6,129 @@
 //  Copyright (c) 2014 Slanissue.com. All rights reserved.
 //
 
+#import "fsm_delegate.h"
 #import "fsm_machine.h"
 #import "fsm_state.h"
 
 #import "FSMState.h"
 #import "FSMMachine.h"
 
-extern fsm_state * inner_state(const FSMState * state);
+@interface FSMState (Hacking)
 
-static void _on_enter(const fsm_machine * m, const fsm_state * s)
+@property(nonatomic, readwrite) fsm_state *innerState;
+
+@end
+
+static void enter_state(const struct _fsm_delegate *d,
+                        const struct _fsm_state    *s,
+                        const         fsm_context  *ctx,
+                        const         fsm_time      now)
 {
-	FSMMachine * machine = m->object;
-	FSMState * state = s->object;
-	[machine.delegate machine:machine enterState:state]; // call 'enterState:' of delegate
-	[state onEnter:machine]; // call 'onEnter:' of state
+    FSMMachine *machine = d->ctx;
+    id<FSMDelegate> delegate = machine.delegate;
+    id<FSMContext> context = (id<FSMContext>)machine;
+    id<FSMState> next = s->ctx;
+    
+    [delegate machine:context enterState:next time:now];
 }
 
-static void _on_exit(const fsm_machine * m, const fsm_state * s)
+static void exit_state(const struct _fsm_delegate *d,
+                       const struct _fsm_state    *s,
+                       const         fsm_context  *ctx,
+                       const         fsm_time      now)
 {
-	FSMMachine * machine = m->object;
-	FSMState * state = s->object;
-	[machine.delegate machine:machine exitState:state]; // call 'exitState:' of delegate
-	[state onExit:machine]; // call 'onExit:' of state
+    FSMMachine *machine = d->ctx;
+    id<FSMDelegate> delegate = machine.delegate;
+    id<FSMContext> context = (id<FSMContext>)machine;
+    id<FSMState> previous = s->ctx;
+
+    [delegate machine:context exitState:previous time:now];
 }
 
-typedef NS_ENUM(NSUInteger, FSMStatus) {
-	FSMMachineStatusStop,
-	FSMMachineStatusRunning,
-	FSMMachineStatusPaused,
-};
+static void pause_state(const struct _fsm_delegate *d,
+                        const struct _fsm_state    *s,
+                        const         fsm_context  *ctx,
+                        const         fsm_time      now)
+{
+    FSMMachine *machine = d->ctx;
+    id<FSMDelegate> delegate = machine.delegate;
+    id<FSMContext> context = (id<FSMContext>)machine;
+    id<FSMState> current = s->ctx;
 
-@interface FSMMachine () {
-	
-	FSMStatus _status;
+    [delegate machine:context pauseState:current time:now];
 }
 
-@property(nonatomic, readwrite) fsm_machine * innerMachine;
+static void resume_state(const struct _fsm_delegate *d,
+                         const struct _fsm_state    *s,
+                         const         fsm_context  *ctx,
+                         const         fsm_time      now)
+{
+    FSMMachine *machine = d->ctx;
+    id<FSMDelegate> delegate = machine.delegate;
+    id<FSMContext> context = (id<FSMContext>)machine;
+    id<FSMState> current = s->ctx;
+
+    [delegate machine:context resumeState:current time:now];
+}
+
+@interface FSMMachine ()
+
+@property(nonatomic, readwrite) fsm_machine  *innerMachine;
+@property(nonatomic, readwrite) fsm_delegate *innerDelegate;
+
 @property(nonatomic, retain) NSMutableArray * states;
 
 @end
 
 @implementation FSMMachine
 
-@synthesize innerMachine = _innerMachine;
-
-@synthesize defaultStateName = _defaultStateName;
-@synthesize states = _states;
-
-@synthesize delegate = _delegate;
-
-- (void) dealloc
+- (void)dealloc
 {
 	[_defaultStateName release];
 	[_states release];
 	
-	if (_innerMachine) {
-		fsm_machine_destroy(_innerMachine);
+    fsm_machine *machine = _innerMachine;
+	if (machine != NULL) {
+		fsm_destroy_machine(machine);
 	}
+    fsm_delegate *delegate = _innerDelegate;
+    if (delegate != NULL) {
+        fsm_destroy_delegate(delegate);
+    }
 	
 	[super dealloc];
 }
 
-+ (instancetype) allocWithZone:(struct _NSZone *)zone
++ (instancetype)allocWithZone:(struct _NSZone *)zone
 {
 	id object = [super allocWithZone:zone];
-	fsm_machine * m = fsm_machine_create();
-	if (m) {
-		m->enter = _on_enter;
-		m->exit = _on_exit;
-		m->object = object;
+	fsm_machine *machine = fsm_create_machine(NULL);
+	if (machine) {
+        fsm_delegate *delegate = fsm_create_delegate();
+        if (delegate != NULL) {
+            delegate->enter_state  = enter_state;
+            delegate->exit_state   = exit_state;
+            delegate->pause_state  = pause_state;
+            delegate->resume_state = resume_state;
+            delegate->ctx = object;
+        }
+        machine->delegate = delegate;
+		machine->ctx = object;
 	}
-	[object setInnerMachine:m];
+	[object setInnerMachine:machine];
 	return object;
 }
 
-- (instancetype) init
+- (instancetype)init
 {
 	return [self initWithDefaultStateName:@"default" capacity:8];
 }
 
 /* designated initializer */
-- (instancetype) initWithDefaultStateName:(NSString *)name capacity:(NSUInteger)capacity
+- (instancetype)initWithDefaultStateName:(NSString *)name capacity:(NSUInteger)capacity
 {
 	self = [super init];
 	if (self) {
-		_status = FSMMachineStatusStop;
-		
 		self.defaultStateName = name;
 		self.states = [NSMutableArray arrayWithCapacity:capacity];
 		
@@ -100,156 +137,83 @@ typedef NS_ENUM(NSUInteger, FSMStatus) {
 	return self;
 }
 
-- (void) addState:(FSMState *)state
+- (void)addState:(FSMState *)state
 {
-	NSAssert([state isKindOfClass:[FSMState class]], @"error state: %@", state);
 	if (!state) {
 		return;
 	}
 	
-	fsm_machine_add_state(_innerMachine, inner_state(state));
+	fsm_add_state(_innerMachine, [state innerState]);
 	[_states addObject:state];
 }
 
-- (void) changeState:(NSString *)name
+- (id<FSMState>)currentState
 {
-	fsm_machine_change_state(_innerMachine, [name UTF8String]);
-}
-
-- (FSMState *) currentState
-{
-	const fsm_state * s = fsm_machine_get_state(_innerMachine, _innerMachine->current);
+	const fsm_state *s = fsm_get_current_state(_innerMachine);
 	NSAssert(s, @"failed to get current state: %d", _innerMachine->current);
-	FSMState * state = s->object;
+	id<FSMState> state = s->ctx;
 	NSAssert([state isKindOfClass:[FSMState class]], @"memory error");
 	return state;
 }
 
 #pragma mark -
 
-- (void) tick
+- (void)start
 {
-	@synchronized(self) {
-        if (_status == FSMMachineStatusRunning) {
-            fsm_machine_tick(_innerMachine);
-        }
-	}
+    fsm_machine *machine = _innerMachine;
+    if (machine == NULL) {
+        return;
+    }
+    NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
+    @synchronized (self) {
+        machine->start(machine, now);
+    }
 }
 
-- (void) start
+- (void)stop
 {
-	switch (_status) {
-		case FSMMachineStatusStop: {
-			[self changeState:_defaultStateName];
-			_status = FSMMachineStatusRunning;
-			break;
-		}
-			
-		case FSMMachineStatusRunning: {
-			// already running
-			break;
-		}
-			
-		case FSMMachineStatusPaused: {
-			[self changeState:_defaultStateName];
-			_status = FSMMachineStatusRunning;
-			break;
-		}
-			
-		default: {
-			// unknown status
-			break;
-		}
-	}
+    fsm_machine *machine = _innerMachine;
+    if (machine == NULL) {
+        return;
+    }
+    NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
+    @synchronized (self) {
+        machine->stop(machine, now);
+    }
 }
 
-- (void) stop
+- (void)pause
 {
-	switch (_status) {
-		case FSMMachineStatusStop: {
-			// already stop
-			break;
-		}
-			
-		case FSMMachineStatusRunning: {
-			_status = FSMMachineStatusStop;
-			[self changeState:nil];
-			break;
-		}
-			
-		case FSMMachineStatusPaused: {
-			_status = FSMMachineStatusStop;
-			[self changeState:nil];
-			break;
-		}
-			
-		default: {
-			// unknown status
-			break;
-		}
-	}
+    fsm_machine *machine = _innerMachine;
+    if (machine == NULL) {
+        return;
+    }
+    NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
+    @synchronized (self) {
+        machine->pause(machine, now);
+    }
 }
 
-- (void) pause
+- (void)resume
 {
-	switch (_status) {
-		case FSMMachineStatusStop: {
-			// error
-			break;
-		}
-			
-		case FSMMachineStatusRunning: {
-			_status = FSMMachineStatusPaused;
-			
-			FSMState * state = [self currentState];
-			if ([_delegate respondsToSelector:@selector(machine:pauseState:)]) {
-				[_delegate machine:self pauseState:state];
-			}
-			[state onPause:self];
-			break;
-		}
-			
-		case FSMMachineStatusPaused: {
-			// already paused
-			break;
-		}
-			
-		default: {
-			// unknown status
-			break;
-		}
-	}
+    fsm_machine *machine = _innerMachine;
+    if (machine == NULL) {
+        return;
+    }
+    NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
+    @synchronized (self) {
+        machine->resume(machine, now);
+    }
 }
 
-- (void) resume
-{
-	switch (_status) {
-		case FSMMachineStatusStop: {
-			// error
-			break;
-		}
-			
-		case FSMMachineStatusRunning: {
-			// not paused
-			break;
-		}
-			
-		case FSMMachineStatusPaused: {
-			_status = FSMMachineStatusRunning;
-			
-			FSMState * state = [self currentState];
-			if ([_delegate respondsToSelector:@selector(machine:resumeState:)]) {
-				[_delegate machine:self resumeState:state];
-			}
-			[state onResume:self];
-			break;
-		}
-			
-		default: {
-			// unknown status
-			break;
-		}
-	}
+- (void)tick:(NSTimeInterval)now elapsed:(NSTimeInterval)delta {
+    fsm_machine *machine = _innerMachine;
+    if (machine == NULL) {
+        return;
+    }
+    @synchronized(self) {
+        machine->tick(machine, now, delta);
+    }
 }
 
 @end

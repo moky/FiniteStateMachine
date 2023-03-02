@@ -19,6 +19,8 @@ FOUNDATION_EXPORT const unsigned char FiniteStateMachineVersionString[];
 #if !defined(__FINITE_STATE_MACHINE__)
 #define __FINITE_STATE_MACHINE__ 1
 
+#import <FiniteStateMachine/FSMProtocol.h>
+
 #import <FiniteStateMachine/FSMTransition.h>
 #import <FiniteStateMachine/FSMFunctionTransition.h>
 #import <FiniteStateMachine/FSMBlockTransition.h>

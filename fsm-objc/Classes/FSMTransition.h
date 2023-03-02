@@ -6,16 +6,13 @@
 //  Copyright (c) 2014 Slanissue.com. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <FiniteStateMachine/FSMProtocol.h>
 
-@class FSMMachine;
+@interface FSMTransition : NSObject <FSMTransition>
 
-@interface FSMTransition : NSObject
+@property(nonatomic, readonly) NSString *targetStateName;
 
-@property(nonatomic, readonly) NSString * targetStateName;
-
-- (instancetype) initWithTargetStateName:(NSString *)name NS_DESIGNATED_INITIALIZER;
-
-- (BOOL) evaluate:(FSMMachine *)machine;
+- (instancetype)initWithTargetStateName:(NSString *)name
+NS_DESIGNATED_INITIALIZER;
 
 @end

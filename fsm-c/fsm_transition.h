@@ -11,9 +11,11 @@
 
 #include "fsm_protocol.h"
 
-fsm_transition * fsm_transition_create(const char * target);
-void fsm_transition_destroy(fsm_transition * t);
 
-void fsm_transition_set_target(fsm_transition * t, const char * target);
+fsm_transition *fsm_create_transition(const char *target, fsm_transition_evaluate evaluate);
+void fsm_destroy_transition(fsm_transition *trans);
+
+void fsm_rename_transition(fsm_transition *trans, const char *target);
+
 
 #endif /* defined(__fsm_transition__) */

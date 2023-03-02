@@ -11,12 +11,22 @@
 
 #include "fsm_protocol.h"
 
-fsm_state * fsm_state_create(const char * name);
-void fsm_state_destroy(fsm_state * s);
 
-void fsm_state_set_name(fsm_state * s, const char * name);
-void fsm_state_add_transition(fsm_state * s, const fsm_transition * t);
+void fsm_set_name(char *dst, const char *src);
+void fsm_erase_name(char *dst);
 
-void fsm_state_tick(fsm_machine * m, const fsm_state * s);
+
+fsm_state *fsm_create_state(const char *name);
+void fsm_destroy_state(fsm_state *state);
+
+void fsm_rename_state(fsm_state *state, const char *name);
+
+void fsm_add_transition(fsm_state *state, const fsm_transition *trans);
+
+// state evaluate
+const struct _fsm_transition *fsm_tick_state(const fsm_state   *state,
+                                             const fsm_context *machine,
+                                             const fsm_time     now);
+
 
 #endif /* defined(__fsm_state__) */

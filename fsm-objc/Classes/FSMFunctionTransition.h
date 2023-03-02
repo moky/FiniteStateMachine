@@ -10,11 +10,12 @@
 
 @interface FSMFunctionTransition : FSMTransition
 
-@property(nonatomic, assign) id delegate;
+@property(nonatomic, weak)       id delegate;
 @property(nonatomic, readwrite) SEL selector;
 
-- (instancetype) initWithTargetStateName:(NSString *)name
-								delegate:(id)delegate
-								selector:(SEL)selector NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithTargetStateName:(NSString *)name
+                               delegate:(id)delegate
+                               selector:(SEL)selector
+NS_DESIGNATED_INITIALIZER;
 
 @end

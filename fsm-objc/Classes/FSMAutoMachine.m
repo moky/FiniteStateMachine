@@ -9,54 +9,52 @@
 #import "FSMAutoMachine.h"
 
 @interface FSMAutoMachine () {
-	
-	NSTimer * _timer;
+
+    NSTimeInterval _lastTime;
 }
 
-@property(nonatomic, readwrite) NSTimer * timer;
+@property(nonatomic, retain) NSTimer *timer;
 
 @end
 
 @implementation FSMAutoMachine
 
-@synthesize interval = _interval;
-@synthesize timer = _timer;
-
-- (void) dealloc
+- (void)dealloc
 {
 	self.timer = nil;
 	
 	[super dealloc];
 }
 
-- (instancetype) initWithDefaultStateName:(NSString *)name capacity:(NSUInteger)capacity
+- (instancetype)initWithDefaultStateName:(NSString *)name capacity:(NSUInteger)capacity
 {
 	return [self initWithDefaultStateName:name
 								 capacity:capacity
-								 interval:(1.0f / 12.0f)];
+								 interval:0.125f];
 }
 
 /* designated initializer */
-- (instancetype) initWithDefaultStateName:(NSString *)name
-								 capacity:(NSUInteger)capacity
-								 interval:(NSTimeInterval)interval
+- (instancetype)initWithDefaultStateName:(NSString *)name
+                                capacity:(NSUInteger)capacity
+                                interval:(NSTimeInterval)interval
 {
 	self = [super initWithDefaultStateName:name capacity:capacity];
 	if (self) {
 		_interval = interval;
+        _lastTime = 0.0f;
 		self.timer = nil;
 	}
 	return self;
 }
 
-- (instancetype) initWithInterval:(NSTimeInterval)interval
+- (instancetype)initWithInterval:(NSTimeInterval)interval
 {
 	return [self initWithDefaultStateName:@"default"
 								 capacity:8
 								 interval:interval];
 }
 
-- (void) setTimer:(NSTimer *)timer
+- (void)setTimer:(NSTimer *)timer
 {
 	if (_timer != timer) {
 		[_timer invalidate];
@@ -64,7 +62,17 @@
 	}
 }
 
-- (void) _startMachine
+- (void)tick
+{
+    NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
+    NSTimeInterval elapsed = now - _lastTime;
+    
+    [self tick:now elapsed:elapsed];
+    
+    _lastTime = now;
+}
+
+- (void)_startMachine
 {
 	// start
 	self.timer = [NSTimer scheduledTimerWithTimeInterval:_interval
@@ -74,31 +82,32 @@
 												 repeats:YES];
 }
 
-- (void) _stopMachine
+- (void)_stopMachine
 {
 	// stop timer and release itself and the target
 	self.timer = nil;
 }
 
-- (void) start
+- (void)start
 {
+    _lastTime = [[NSDate date] timeIntervalSince1970];
 	[super start];
 	[self _startMachine];
 }
 
-- (void) stop
+- (void)stop
 {
 	[self _stopMachine];
 	[super stop];
 }
 
-- (void) pause
+- (void)pause
 {
 	[self _stopMachine];
 	[super pause];
 }
 
-- (void) resume
+- (void)resume
 {
 	[super resume];
 	[self _startMachine];

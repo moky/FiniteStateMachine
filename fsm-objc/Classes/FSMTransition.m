@@ -8,96 +8,83 @@
 
 #import "fsm_transition.h"
 
-#import "FSMMachine.h"
-//#import "FSMState.h"
 #import "FSMTransition.h"
 
-// compare strings
-#define NSStringEquals(str1, str2)          (str1 == nil ? str2.length == 0 :  \
-                                             (str2 == nil ? str1.length == 0 : \
-                                              [str1 isEqualToString:str2]))
-
-static fsm_bool _evaluate(const fsm_machine * m, const fsm_state * s, const fsm_transition * t)
+static fsm_bool trans_eval(const fsm_transition *trans,
+                           const fsm_context    *ctx,
+                           const fsm_time        now)
 {
-	FSMMachine * machine = m->object;
-	//FSMState * state = s->object;
-	FSMTransition * transition = t->object;
-	
-	return [transition evaluate:machine] ? FSMTrue : FSMFalse;
+    fsm_machine *m = (fsm_machine *)ctx;
+    id<FSMContext> machine = m->ctx;
+    id<FSMTransition> transition = trans->ctx;
+    
+    BOOL ok = [transition evaluate:machine time:now];
+    return ok ? FSMTrue : FSMFalse;
 }
 
 @interface FSMTransition ()
 
-@property(nonatomic, readwrite) fsm_transition * innerTransition;
+@property(nonatomic, readwrite) fsm_transition *innerTransition;
 
-@property(nonatomic, retain) NSString * targetStateName;
+@property(nonatomic, retain) NSString *targetStateName;
 
 @end
 
 @implementation FSMTransition
 
-@synthesize innerTransition = _innerTransition;
-
-@synthesize targetStateName = _targetStateName;
-
-- (void) dealloc
+- (void)dealloc
 {
 	[_targetStateName release];
 	
-	if (_innerTransition) {
-		fsm_transition_destroy(_innerTransition);
+    fsm_transition *trans = _innerTransition;
+	if (trans) {
+        fsm_destroy_transition(trans);
 	}
 	
 	[super dealloc];
 }
 
-+ (instancetype) allocWithZone:(struct _NSZone *)zone
++ (instancetype)allocWithZone:(struct _NSZone *)zone
 {
 	id object = [super allocWithZone:zone];
-	fsm_transition * t = fsm_transition_create(NULL);
-	if (t) {
-		t->evaluate = _evaluate;
-		t->object = object;
+	fsm_transition *trans = fsm_create_transition(NULL, trans_eval);
+	if (trans) {
+		trans->ctx = object;
 	}
-	[object setInnerTransition:t];
+    [object setInnerTransition:trans];
 	return object;
 }
 
-- (instancetype) init
+- (instancetype)init
 {
 	return [self initWithTargetStateName:nil];
 }
 
 /* designated initializer */
-- (instancetype) initWithTargetStateName:(NSString *)name
+- (instancetype)initWithTargetStateName:(NSString *)name
 {
 	self = [super init];
 	if (self) {
-		self.targetStateName = name;
+		[self setTargetStateName:name];
 	}
 	return self;
 }
 
-- (void) setTargetStateName:(NSString *)targetStateName
+- (void)setTargetStateName:(NSString *)targetStateName
 {
-	if (!NSStringEquals(_targetStateName, targetStateName)) {
+	if (_targetStateName != targetStateName) {
 		[targetStateName retain];
 		[_targetStateName release];
 		_targetStateName = targetStateName;
 		
-		fsm_transition_set_target(_innerTransition, [targetStateName UTF8String]);
+		fsm_rename_transition(_innerTransition, [targetStateName UTF8String]);
 	}
 }
 
-- (BOOL) evaluate:(FSMMachine *)machine
+- (BOOL)evaluate:(id<FSMContext>)machine time:(NSTimeInterval)now
 {
-	NSAssert(false, @"override me!");
-	return YES;
+    NSAssert(false, @"override me!");
+    return YES;
 }
 
 @end
-
-fsm_transition * inner_transition(const FSMTransition * transition)
-{
-	return [transition innerTransition];
-}

@@ -8,14 +8,19 @@
 
 #import "FSMMachine.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface FSMAutoMachine : FSMMachine
 
-@property(nonatomic, readwrite) NSTimeInterval interval; // default is 1.0/12.0
+@property(nonatomic, readwrite) NSTimeInterval interval; // default is 0.125
 
-- (instancetype) initWithDefaultStateName:(NSString *)name
-								 capacity:(NSUInteger)capacity
-								 interval:(NSTimeInterval)interval NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithDefaultStateName:(NSString *)name
+                                capacity:(NSUInteger)capacity
+                                interval:(NSTimeInterval)interval
+NS_DESIGNATED_INITIALIZER;
 
-- (instancetype) initWithInterval:(NSTimeInterval)interval;
+- (instancetype)initWithInterval:(NSTimeInterval)interval;
 
 @end
+
+NS_ASSUME_NONNULL_END

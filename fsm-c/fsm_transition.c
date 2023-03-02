@@ -6,38 +6,35 @@
 //  Copyright (c) 2014 Slanissue.com. All rights reserved.
 //
 
-#include <stdlib.h>
 #include <string.h>
 
+#include "fsm_state.h"
 #include "fsm_transition.h"
 
-fsm_transition * fsm_transition_create(const char * target)
+
+fsm_transition *fsm_create_transition(const char *target, fsm_transition_evaluate evaluate)
 {
-	fsm_transition * t = (fsm_transition *)malloc(sizeof(fsm_transition));
-	memset(t, 0, sizeof(fsm_transition));
-	if (target) {
-		fsm_transition_set_target(t, target);
+	fsm_transition *trans = (fsm_transition *)malloc(sizeof(fsm_transition));
+	memset(trans, 0, sizeof(fsm_transition));
+	if (target != NULL) {
+        fsm_set_name(trans->target, target);
 	}
-	return t;
+    trans->evaluate = evaluate;
+	return trans;
 }
 
-void fsm_transition_destroy(fsm_transition * t)
+void fsm_destroy_transition(fsm_transition *trans)
 {
-//	t->evaluate = NULL;
-//	t->object = NULL;
-	
-	free(t);
+    // trans->evaluate = NULL;
+    // trans->ctx = NULL;
+	free(trans);
 }
 
-void fsm_transition_set_target(fsm_transition * t, const char * target)
+void fsm_rename_transition(fsm_transition *trans, const char *target)
 {
-	unsigned long len = strlen(target);
-	if (len > 0) {
-		if (len >= sizeof(t->target)) {
-			len = sizeof(t->target) - 1;
-		}
-		strncpy(t->target, target, len);
-	} else {
-		memset(t->target, 0, sizeof(t->target));
-	}
+    if (target == NULL) {
+        fsm_erase_name(trans->target);
+    } else {
+        fsm_set_name(trans->target, target);
+    }
 }

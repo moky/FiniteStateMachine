@@ -11,11 +11,11 @@
 
 #include "fsm_protocol.h"
 
-fsm_chain_table * fsm_chain_create(void);
-void fsm_chain_destroy(fsm_chain_table * chain);
+fsm_chain_table *fsm_chain_create(void);
+void fsm_chain_destroy(fsm_chain_table *chain);
 
-void fsm_chain_add(fsm_chain_table * chain, const void * element);
-fsm_chain_node * fsm_chain_at(fsm_chain_table * chain, unsigned int index);
-void * fsm_chain_get(const fsm_chain_node * node);
+void fsm_chain_add(fsm_chain_table *chain, const void *element);
+fsm_chain_node *fsm_chain_at(fsm_chain_table *chain, unsigned int index);
+void *fsm_chain_get(const fsm_chain_node *node);
 
 #endif /* defined(__fsm_chain_table__) */

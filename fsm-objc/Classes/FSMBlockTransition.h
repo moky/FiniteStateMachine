@@ -10,14 +10,14 @@
 
 #if NS_BLOCKS_AVAILABLE
 
-typedef BOOL (^FSMBlock)(FSMMachine * machine, FSMTransition * transition);
+typedef BOOL (^FSMBlock)(id<FSMContext> machine, NSTimeInterval now);
 
 @interface FSMBlockTransition : FSMTransition
 
 @property(nonatomic, readwrite) FSMBlock block;
 
-- (instancetype) initWithTargetStateName:(NSString *)name
-								   block:(FSMBlock)block NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithTargetStateName:(NSString *)name block:(FSMBlock)block
+NS_DESIGNATED_INITIALIZER;
 
 @end
 
