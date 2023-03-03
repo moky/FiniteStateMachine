@@ -61,15 +61,17 @@ public interface State<C extends Context, T extends Transition<C>> {
      *  Called before current state paused
      *
      * @param ctx - context (machine)
+     * @param now - current time (milliseconds, from Jan 1, 1970 UTC)
      */
-    void onPause(C ctx);
+    void onPause(C ctx, long now);
 
     /**
      *  Called after current state resumed
      *
      * @param ctx - context (machine)
+     * @param now - current time (milliseconds, from Jan 1, 1970 UTC)
      */
-    void onResume(C ctx);
+    void onResume(C ctx, long now);
 
     /**
      *  Called by machine.tick() to evaluate each transitions

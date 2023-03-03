@@ -42,8 +42,9 @@ public interface Delegate<C extends Context, T extends Transition<C>, S extends 
      *
      * @param next     - new state
      * @param ctx      - context (machine)
+     * @param now      - current time (milliseconds, from Jan 1, 1970 UTC)
      */
-    void enterState(S next, C ctx);
+    void enterState(S next, C ctx, long now);
 
     /**
      *  Called after old state exited
@@ -51,22 +52,25 @@ public interface Delegate<C extends Context, T extends Transition<C>, S extends 
      *
      * @param previous - old state
      * @param ctx      - context (machine)
+     * @param now      - current time (milliseconds, from Jan 1, 1970 UTC)
      */
-    void exitState(S previous, C ctx);
+    void exitState(S previous, C ctx, long now);
 
     /**
      *  Called after current state paused
      *
      * @param current  - current state
      * @param ctx      - context (machine)
+     * @param now      - current time (milliseconds, from Jan 1, 1970 UTC)
      */
-    void pauseState(S current, C ctx);
+    void pauseState(S current, C ctx, long now);
 
     /**
      *  Called before current state resumed
      *
      * @param current  - current state
      * @param ctx      - context (machine)
+     * @param now      - current time (milliseconds, from Jan 1, 1970 UTC)
      */
-    void resumeState(S current, C ctx);
+    void resumeState(S current, C ctx, long now);
 }

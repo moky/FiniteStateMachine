@@ -99,11 +99,11 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
         S oldState = getCurrentState();
         if (oldState == null) {
             if (newState == null) {
-                // state not chang
+                // state not change
                 return false;
             }
         } else if (oldState.equals(newState)) {
-            // state not chang
+            // state not change
             return false;
         }
 
@@ -116,7 +116,7 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
         if (delegate != null) {
             // prepare for changing current state to the new one,
             // the delegate can get old state via ctx if need
-            delegate.enterState(newState, ctx);
+            delegate.enterState(newState, ctx, now);
         }
         if (oldState != null) {
             oldState.onExit(newState, ctx, now);
@@ -136,7 +136,7 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
         if (delegate != null) {
             // handle after the current state changed,
             // the delegate can get new state via ctx if need
-            delegate.exitState(oldState, ctx);
+            delegate.exitState(oldState, ctx, now);
         }
 
         return true;
@@ -172,6 +172,7 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
      */
     @Override
     public void pause() {
+        long now = System.currentTimeMillis();
         C ctx = getContext();
         S current = getCurrentState();
         Delegate<C, T, S> delegate = getDelegate();
@@ -179,7 +180,7 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
         //  Events before state paused
         //
         if (current != null) {
-            current.onPause(ctx);
+            current.onPause(ctx, now);
         }
         //
         //  Pause current state
@@ -189,7 +190,7 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
         //  Events after state paused
         //
         if (delegate != null) {
-            delegate.pauseState(current, ctx);
+            delegate.pauseState(current, ctx, now);
         }
     }
 
@@ -198,6 +199,7 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
      */
     @Override
     public void resume() {
+        long now = System.currentTimeMillis();
         C ctx = getContext();
         S current = getCurrentState();
         Delegate<C, T, S> delegate = getDelegate();
@@ -205,7 +207,7 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
         //  Events before state resumed
         //
         if (delegate != null) {
-            delegate.resumeState(current, ctx);
+            delegate.resumeState(current, ctx, now);
         }
         //
         //  Resume current state
@@ -215,7 +217,7 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
         //  Events after state resumed
         //
         if (current != null) {
-            current.onResume(ctx);
+            current.onResume(ctx, now);
         }
     }
 
