@@ -18,11 +18,11 @@ Pod::Spec.new do |s|
     s.author                = { 'Albert Moky' => 'albert.moky@gmail.com' }
     s.source                = { :git => 'https://github.com/moky/FiniteStateMachine.git', :tag => s.version.to_s }
     # s.platform            = :ios, "11.0"
-    s.ios.deployment_target = '12.0'
+    s.ios.deployment_target = '11.0'
     
-    s.source_files          = 'Classes/*.{h,m}', 'ds-c/*.{h,c}', 'fsm-c/*.{h,c}'
+    s.source_files          = 'Classes/**/*.{h,m}', 'ds-c/*.{h,c}', 'fsm-c/*.{h,c}'
     # s.exclude_files       = 'Classes/Exclude'
-    s.public_header_files   = 'Classes/*.h'
+    s.public_header_files   = 'Classes/*.h', 'Classes/type/*.h', 'Classes/threading/*.h'
 
     # s.frameworks          = 'Security'
     s.requires_arc          = false

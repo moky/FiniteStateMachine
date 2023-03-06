@@ -1,3 +1,32 @@
+// license: https://mit-license.org
+//
+//  FSM : Finite State Machine
+//
+//                               Written in 2015 by Moky <albert.moky@gmail.com>
+//
+// =============================================================================
+// The MIT License (MIT)
+//
+// Copyright (c) 2015 Albert Moky
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+// =============================================================================
 //
 //  FSMAutoMachine.m
 //  FiniteStateMachine
@@ -6,111 +35,38 @@
 //  Copyright (c) 2015 Slanissue.com. All rights reserved.
 //
 
+#import "FSMMetronome.h"
+
 #import "FSMAutoMachine.h"
-
-@interface FSMAutoMachine () {
-
-    NSTimeInterval _lastTime;
-}
-
-@property(nonatomic, retain) NSTimer *timer;
-
-@end
 
 @implementation FSMAutoMachine
 
-- (void)dealloc
-{
-	self.timer = nil;
-	
-	[super dealloc];
-}
-
-- (instancetype)initWithDefaultStateName:(NSString *)name capacity:(NSUInteger)capacity
-{
-	return [self initWithDefaultStateName:name
-								 capacity:capacity
-								 interval:0.125f];
-}
-
-/* designated initializer */
-- (instancetype)initWithDefaultStateName:(NSString *)name
-                                capacity:(NSUInteger)capacity
-                                interval:(NSTimeInterval)interval
-{
-	self = [super initWithDefaultStateName:name capacity:capacity];
-	if (self) {
-		_interval = interval;
-        _lastTime = 0.0f;
-		self.timer = nil;
-	}
-	return self;
-}
-
-- (instancetype)initWithInterval:(NSTimeInterval)interval
-{
-	return [self initWithDefaultStateName:@"default"
-								 capacity:8
-								 interval:interval];
-}
-
-- (void)setTimer:(NSTimer *)timer
-{
-	if (_timer != timer) {
-		[_timer invalidate];
-		_timer = timer;
-	}
-}
-
-- (void)tick
-{
-    NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
-    NSTimeInterval elapsed = now - _lastTime;
-    
-    [self tick:now elapsed:elapsed];
-    
-    _lastTime = now;
-}
-
-- (void)_startMachine
-{
-	// start
-	self.timer = [NSTimer scheduledTimerWithTimeInterval:_interval
-												  target:self
-												selector:@selector(tick)
-												userInfo:nil
-												 repeats:YES];
-}
-
-- (void)_stopMachine
-{
-	// stop timer and release itself and the target
-	self.timer = nil;
-}
-
-- (void)start
-{
-    _lastTime = [[NSDate date] timeIntervalSince1970];
+// Override
+- (void)start {
 	[super start];
-	[self _startMachine];
+    FSMPrimeMetronome *timer = [FSMPrimeMetronome sharedInstance];
+    [timer addTicker:self];
 }
 
-- (void)stop
-{
-	[self _stopMachine];
+// Override
+- (void)stop {
+    FSMPrimeMetronome *timer = [FSMPrimeMetronome sharedInstance];
+    [timer removeTicker:self];
 	[super stop];
 }
 
-- (void)pause
-{
-	[self _stopMachine];
+// Override
+- (void)pause {
+    FSMPrimeMetronome *timer = [FSMPrimeMetronome sharedInstance];
+    [timer removeTicker:self];
 	[super pause];
 }
 
-- (void)resume
-{
+// Override
+- (void)resume {
 	[super resume];
-	[self _startMachine];
+    FSMPrimeMetronome *timer = [FSMPrimeMetronome sharedInstance];
+    [timer addTicker:self];
 }
 
 @end

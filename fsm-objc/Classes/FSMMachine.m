@@ -1,3 +1,32 @@
+// license: https://mit-license.org
+//
+//  FSM : Finite State Machine
+//
+//                               Written in 2014 by Moky <albert.moky@gmail.com>
+//
+// =============================================================================
+// The MIT License (MIT)
+//
+// Copyright (c) 2014 Albert Moky
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+// =============================================================================
 //
 //  FSMMachine.m
 //  FiniteStateMachine
@@ -10,20 +39,21 @@
 #import "fsm_machine.h"
 #import "fsm_state.h"
 
+#import "NSDate+Timestamp.h"
 #import "FSMState.h"
+
 #import "FSMMachine.h"
 
 @interface FSMState (Hacking)
 
-@property(nonatomic, readwrite) fsm_state *innerState;
+@property(nonatomic, assign) fsm_state *innerState;
 
 @end
 
 static void enter_state(const struct _fsm_delegate *d,
                         const struct _fsm_state    *s,
                         const         fsm_context  *ctx,
-                        const         fsm_time      now)
-{
+                        const         fsm_time      now) {
     FSMMachine *machine = d->ctx;
     id<FSMDelegate> delegate = machine.delegate;
     id<FSMContext> context = (id<FSMContext>)machine;
@@ -35,8 +65,7 @@ static void enter_state(const struct _fsm_delegate *d,
 static void exit_state(const struct _fsm_delegate *d,
                        const struct _fsm_state    *s,
                        const         fsm_context  *ctx,
-                       const         fsm_time      now)
-{
+                       const         fsm_time      now) {
     FSMMachine *machine = d->ctx;
     id<FSMDelegate> delegate = machine.delegate;
     id<FSMContext> context = (id<FSMContext>)machine;
@@ -48,8 +77,7 @@ static void exit_state(const struct _fsm_delegate *d,
 static void pause_state(const struct _fsm_delegate *d,
                         const struct _fsm_state    *s,
                         const         fsm_context  *ctx,
-                        const         fsm_time      now)
-{
+                        const         fsm_time      now) {
     FSMMachine *machine = d->ctx;
     id<FSMDelegate> delegate = machine.delegate;
     id<FSMContext> context = (id<FSMContext>)machine;
@@ -61,8 +89,7 @@ static void pause_state(const struct _fsm_delegate *d,
 static void resume_state(const struct _fsm_delegate *d,
                          const struct _fsm_state    *s,
                          const         fsm_context  *ctx,
-                         const         fsm_time      now)
-{
+                         const         fsm_time      now) {
     FSMMachine *machine = d->ctx;
     id<FSMDelegate> delegate = machine.delegate;
     id<FSMContext> context = (id<FSMContext>)machine;
@@ -73,34 +100,37 @@ static void resume_state(const struct _fsm_delegate *d,
 
 @interface FSMMachine ()
 
-@property(nonatomic, readwrite) fsm_machine  *innerMachine;
-@property(nonatomic, readwrite) fsm_delegate *innerDelegate;
+@property(nonatomic, assign) fsm_machine  *innerMachine;
+@property(nonatomic, assign) fsm_delegate *innerDelegate;
 
-@property(nonatomic, retain) NSMutableArray * states;
+@property(nonatomic, retain) NSString *defaultStateName; // default is "default"
+@property(nonatomic, retain) NSMutableArray<id<FSMState>> *states;
 
 @end
 
 @implementation FSMMachine
 
-- (void)dealloc
-{
+- (void)dealloc {
 	[_defaultStateName release];
+    _defaultStateName = nil;
 	[_states release];
+    _states = nil;
 	
     fsm_machine *machine = _innerMachine;
 	if (machine != NULL) {
 		fsm_destroy_machine(machine);
+        _innerMachine = NULL;
 	}
     fsm_delegate *delegate = _innerDelegate;
     if (delegate != NULL) {
         fsm_destroy_delegate(delegate);
+        _innerDelegate = NULL;
     }
 	
 	[super dealloc];
 }
 
-+ (instancetype)allocWithZone:(struct _NSZone *)zone
-{
++ (instancetype)allocWithZone:(struct _NSZone *)zone {
 	id object = [super allocWithZone:zone];
 	fsm_machine *machine = fsm_create_machine(NULL);
 	if (machine) {
@@ -119,36 +149,30 @@ static void resume_state(const struct _fsm_delegate *d,
 	return object;
 }
 
-- (instancetype)init
-{
+- (instancetype)init {
 	return [self initWithDefaultStateName:@"default" capacity:8];
 }
 
 /* designated initializer */
-- (instancetype)initWithDefaultStateName:(NSString *)name capacity:(NSUInteger)capacity
-{
-	self = [super init];
-	if (self) {
-		self.defaultStateName = name;
-		self.states = [NSMutableArray arrayWithCapacity:capacity];
+- (instancetype)initWithDefaultStateName:(NSString *)stateName
+                                capacity:(NSUInteger)countOfStates {
+	if (self = [super init]) {
+		self.defaultStateName = stateName;
+		self.states = [NSMutableArray arrayWithCapacity:countOfStates];
 		
 		self.delegate = nil;
 	}
 	return self;
 }
 
-- (void)addState:(FSMState *)state
-{
-	if (!state) {
-		return;
-	}
-	
-	fsm_add_state(_innerMachine, [state innerState]);
-	[_states addObject:state];
+- (void)addState:(FSMState *)state {
+    NSAssert(state, @"state empty");
+    fsm_add_state(_innerMachine, [state innerState]);
+    [_states addObject:state];
 }
 
-- (id<FSMState>)currentState
-{
+// Override
+- (id<FSMState>)currentState {
 	const fsm_state *s = fsm_get_current_state(_innerMachine);
 	NSAssert(s, @"failed to get current state: %d", _innerMachine->current);
 	id<FSMState> state = s->ctx;
@@ -156,56 +180,55 @@ static void resume_state(const struct _fsm_delegate *d,
 	return state;
 }
 
-#pragma mark -
-
-- (void)start
-{
+// Override
+- (void)start {
     fsm_machine *machine = _innerMachine;
     if (machine == NULL) {
         return;
     }
-    NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
+    NSTimeInterval now = [NSDate currentTimeInterval];
     @synchronized (self) {
         machine->start(machine, now);
     }
 }
 
-- (void)stop
-{
+// Override
+- (void)stop {
     fsm_machine *machine = _innerMachine;
     if (machine == NULL) {
         return;
     }
-    NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
+    NSTimeInterval now = [NSDate currentTimeInterval];
     @synchronized (self) {
         machine->stop(machine, now);
     }
 }
 
-- (void)pause
-{
+// Override
+- (void)pause {
     fsm_machine *machine = _innerMachine;
     if (machine == NULL) {
         return;
     }
-    NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
+    NSTimeInterval now = [NSDate currentTimeInterval];
     @synchronized (self) {
         machine->pause(machine, now);
     }
 }
 
-- (void)resume
-{
+// Override
+- (void)resume {
     fsm_machine *machine = _innerMachine;
     if (machine == NULL) {
         return;
     }
-    NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
+    NSTimeInterval now = [NSDate currentTimeInterval];
     @synchronized (self) {
         machine->resume(machine, now);
     }
 }
 
+// Override
 - (void)tick:(NSTimeInterval)now elapsed:(NSTimeInterval)delta {
     fsm_machine *machine = _innerMachine;
     if (machine == NULL) {

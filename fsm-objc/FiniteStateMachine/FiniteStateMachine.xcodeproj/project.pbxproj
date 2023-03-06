@@ -29,6 +29,12 @@
 		E9898C8429B07323004CE998 /* FSMProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = E9898C8329B0731B004CE998 /* FSMProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9898C8D29B0A8FC004CE998 /* fsm_delegate.h in Headers */ = {isa = PBXBuildFile; fileRef = E9898C8B29B0A8FC004CE998 /* fsm_delegate.h */; };
 		E9898C8E29B0A8FC004CE998 /* fsm_delegate.c in Sources */ = {isa = PBXBuildFile; fileRef = E9898C8C29B0A8FC004CE998 /* fsm_delegate.c */; };
+		E99F06A629B4F6D7005A2FE9 /* FSMMetronome.m in Sources */ = {isa = PBXBuildFile; fileRef = E99F06A029B4F6D7005A2FE9 /* FSMMetronome.m */; };
+		E99F06A729B4F6D7005A2FE9 /* FSMMetronome.h in Headers */ = {isa = PBXBuildFile; fileRef = E99F06A129B4F6D7005A2FE9 /* FSMMetronome.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E99F06A829B4F6D7005A2FE9 /* FSMRunner.h in Headers */ = {isa = PBXBuildFile; fileRef = E99F06A229B4F6D7005A2FE9 /* FSMRunner.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E99F06A929B4F6D7005A2FE9 /* FSMRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = E99F06A329B4F6D7005A2FE9 /* FSMRunner.m */; };
+		E99F06AA29B4F6D7005A2FE9 /* FSMThread.h in Headers */ = {isa = PBXBuildFile; fileRef = E99F06A429B4F6D7005A2FE9 /* FSMThread.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E99F06AB29B4F6D7005A2FE9 /* FSMThread.m in Sources */ = {isa = PBXBuildFile; fileRef = E99F06A529B4F6D7005A2FE9 /* FSMThread.m */; };
 		E9AFAA7A223105F0001F95C6 /* FiniteStateMachine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9AFAA70223105F0001F95C6 /* FiniteStateMachine.framework */; };
 		E9AFAA7F223105F0001F95C6 /* FiniteStateMachineTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E9AFAA7E223105F0001F95C6 /* FiniteStateMachineTests.m */; };
 		E9AFAAA1223105FC001F95C6 /* FSMState.m in Sources */ = {isa = PBXBuildFile; fileRef = E9AFAA8B223105FC001F95C6 /* FSMState.m */; };
@@ -44,6 +50,11 @@
 		E9AFAAAB223105FC001F95C6 /* FSMBlockTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = E9AFAA95223105FC001F95C6 /* FSMBlockTransition.m */; };
 		E9AFAAAC223105FC001F95C6 /* FSMTransition.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AFAA96223105FC001F95C6 /* FSMTransition.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9AFAAB722310642001F95C6 /* FiniteStateMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AFAAB622310642001F95C6 /* FiniteStateMachine.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E9DD8A5E29B595B900010FFE /* FSMWeakSet.h in Headers */ = {isa = PBXBuildFile; fileRef = E9DD8A5C29B595B900010FFE /* FSMWeakSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E9DD8A5F29B595B900010FFE /* FSMWeakSet.m in Sources */ = {isa = PBXBuildFile; fileRef = E9DD8A5D29B595B900010FFE /* FSMWeakSet.m */; };
+		E9DD8A6229B595EF00010FFE /* NSDate+Timestamp.h in Headers */ = {isa = PBXBuildFile; fileRef = E9DD8A6029B595EF00010FFE /* NSDate+Timestamp.h */; };
+		E9DD8A6329B595EF00010FFE /* NSDate+Timestamp.m in Sources */ = {isa = PBXBuildFile; fileRef = E9DD8A6129B595EF00010FFE /* NSDate+Timestamp.m */; };
+		E9DD8A6629B5B26700010FFE /* NSObject+Singleton.h in Headers */ = {isa = PBXBuildFile; fileRef = E9DD8A6529B5B26700010FFE /* NSObject+Singleton.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,6 +90,12 @@
 		E9898C8329B0731B004CE998 /* FSMProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSMProtocol.h; sourceTree = "<group>"; };
 		E9898C8B29B0A8FC004CE998 /* fsm_delegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fsm_delegate.h; sourceTree = "<group>"; };
 		E9898C8C29B0A8FC004CE998 /* fsm_delegate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fsm_delegate.c; sourceTree = "<group>"; };
+		E99F06A029B4F6D7005A2FE9 /* FSMMetronome.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FSMMetronome.m; sourceTree = "<group>"; };
+		E99F06A129B4F6D7005A2FE9 /* FSMMetronome.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSMMetronome.h; sourceTree = "<group>"; };
+		E99F06A229B4F6D7005A2FE9 /* FSMRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSMRunner.h; sourceTree = "<group>"; };
+		E99F06A329B4F6D7005A2FE9 /* FSMRunner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FSMRunner.m; sourceTree = "<group>"; };
+		E99F06A429B4F6D7005A2FE9 /* FSMThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSMThread.h; sourceTree = "<group>"; };
+		E99F06A529B4F6D7005A2FE9 /* FSMThread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FSMThread.m; sourceTree = "<group>"; };
 		E9AFAA70223105F0001F95C6 /* FiniteStateMachine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = FiniteStateMachine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9AFAA74223105F0001F95C6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E9AFAA79223105F0001F95C6 /* FiniteStateMachineTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FiniteStateMachineTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -97,6 +114,11 @@
 		E9AFAA95223105FC001F95C6 /* FSMBlockTransition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FSMBlockTransition.m; sourceTree = "<group>"; };
 		E9AFAA96223105FC001F95C6 /* FSMTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSMTransition.h; sourceTree = "<group>"; };
 		E9AFAAB622310642001F95C6 /* FiniteStateMachine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FiniteStateMachine.h; sourceTree = "<group>"; };
+		E9DD8A5C29B595B900010FFE /* FSMWeakSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSMWeakSet.h; sourceTree = "<group>"; };
+		E9DD8A5D29B595B900010FFE /* FSMWeakSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FSMWeakSet.m; sourceTree = "<group>"; };
+		E9DD8A6029B595EF00010FFE /* NSDate+Timestamp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSDate+Timestamp.h"; sourceTree = "<group>"; };
+		E9DD8A6129B595EF00010FFE /* NSDate+Timestamp.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSDate+Timestamp.m"; sourceTree = "<group>"; };
+		E9DD8A6529B5B26700010FFE /* NSObject+Singleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+Singleton.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -155,6 +177,19 @@
 			path = "../../ds-c";
 			sourceTree = "<group>";
 		};
+		E99F069F29B4F6A8005A2FE9 /* threading */ = {
+			isa = PBXGroup;
+			children = (
+				E99F06A429B4F6D7005A2FE9 /* FSMThread.h */,
+				E99F06A529B4F6D7005A2FE9 /* FSMThread.m */,
+				E99F06A229B4F6D7005A2FE9 /* FSMRunner.h */,
+				E99F06A329B4F6D7005A2FE9 /* FSMRunner.m */,
+				E99F06A129B4F6D7005A2FE9 /* FSMMetronome.h */,
+				E99F06A029B4F6D7005A2FE9 /* FSMMetronome.m */,
+			);
+			path = threading;
+			sourceTree = "<group>";
+		};
 		E9AFAA66223105F0001F95C6 = {
 			isa = PBXGroup;
 			children = (
@@ -196,6 +231,8 @@
 		E9AFAA8A223105FC001F95C6 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				E9DD8A5B29B595A800010FFE /* type */,
+				E99F069F29B4F6A8005A2FE9 /* threading */,
 				E9898C8329B0731B004CE998 /* FSMProtocol.h */,
 				E9AFAA96223105FC001F95C6 /* FSMTransition.h */,
 				E9AFAA8E223105FC001F95C6 /* FSMTransition.m */,
@@ -215,6 +252,18 @@
 			path = ../Classes;
 			sourceTree = "<group>";
 		};
+		E9DD8A5B29B595A800010FFE /* type */ = {
+			isa = PBXGroup;
+			children = (
+				E9DD8A6529B5B26700010FFE /* NSObject+Singleton.h */,
+				E9DD8A6029B595EF00010FFE /* NSDate+Timestamp.h */,
+				E9DD8A6129B595EF00010FFE /* NSDate+Timestamp.m */,
+				E9DD8A5C29B595B900010FFE /* FSMWeakSet.h */,
+				E9DD8A5D29B595B900010FFE /* FSMWeakSet.m */,
+			);
+			path = type;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -224,8 +273,12 @@
 			files = (
 				E92B294A29AF8144006EF934 /* ds_base.h in Headers */,
 				E92B294829AF8144006EF934 /* ds_stack.h in Headers */,
+				E99F06A829B4F6D7005A2FE9 /* FSMRunner.h in Headers */,
 				E9AFAAAC223105FC001F95C6 /* FSMTransition.h in Headers */,
 				E9AFAAAA223105FC001F95C6 /* FSMFunctionTransition.h in Headers */,
+				E99F06AA29B4F6D7005A2FE9 /* FSMThread.h in Headers */,
+				E99F06A729B4F6D7005A2FE9 /* FSMMetronome.h in Headers */,
+				E9DD8A5E29B595B900010FFE /* FSMWeakSet.h in Headers */,
 				E92B294529AF8144006EF934 /* ds_queue.h in Headers */,
 				E92B294729AF8144006EF934 /* ds_array.h in Headers */,
 				E92B293329AF8137006EF934 /* fsm_state.h in Headers */,
@@ -240,6 +293,8 @@
 				E9AFAAA3223105FC001F95C6 /* FSMAutoMachine.h in Headers */,
 				E9898C8D29B0A8FC004CE998 /* fsm_delegate.h in Headers */,
 				E92B293429AF8137006EF934 /* fsm_chain_table.h in Headers */,
+				E9DD8A6229B595EF00010FFE /* NSDate+Timestamp.h in Headers */,
+				E9DD8A6629B5B26700010FFE /* NSObject+Singleton.h in Headers */,
 				E9AFAAB722310642001F95C6 /* FiniteStateMachine.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -343,14 +398,19 @@
 			files = (
 				E9AFAAA1223105FC001F95C6 /* FSMState.m in Sources */,
 				E92B294429AF8144006EF934 /* ds_base.c in Sources */,
+				E99F06A929B4F6D7005A2FE9 /* FSMRunner.m in Sources */,
 				E92B294C29AF8144006EF934 /* ds_array.c in Sources */,
 				E92B293129AF8137006EF934 /* fsm_chain_table.c in Sources */,
+				E9DD8A5F29B595B900010FFE /* FSMWeakSet.m in Sources */,
+				E99F06AB29B4F6D7005A2FE9 /* FSMThread.m in Sources */,
 				E92B293829AF8137006EF934 /* fsm_state.c in Sources */,
 				E92B294D29AF8144006EF934 /* ds_stack.c in Sources */,
 				E9AFAAA9223105FC001F95C6 /* FSMMachine.m in Sources */,
+				E99F06A629B4F6D7005A2FE9 /* FSMMetronome.m in Sources */,
 				E92B293529AF8137006EF934 /* fsm_machine.c in Sources */,
 				E9AFAAA6223105FC001F95C6 /* FSMFunctionTransition.m in Sources */,
 				E9AFAAA4223105FC001F95C6 /* FSMTransition.m in Sources */,
+				E9DD8A6329B595EF00010FFE /* NSDate+Timestamp.m in Sources */,
 				E92B294629AF8144006EF934 /* ds_chain.c in Sources */,
 				E9AFAAA8223105FC001F95C6 /* FSMAutoMachine.m in Sources */,
 				E9AFAAAB223105FC001F95C6 /* FSMBlockTransition.m in Sources */,

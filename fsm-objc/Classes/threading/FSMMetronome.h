@@ -2,12 +2,12 @@
 //
 //  FSM : Finite State Machine
 //
-//                               Written in 2014 by Moky <albert.moky@gmail.com>
+//                               Written in 2023 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2014 Albert Moky
+// Copyright (c) 2023 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,31 +28,53 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  FSMMachine.h
+//  FSMMetronome.h
 //  FiniteStateMachine
 //
-//  Created by Moky on 14-12-13.
-//  Copyright (c) 2014 Slanissue.com. All rights reserved.
+//  Created by Albert Moky on 2023/3/6.
+//  Copyright © 2023 DIM Group. All rights reserved.
 //
 
-#import <FiniteStateMachine/FSMMetronome.h>
-#import <FiniteStateMachine/FSMProtocol.h>
+#import <FiniteStateMachine/FSMRunner.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class FSMState;
+@protocol FSMTicker <NSObject>
 
-@interface FSMMachine : NSObject <FSMMachine>
+/*
+ *  Drive current thread forward
+ *
+ * @param now   - current time (seconds, from Jan 1, 1970 UTC)
+ * @param delta - elapsed time (seconds, from previous tick)
+ */
+- (void)tick:(NSTimeInterval)now elapsed:(NSTimeInterval)delta;
 
-@property(nonatomic, assign, nullable) id<FSMDelegate> delegate;
+@end
 
-@property(nonatomic, readonly) id<FSMContext> context;  // the machine itself
+@protocol FSMMetronome <FSMRunner>
 
-- (instancetype)initWithDefaultStateName:(NSString *)stateName
-                                capacity:(NSUInteger)countOfStates
+- (void)addTicker:(id<FSMTicker>)ticker;
+- (void)removeTicker:(id<FSMTicker>)ticker;
+
+- (void)start;
+
+@end
+
+@interface FSMMetronome : FSMRunner <FSMMetronome>
+
+- (instancetype)initWithInterval:(NSTimeInterval)seconds
 NS_DESIGNATED_INITIALIZER;
 
-- (void)addState:(FSMState *)state; // add state with transition(s)
+@end
+
+#pragma mark - Singleton
+
+@interface FSMPrimeMetronome : NSObject
+
++ (instancetype)sharedInstance;
+
+- (void)addTicker:(id<FSMTicker>)ticker;
+- (void)removeTicker:(id<FSMTicker>)ticker;
 
 @end
 

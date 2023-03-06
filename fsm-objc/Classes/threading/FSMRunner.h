@@ -2,12 +2,12 @@
 //
 //  FSM : Finite State Machine
 //
-//                               Written in 2014 by Moky <albert.moky@gmail.com>
+//                               Written in 2023 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2014 Albert Moky
+// Copyright (c) 2023 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,31 +28,65 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  FSMMachine.h
+//  FSMRunner.h
 //  FiniteStateMachine
 //
-//  Created by Moky on 14-12-13.
-//  Copyright (c) 2014 Slanissue.com. All rights reserved.
+//  Created by Albert Moky on 2023/3/5.
+//  Copyright © 2023 DIM Group. All rights reserved.
 //
 
-#import <FiniteStateMachine/FSMMetronome.h>
-#import <FiniteStateMachine/FSMProtocol.h>
+#import <FiniteStateMachine/FSMThread.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class FSMState;
+@protocol FSMHandler <NSObject>
 
-@interface FSMMachine : NSObject <FSMMachine>
+/**
+ *  Prepare for handling
+ */
+- (void)setup;
 
-@property(nonatomic, assign, nullable) id<FSMDelegate> delegate;
+/**
+ *  Handling run loop
+ */
+- (void)handle;
 
-@property(nonatomic, readonly) id<FSMContext> context;  // the machine itself
+/**
+ *  Cleanup after handled
+ */
+- (void)finish;
 
-- (instancetype)initWithDefaultStateName:(NSString *)stateName
-                                capacity:(NSUInteger)countOfStates
-NS_DESIGNATED_INITIALIZER;
+@end
 
-- (void)addState:(FSMState *)state; // add state with transition(s)
+@protocol FSMProcessor <NSObject>
+
+/**
+ *  Do the job
+ *
+ * @return false on nothing to do
+ */
+- (BOOL)process;
+
+@end
+
+@protocol FSMRunner <FSMRunnable, FSMHandler, FSMProcessor>
+
+@property(nonatomic, readonly, getter=isRunning) BOOL running;
+
+- (void)stop;
+
+@end
+
+@interface FSMRunner : NSObject <FSMRunner>
+
+// protected
+- (void)idle;
+
+@end
+
+@interface FSMRunner (Sleeping)
+
++ (void)idle:(NSTimeInterval)seconds;
 
 @end
 

@@ -2,12 +2,12 @@
 //
 //  FSM : Finite State Machine
 //
-//                               Written in 2014 by Moky <albert.moky@gmail.com>
+//                               Written in 2023 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2014 Albert Moky
+// Copyright (c) 2023 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,31 +28,31 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  FSMMachine.h
+//  NSDate+Timestamp.h
 //  FiniteStateMachine
 //
-//  Created by Moky on 14-12-13.
-//  Copyright (c) 2014 Slanissue.com. All rights reserved.
+//  Created by Albert Moky on 2023/3/6.
+//  Copyright © 2023 DIM Group. All rights reserved.
 //
 
-#import <FiniteStateMachine/FSMMetronome.h>
-#import <FiniteStateMachine/FSMProtocol.h>
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class FSMState;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-@interface FSMMachine : NSObject <FSMMachine>
+NSDate *NSDateFromTimeInterval(NSTimeInterval seconds);
+NSTimeInterval NSDateToTimeInterval(NSDate *time);
 
-@property(nonatomic, assign, nullable) id<FSMDelegate> delegate;
+#ifdef __cplusplus
+} /* end of extern "C" */
+#endif
 
-@property(nonatomic, readonly) id<FSMContext> context;  // the machine itself
+@interface NSDate (Timestamp)
 
-- (instancetype)initWithDefaultStateName:(NSString *)stateName
-                                capacity:(NSUInteger)countOfStates
-NS_DESIGNATED_INITIALIZER;
-
-- (void)addState:(FSMState *)state; // add state with transition(s)
++ (NSTimeInterval)currentTimeInterval;
 
 @end
 
