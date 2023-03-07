@@ -29,11 +29,8 @@
 		E9AFAAAB223105FC001F95C6 /* FSMBlockTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = E9AFAA95223105FC001F95C6 /* FSMBlockTransition.m */; };
 		E9AFAAAC223105FC001F95C6 /* FSMTransition.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AFAA96223105FC001F95C6 /* FSMTransition.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9AFAAB722310642001F95C6 /* FiniteStateMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AFAAB622310642001F95C6 /* FiniteStateMachine.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		E9DD8A5E29B595B900010FFE /* FSMWeakSet.h in Headers */ = {isa = PBXBuildFile; fileRef = E9DD8A5C29B595B900010FFE /* FSMWeakSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		E9DD8A5F29B595B900010FFE /* FSMWeakSet.m in Sources */ = {isa = PBXBuildFile; fileRef = E9DD8A5D29B595B900010FFE /* FSMWeakSet.m */; };
 		E9DD8A6229B595EF00010FFE /* NSDate+Timestamp.h in Headers */ = {isa = PBXBuildFile; fileRef = E9DD8A6029B595EF00010FFE /* NSDate+Timestamp.h */; };
 		E9DD8A6329B595EF00010FFE /* NSDate+Timestamp.m in Sources */ = {isa = PBXBuildFile; fileRef = E9DD8A6129B595EF00010FFE /* NSDate+Timestamp.m */; };
-		E9DD8A6629B5B26700010FFE /* NSObject+Singleton.h in Headers */ = {isa = PBXBuildFile; fileRef = E9DD8A6529B5B26700010FFE /* NSObject+Singleton.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9DD8A7329B607E700010FFE /* fsm_transition.c in Sources */ = {isa = PBXBuildFile; fileRef = E9DD8A6829B607E700010FFE /* fsm_transition.c */; };
 		E9DD8A7429B607E700010FFE /* fsm_chain_table.c in Sources */ = {isa = PBXBuildFile; fileRef = E9DD8A6929B607E700010FFE /* fsm_chain_table.c */; };
 		E9DD8A7529B607E700010FFE /* fsm_machine.h in Headers */ = {isa = PBXBuildFile; fileRef = E9DD8A6A29B607E700010FFE /* fsm_machine.h */; };
@@ -93,11 +90,8 @@
 		E9AFAA95223105FC001F95C6 /* FSMBlockTransition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FSMBlockTransition.m; sourceTree = "<group>"; };
 		E9AFAA96223105FC001F95C6 /* FSMTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSMTransition.h; sourceTree = "<group>"; };
 		E9AFAAB622310642001F95C6 /* FiniteStateMachine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FiniteStateMachine.h; sourceTree = "<group>"; };
-		E9DD8A5C29B595B900010FFE /* FSMWeakSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSMWeakSet.h; sourceTree = "<group>"; };
-		E9DD8A5D29B595B900010FFE /* FSMWeakSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FSMWeakSet.m; sourceTree = "<group>"; };
-		E9DD8A6029B595EF00010FFE /* NSDate+Timestamp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSDate+Timestamp.h"; sourceTree = "<group>"; };
-		E9DD8A6129B595EF00010FFE /* NSDate+Timestamp.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSDate+Timestamp.m"; sourceTree = "<group>"; };
-		E9DD8A6529B5B26700010FFE /* NSObject+Singleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+Singleton.h"; sourceTree = "<group>"; };
+		E9DD8A6029B595EF00010FFE /* NSDate+Timestamp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+Timestamp.h"; sourceTree = "<group>"; };
+		E9DD8A6129B595EF00010FFE /* NSDate+Timestamp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+Timestamp.m"; sourceTree = "<group>"; };
 		E9DD8A6829B607E700010FFE /* fsm_transition.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fsm_transition.c; sourceTree = "<group>"; };
 		E9DD8A6929B607E700010FFE /* fsm_chain_table.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fsm_chain_table.c; sourceTree = "<group>"; };
 		E9DD8A6A29B607E700010FFE /* fsm_machine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fsm_machine.h; sourceTree = "<group>"; };
@@ -218,11 +212,8 @@
 		E9DD8A5B29B595A800010FFE /* type */ = {
 			isa = PBXGroup;
 			children = (
-				E9DD8A6529B5B26700010FFE /* NSObject+Singleton.h */,
 				E9DD8A6029B595EF00010FFE /* NSDate+Timestamp.h */,
 				E9DD8A6129B595EF00010FFE /* NSDate+Timestamp.m */,
-				E9DD8A5C29B595B900010FFE /* FSMWeakSet.h */,
-				E9DD8A5D29B595B900010FFE /* FSMWeakSet.m */,
 			);
 			path = type;
 			sourceTree = "<group>";
@@ -281,7 +272,6 @@
 				E9DD8A7529B607E700010FFE /* fsm_machine.h in Headers */,
 				E99F06AA29B4F6D7005A2FE9 /* FSMThread.h in Headers */,
 				E99F06A729B4F6D7005A2FE9 /* FSMMetronome.h in Headers */,
-				E9DD8A5E29B595B900010FFE /* FSMWeakSet.h in Headers */,
 				E9DD8A7629B607E700010FFE /* fsm_state.h in Headers */,
 				E9AFAAA5223105FC001F95C6 /* FSMBlockTransition.h in Headers */,
 				E9AFAAA7223105FC001F95C6 /* FSMState.h in Headers */,
@@ -294,7 +284,6 @@
 				E9AFAAA3223105FC001F95C6 /* FSMAutoMachine.h in Headers */,
 				E9DD8A7C29B607E700010FFE /* fsm_delegate.h in Headers */,
 				E9DD8A6229B595EF00010FFE /* NSDate+Timestamp.h in Headers */,
-				E9DD8A6629B5B26700010FFE /* NSObject+Singleton.h in Headers */,
 				E9AFAAB722310642001F95C6 /* FiniteStateMachine.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -404,7 +393,6 @@
 				E9DD8A9229B607F000010FFE /* ds_stack.c in Sources */,
 				E9DD8A7929B607E700010FFE /* fsm_machine.c in Sources */,
 				E99F06A929B4F6D7005A2FE9 /* FSMRunner.m in Sources */,
-				E9DD8A5F29B595B900010FFE /* FSMWeakSet.m in Sources */,
 				E99F06AB29B4F6D7005A2FE9 /* FSMThread.m in Sources */,
 				E9AFAAA9223105FC001F95C6 /* FSMMachine.m in Sources */,
 				E99F06A629B4F6D7005A2FE9 /* FSMMetronome.m in Sources */,

@@ -49,13 +49,6 @@ FOUNDATION_EXPORT const unsigned char FiniteStateMachineVersionString[];
 #define __FINITE_STATE_MACHINE__ 1
 
 //
-//  type
-//
-#import <FiniteStateMachine/NSObject+Singleton.h>
-#import <FiniteStateMachine/NSDate+Timestamp.h>
-#import <FiniteStateMachine/FSMWeakSet.h>
-
-//
 //  threading
 //
 #import <FiniteStateMachine/FSMThread.h>
