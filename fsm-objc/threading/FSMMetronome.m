@@ -37,8 +37,6 @@
 
 #import <ObjectKey/ObjectKey.h>
 
-#import "NSDate+Timestamp.h"
-
 #import "FSMMetronome.h"
 
 // at least wait 1/60 of a second
@@ -84,7 +82,7 @@
 // Override
 - (void)setup {
     [super setup];
-    _lastTime = [NSDate currentTimeInterval];
+    _lastTime = OKGetCurrentTimeInterval();
 }
 
 // Override
@@ -96,7 +94,7 @@
         return NO;
     }
     // 1. check time
-    NSTimeInterval now = [NSDate currentTimeInterval];
+    NSTimeInterval now = OKGetCurrentTimeInterval();
     NSTimeInterval elapsed = now - _lastTime;
     NSTimeInterval waiting = _interval - elapsed;
     if (waiting < MIN_INTERVAL) {

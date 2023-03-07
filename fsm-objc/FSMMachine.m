@@ -35,11 +35,12 @@
 //  Copyright (c) 2014 Slanissue.com. All rights reserved.
 //
 
+#import <ObjectKey/ObjectKey.h>
+
 #import "fsm_delegate.h"
 #import "fsm_machine.h"
 #import "fsm_state.h"
 
-#import "NSDate+Timestamp.h"
 #import "FSMState.h"
 
 #import "FSMMachine.h"
@@ -186,7 +187,7 @@ static void resume_state(const struct _fsm_delegate *d,
     if (machine == NULL) {
         return;
     }
-    NSTimeInterval now = [NSDate currentTimeInterval];
+    NSTimeInterval now = OKGetCurrentTimeInterval();
     @synchronized (self) {
         machine->start(machine, now);
     }
@@ -198,7 +199,7 @@ static void resume_state(const struct _fsm_delegate *d,
     if (machine == NULL) {
         return;
     }
-    NSTimeInterval now = [NSDate currentTimeInterval];
+    NSTimeInterval now = OKGetCurrentTimeInterval();
     @synchronized (self) {
         machine->stop(machine, now);
     }
@@ -210,7 +211,7 @@ static void resume_state(const struct _fsm_delegate *d,
     if (machine == NULL) {
         return;
     }
-    NSTimeInterval now = [NSDate currentTimeInterval];
+    NSTimeInterval now = OKGetCurrentTimeInterval();
     @synchronized (self) {
         machine->pause(machine, now);
     }
@@ -222,7 +223,7 @@ static void resume_state(const struct _fsm_delegate *d,
     if (machine == NULL) {
         return;
     }
-    NSTimeInterval now = [NSDate currentTimeInterval];
+    NSTimeInterval now = OKGetCurrentTimeInterval();
     @synchronized (self) {
         machine->resume(machine, now);
     }

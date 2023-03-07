@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name                  = 'FiniteStateMachine'
-    s.version               = '2.2.1'
+    s.version               = '2.2.2'
     s.summary               = 'FSM'
     s.description           = <<-DESC
             Finite State Machine
@@ -27,5 +27,5 @@ Pod::Spec.new do |s|
     # s.frameworks          = 'Security'
     s.requires_arc          = false
 
-    s.dependency 'ObjectKey', '~> 0.1.0'
+    s.dependency 'ObjectKey', '~> 0.1.1'
 end
