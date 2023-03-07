@@ -35,9 +35,9 @@
 //  Copyright © 2023 DIM Group. All rights reserved.
 //
 
-#import "NSObject+Singleton.h"
+#import <ObjectKey/ObjectKey.h>
+
 #import "NSDate+Timestamp.h"
-#import "FSMWeakSet.h"
 
 #import "FSMMetronome.h"
 
@@ -51,7 +51,7 @@
 }
 
 @property(nonatomic, retain) id<FSMThread> daemon;
-@property(nonatomic, retain) FSMWeakSet<id<FSMTicker>> *allTickers;
+@property(nonatomic, retain) OKWeakSet<id<FSMTicker>> *allTickers;
 
 @end
 
@@ -76,7 +76,7 @@
         _interval = seconds;
         _lastTime = 0;
         _daemon = [[FSMThread alloc] initWithTarget:self];
-        _allTickers = [[FSMWeakSet alloc] initWithCapacity:8];
+        _allTickers = [[OKWeakSet alloc] initWithCapacity:8];
     }
     return self;
 }
@@ -158,7 +158,7 @@
 
 @implementation FSMPrimeMetronome
 
-SingletonImplementations(FSMPrimeMetronome, sharedInstance)
+OKSingletonImplementations(FSMPrimeMetronome, sharedInstance)
 
 - (void)dealloc {
     [_metronome release];
