@@ -152,7 +152,7 @@
 			children = (
 				E9DD8A7E29B607F000010FFE /* ds-c */,
 				E9DD8A6729B607E700010FFE /* fsm-c */,
-				E9AFAA8A223105FC001F95C6 /* Classes */,
+				E9AFAA8A223105FC001F95C6 /* fsm-objc */,
 				E9AFAA72223105F0001F95C6 /* FiniteStateMachine */,
 				E9AFAA7D223105F0001F95C6 /* FiniteStateMachineTests */,
 				E9AFAA71223105F0001F95C6 /* Products */,
@@ -185,7 +185,7 @@
 			path = FiniteStateMachineTests;
 			sourceTree = "<group>";
 		};
-		E9AFAA8A223105FC001F95C6 /* Classes */ = {
+		E9AFAA8A223105FC001F95C6 /* fsm-objc */ = {
 			isa = PBXGroup;
 			children = (
 				E9DD8A5B29B595A800010FFE /* type */,
@@ -205,8 +205,8 @@
 				E9AFAA92223105FC001F95C6 /* FSMAutoMachine.m */,
 				E9AFAAB622310642001F95C6 /* FiniteStateMachine.h */,
 			);
-			name = Classes;
-			path = ../Classes;
+			name = "fsm-objc";
+			path = "../fsm-objc";
 			sourceTree = "<group>";
 		};
 		E9DD8A5B29B595A800010FFE /* type */ = {

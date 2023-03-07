@@ -20,9 +20,9 @@ Pod::Spec.new do |s|
     # s.platform            = :ios, "11.0"
     s.ios.deployment_target = '11.0'
     
-    s.source_files          = 'Classes/**/*.{h,m}', 'ds-c/*.{h,c}', 'fsm-c/*.{h,c}'
+    s.source_files          = 'fsm-objc/**/*.{h,m}', 'ds-c/*.{h,c}', 'fsm-c/*.{h,c}'
     # s.exclude_files       = 'Classes/Exclude'
-    s.public_header_files   = 'Classes/**/*.h'
+    s.public_header_files   = 'fsm-objc/*.h', 'fsm-objc/threading/*.h'
 
     # s.frameworks          = 'Security'
     s.requires_arc          = false
