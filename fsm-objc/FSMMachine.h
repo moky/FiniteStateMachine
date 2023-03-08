@@ -48,8 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(nonatomic, readonly) id<FSMContext> context;  // the machine itself
 
-- (instancetype)initWithDefaultStateName:(NSString *)stateName
-                                capacity:(NSUInteger)countOfStates
+- (instancetype)initWithCapacity:(NSUInteger)countOfStates
 NS_DESIGNATED_INITIALIZER;
 
 - (void)addState:(FSMState *)state; // add state with transition(s)

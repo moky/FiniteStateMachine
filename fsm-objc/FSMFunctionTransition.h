@@ -39,9 +39,9 @@
 
 @interface FSMFunctionTransition : FSMTransition
 
-- (instancetype)initWithTargetStateName:(NSString *)stateName
-                               delegate:(id)delegate
-                               selector:(SEL)selector
+- (instancetype)initWithTarget:(NSUInteger)stateIndex
+                      delegate:(id)delegate
+                      selector:(SEL)selector
 NS_DESIGNATED_INITIALIZER;
 
 @end

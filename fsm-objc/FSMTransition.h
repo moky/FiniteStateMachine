@@ -35,16 +35,20 @@
 //  Copyright (c) 2014 Slanissue.com. All rights reserved.
 //
 
-#import <FiniteStateMachine/FSMProtocol.h>
+#import <FiniteStateMachine/FSMMachine.h>
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  Transition with the name of target state
  */
 @interface FSMTransition : NSObject <FSMTransition>
 
-@property(nonatomic, readonly) NSString *targetStateName;
+@property(nonatomic, readonly) NSUInteger target;  // target state index
 
-- (instancetype)initWithTargetStateName:(NSString *)stateName
+- (instancetype)initWithTarget:(NSUInteger)stateIndex
 NS_DESIGNATED_INITIALIZER;
 
 @end
+
+NS_ASSUME_NONNULL_END

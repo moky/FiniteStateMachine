@@ -13,30 +13,16 @@
 #include "fsm_transition.h"
 #include "fsm_state.h"
 
-void fsm_set_name(char *dst, const char *src)
-{
-    unsigned long len = strlen(src);
-    if (len >= FSM_MAX_NAME_LENGTH) {
-        len = FSM_MAX_NAME_LENGTH - 1;
-    }
-    strncpy(dst, src, len);
-}
 
-void fsm_erase_name(char *dst)
-{
-    memset(dst, 0, FSM_MAX_NAME_LENGTH);
-}
-
-
-fsm_state * fsm_create_state(const char *name)
+fsm_state * fsm_create_state(fsm_state_evaluate evaluate)
 {
     struct _fsm_state *state = (struct _fsm_state *)malloc(sizeof(struct _fsm_state));
 	memset(state, 0, sizeof(fsm_state));
-	if (name != NULL) {
-        fsm_set_name(state->name, name);
+	if (evaluate == NULL) {
+        evaluate = fsm_tick_state;
 	}
     state->transitions = fsm_chain_create();
-    state->evaluate = fsm_tick_state;
+    state->evaluate = evaluate;
 	return state;
 }
 
@@ -50,15 +36,6 @@ void fsm_destroy_state(fsm_state *state)
 	
 	// 2. free the state
 	free(state);
-}
-
-void fsm_rename_state(fsm_state *state, const char *name)
-{
-    if (name == NULL) {
-        fsm_erase_name(state->name);
-    } else {
-        fsm_set_name(state->name, name);
-    }
 }
 
 void fsm_add_transition(fsm_state *state, const fsm_transition *trans)

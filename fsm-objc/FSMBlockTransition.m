@@ -54,14 +54,14 @@
     [super dealloc];
 }
 
-- (instancetype)initWithTargetStateName:(NSString *)stateName {
-	return [self initWithTargetStateName:stateName block:NULL];
+- (instancetype)initWithTarget:(NSUInteger)stateIndex {
+	return [self initWithTarget:stateIndex block:NULL];
 }
 
 /* designated initializer */
-- (instancetype)initWithTargetStateName:(NSString *)stateName
-                                  block:(FSMBlock)block {
-	self = [super initWithTargetStateName:stateName];
+- (instancetype)initWithTarget:(NSUInteger)stateIndex
+                         block:(FSMBlock)block {
+	self = [super initWithTarget:stateIndex];
 	if (self) {
 		self.block = block;
 	}

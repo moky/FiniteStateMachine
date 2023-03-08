@@ -50,20 +50,18 @@ static fsm_bool trans_eval(const fsm_transition *trans,
     return ok ? FSMTrue : FSMFalse;
 }
 
-@interface FSMTransition ()
+@interface FSMTransition () {
+    
+    NSUInteger _target;
+}
 
 @property(nonatomic, assign) fsm_transition *innerTransition;
-
-@property(nonatomic, retain) NSString *targetStateName;
 
 @end
 
 @implementation FSMTransition
 
 - (void)dealloc {
-	[_targetStateName release];
-    _targetStateName = nil;
-	
     fsm_transition *trans = _innerTransition;
 	if (trans) {
         fsm_destroy_transition(trans);
@@ -75,7 +73,7 @@ static fsm_bool trans_eval(const fsm_transition *trans,
 
 + (instancetype)allocWithZone:(struct _NSZone *)zone {
 	id object = [super allocWithZone:zone];
-	fsm_transition *trans = fsm_create_transition(NULL, trans_eval);
+	fsm_transition *trans = fsm_create_transition(trans_eval);
 	if (trans) {
 		trans->ctx = object;
 	}
@@ -85,26 +83,25 @@ static fsm_bool trans_eval(const fsm_transition *trans,
 
 - (instancetype)init {
     NSAssert(false, @"don't call me!");
-	return [self initWithTargetStateName:nil];
+	return [self initWithTarget:-1];
 }
 
 /* designated initializer */
-- (instancetype)initWithTargetStateName:(NSString *)stateName {
+- (instancetype)initWithTarget:(NSUInteger)stateIndex {
 	self = [super init];
 	if (self) {
-        self.targetStateName = stateName;
+        self.target = stateIndex;
 	}
 	return self;
 }
 
-- (void)setTargetStateName:(NSString *)stateName {
-	if (_targetStateName != stateName) {
-		[stateName retain];
-		[_targetStateName release];
-		_targetStateName = stateName;
-		
-		fsm_rename_transition(_innerTransition, [stateName UTF8String]);
-	}
+- (NSUInteger)target {
+    return _target;
+}
+
+- (void)setTarget:(NSUInteger)target {
+    _innerTransition->target = (unsigned int)target;
+    _target = target;
 }
 
 // abstractmethod

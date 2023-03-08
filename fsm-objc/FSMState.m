@@ -90,11 +90,13 @@ static void on_resume(const fsm_state   *s,
     [state onResume:machine time:now];
 }
 
-@interface FSMState ()
+@interface FSMState () {
+    
+    NSUInteger _index;
+}
 
 @property(nonatomic, assign) fsm_state *innerState;
 
-@property(nonatomic, retain) NSString *name;
 @property(nonatomic, retain) NSMutableArray<id<FSMTransition>> *transitions;
 
 @end
@@ -102,8 +104,6 @@ static void on_resume(const fsm_state   *s,
 @implementation FSMState
 
 - (void)dealloc {
-	[_name release];
-    _name = nil;
 	[_transitions release];
     _transitions = nil;
 	
@@ -131,32 +131,31 @@ static void on_resume(const fsm_state   *s,
 }
 
 - (instancetype)init {
-	return [self initWithName:nil capacity:4];
+    NSAssert(false, @"don't call me!");
+	return [self initWithIndex:-1 capacity:4];
 }
 
-- (instancetype)initWithName:(NSString *)name {
-    return [self initWithName:name capacity:4];
+- (instancetype)initWithIndex:(NSUInteger)stateIndex {
+    return [self initWithIndex:stateIndex capacity:4];
 }
 
 /* designated initializer */
-- (instancetype)initWithName:(NSString *)name
+- (instancetype)initWithIndex:(NSUInteger)stateIndex
                     capacity:(NSUInteger)countOfTransitions {
 	self = [super init];
 	if (self) {
-        self.name = name;
+        self.index = stateIndex;
 		self.transitions = [NSMutableArray arrayWithCapacity:countOfTransitions];
 	}
 	return self;
 }
 
-- (void)setName:(NSString *)name {
-	if (_name != name) {
-		[name retain];
-		[_name release];
-		_name = name;
-		
-		fsm_rename_state(_innerState, [name UTF8String]);
-	}
+- (NSUInteger)index {
+    return _index;
+}
+- (void)setIndex:(NSUInteger)index {
+    _innerState->index = (unsigned int)index;
+    _index = index;
 }
 
 - (void)addTransition:(FSMTransition *)transition {

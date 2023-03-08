@@ -17,7 +17,9 @@ static inline void _assign(const ds_chain_table * chain, ds_type * dest, const d
 		chain->fn.assign(dest, src);
 	} else if (chain->bk.assign) {
 		chain->bk.assign(dest, src);
-	} else {
+    } else if (src == NULL) {
+        bzero(dest, chain->data_size);
+    } else {
 		memcpy(dest, src, chain->data_size);
 	}
 }

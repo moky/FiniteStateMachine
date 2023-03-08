@@ -37,17 +37,16 @@
 
 #import "FSMThread.h"
 
-typedef NS_ENUM(UInt8, ThreadStatus) {
+typedef NS_ENUM(UInt8, FSMThreadStatus) {
     
-    ThreadStatusStopped = 0,
-    ThreadStatusStarted = 1,
-    ThreadStatusRunning = 2,
+    FSMThreadStatusStopped = 0,
+    FSMThreadStatusStarted = 1,
+    FSMThreadStatusRunning = 2,
 };
-typedef UInt8 MKMMetaType;
 
 @interface FSMThread () {
     
-    ThreadStatus _status;
+    FSMThreadStatus _status;
 }
 
 @property(nonatomic, assign, nullable) id<FSMRunnable> target;
@@ -68,7 +67,7 @@ typedef UInt8 MKMMetaType;
 /* designated initializer */
 - (instancetype)init {
     if (self = [super init]) {
-        _status = ThreadStatusStopped;
+        _status = FSMThreadStatusStopped;
         _target = nil;
         _block = NULL;
     }
@@ -78,7 +77,7 @@ typedef UInt8 MKMMetaType;
 /* designated initializer */
 - (instancetype)initWithTarget:(id<FSMRunnable>)target {
     if (self = [super init]) {
-        _status = ThreadStatusStopped;
+        _status = FSMThreadStatusStopped;
         _target = target;
         _block = NULL;
     }
@@ -95,13 +94,13 @@ typedef UInt8 MKMMetaType;
 }
 
 // private
-- (void)setStatus:(ThreadStatus)flag {
+- (void)setStatus:(FSMThreadStatus)flag {
     _status = flag;
 }
 
 // Override
 - (BOOL)isAlive {
-    return _status > ThreadStatusStopped;
+    return _status > FSMThreadStatusStopped;
 }
 
 // Override
@@ -110,16 +109,16 @@ typedef UInt8 MKMMetaType;
         NSAssert(false, @"the thread is running");
         return;
     } else {
-        _status = ThreadStatusStarted;
+        _status = FSMThreadStatusStarted;
     }
     __block FSMThread *thread = self;
 
     dispatch_block_t block = ^{
-        [thread setStatus:ThreadStatusRunning];
+        [thread setStatus:FSMThreadStatusRunning];
         @try {
             [thread run];
         } @finally {
-            [thread setStatus:ThreadStatusStopped];
+            [thread setStatus:FSMThreadStatusStopped];
         }
     };
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0),
@@ -129,7 +128,7 @@ typedef UInt8 MKMMetaType;
 
 // Override
 - (void)cancel {
-    if (_status == ThreadStatusStarted) {
+    if (_status == FSMThreadStatusStarted) {
         dispatch_block_cancel(_block);
     }
 }

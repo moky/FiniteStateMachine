@@ -13,13 +13,10 @@
 #include "fsm_state.h"
 #include "fsm_machine.h"
 
-fsm_machine *fsm_create_machine(const char *default_state)
+fsm_machine *fsm_create_machine(void)
 {
 	fsm_machine * machime = (fsm_machine *)malloc(sizeof(fsm_machine));
 	memset(machime, 0, sizeof(fsm_machine));
-    if (default_state != NULL) {
-        fsm_set_name(machime->default_state, default_state);
-    }
     machime->states = fsm_chain_create();
     machime->current = FSMNotFound;
     machime->status = fsm_stopped;
@@ -52,73 +49,85 @@ void fsm_destroy_machine(fsm_machine *machime)
 	free(machime);
 }
 
-void fsm_set_default_name(fsm_machine *machine, const char *default_state)
-{
-    if (default_state == NULL) {
-        fsm_erase_name(machine->default_state);
-    } else {
-        fsm_set_name(machine->default_state, default_state);
-    }
-}
-
-fsm_state *fsm_state_at(const fsm_machine *machine, unsigned int index)
+static inline fsm_state *fsm_state_at(const fsm_machine *machine, unsigned int index)
 {
     fsm_chain_node *node = fsm_chain_at(machine->states, index);
     return fsm_chain_get(node);
 }
 
-void fsm_add_state(fsm_machine *machine, const fsm_state *state)
+const fsm_state *fsm_add_state(fsm_machine *machine, const fsm_state *state)
 {
-	fsm_chain_add(machine->states, state);
-}
-
-fsm_state *fsm_get_state(const fsm_machine *machine, const char *name, unsigned int *index)
-{
-	fsm_state *state = NULL;
-    if (index != NULL) {
-        *index = FSMNotFound;
+    unsigned int index = state->index;
+    unsigned size = fsm_chain_length(machine->states);
+    if (index < size) {
+        // replace
+        fsm_chain_node *node = fsm_chain_at(machine->states, index);
+        fsm_state *old = fsm_chain_get(node);
+        fsm_chain_set(node, state);
+        // WARNING: return old state that was replaced
+        return old == state ? NULL : old;
     }
-	if (name != NULL) {
-		const fsm_chain_node * node;
-		unsigned int i = 0;
-		DS_FOR_EACH_CHAIN_NODE(machine->states, node) {
-			state = fsm_chain_get(node);
-			if (strcmp(state->name, name) == 0) {
-                if (index != NULL) {
-                    *index = i;
-                }
-				break;
-			}
-			++i;
-			state = NULL;
-		}
-	}
-	return state;
+    // filling empty spaces
+    int spaces = index - size;
+    for (int i = 0; i < spaces; ++i) {
+        fsm_chain_add(machine->states, NULL);
+    }
+    // append the new state to the tail
+	fsm_chain_add(machine->states, state);
+    return NULL;
 }
 
-fsm_state *fsm_get_default_state(const fsm_machine *machine, unsigned int *index)
+fsm_state *fsm_get_state(const fsm_machine *machine, unsigned int index)
 {
-    return fsm_get_state(machine, machine->default_state, index);
+    return fsm_state_at(machine, index);
 }
 
-fsm_state *fsm_get_target_state(const fsm_machine *machine, const fsm_transition *trans, unsigned int *index)
+fsm_state *fsm_get_default_state(const fsm_machine *machine)
 {
-    return fsm_get_state(machine, trans->target, index);
+    return fsm_state_at(machine, 0);
+}
+
+fsm_state *fsm_get_target_state(const fsm_machine *machine, const fsm_transition *trans)
+{
+    return fsm_state_at(machine, trans->target);
 }
 
 fsm_state *fsm_get_current_state(const fsm_machine *machine)
 {
-    return fsm_state_at(machine, machine->current);
+    int current = machine->current;
+    if (current < 0) {  // -1
+        return NULL;
+    }
+    return fsm_state_at(machine, current);
 }
 
-fsm_bool fsm_change_state(fsm_machine *machine, const fsm_state *next,
-                          const unsigned int index, const fsm_time now)
+static inline void fsm_set_current_state(fsm_machine *machine, const fsm_state *next)
 {
-    if (index == machine->current) {
+    if (next == NULL) {
+        machine->current = -1;
+    } else {
+        machine->current = next->index;
+    }
+}
+
+/**
+ *  Exit current state, and enter new state
+ *
+ * @param next - next state
+ * @param now  - current time (milliseconds, from Jan 1, 1970 UTC)
+ */
+fsm_bool fsm_change_state(fsm_machine *machine, const fsm_state *next, const fsm_time now)
+{
+    fsm_state *current = fsm_get_current_state(machine);
+    if (current == NULL) {
+        if (next == NULL) {
+            // state not change
+            return FSMFalse;
+        }
+    } else if (current == next) {
         // state not change
         return FSMFalse;
     }
-    fsm_state *current = machine->current_state(machine);
     
     fsm_context *ctx = machine;
     fsm_delegate *delegate = machine->delegate;
@@ -138,7 +147,7 @@ fsm_bool fsm_change_state(fsm_machine *machine, const fsm_state *next,
     //
     //  Change current state
     //
-    machine->current = index;
+    fsm_set_current_state(machine, next);
     
     //
     //  Events after state changed
@@ -157,9 +166,8 @@ fsm_bool fsm_change_state(fsm_machine *machine, const fsm_state *next,
 
 void fsm_start_machine(fsm_machine *machine, const fsm_time now)
 {
-    unsigned int index = FSMNotFound;
-    fsm_state *next = fsm_get_default_state(machine, &index);
-    fsm_change_state(machine, next, index, now);
+    fsm_state *next = fsm_get_default_state(machine);
+    fsm_change_state(machine, next, now);
     machine->status = fsm_running;
 }
 
@@ -167,7 +175,7 @@ void fsm_stop_machine(fsm_machine *machine, const fsm_time now)
 {
     machine->status = fsm_stopped;
     // force current state to null
-    fsm_change_state(machine, NULL, FSMNotFound, now);
+    fsm_change_state(machine, NULL, now);
 }
 
 void fsm_pause_machine(fsm_machine *machine, const fsm_time now)
@@ -223,9 +231,8 @@ void fsm_tick_machine(fsm_machine *machine, const fsm_time now, const fsm_time e
     if (current != NULL && machine->status == fsm_running) {
         const fsm_transition *trans = current->evaluate(current, ctx, now);
         if (trans != NULL) {
-            unsigned int index = FSMNotFound;
-            fsm_state *next = fsm_get_target_state(machine, trans, &index);
-            fsm_change_state(machine, next, index, now);
+            fsm_state *next = fsm_get_target_state(machine, trans);
+            fsm_change_state(machine, next, now);
         }
     }
 }

@@ -37,19 +37,23 @@
 
 #import <FiniteStateMachine/FSMTransition.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  *  State with transitions
  */
 @interface FSMState : NSObject <FSMState>
 
-@property(nonatomic, readonly) NSString *name;
+@property(nonatomic, readonly) NSUInteger index;
 
-- (instancetype)initWithName:(NSString *)name;
+- (instancetype)initWithIndex:(NSUInteger)stateIndex;
 
-- (instancetype)initWithName:(NSString *)name
+- (instancetype)initWithIndex:(NSUInteger)stateIndex
                     capacity:(NSUInteger)countOfTransitions
 NS_DESIGNATED_INITIALIZER;
 
 - (void)addTransition:(FSMTransition *)transition;
 
 @end
+
+NS_ASSUME_NONNULL_END

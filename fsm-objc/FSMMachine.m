@@ -55,11 +55,14 @@ static void enter_state(const struct _fsm_delegate *d,
                         const struct _fsm_state    *s,
                         const         fsm_context  *ctx,
                         const         fsm_time      now) {
-    FSMMachine *machine = d->ctx;
-    id<FSMDelegate> delegate = machine.delegate;
-    id<FSMContext> context = (id<FSMContext>)machine;
+    fsm_machine *m = (fsm_machine *)ctx;
+    id<FSMContext> context = m->ctx;
+    id<FSMDelegate> delegate = d->ctx;
     id<FSMState> next = s->ctx;
-    
+    if (!delegate) {
+        FSMMachine *machine = (FSMMachine *)context;
+        delegate = [machine delegate];
+    }
     [delegate machine:context enterState:next time:now];
 }
 
@@ -67,11 +70,14 @@ static void exit_state(const struct _fsm_delegate *d,
                        const struct _fsm_state    *s,
                        const         fsm_context  *ctx,
                        const         fsm_time      now) {
-    FSMMachine *machine = d->ctx;
-    id<FSMDelegate> delegate = machine.delegate;
-    id<FSMContext> context = (id<FSMContext>)machine;
+    fsm_machine *m = (fsm_machine *)ctx;
+    id<FSMContext> context = m->ctx;
+    id<FSMDelegate> delegate = d->ctx;
     id<FSMState> previous = s->ctx;
-
+    if (!delegate) {
+        FSMMachine *machine = (FSMMachine *)context;
+        delegate = [machine delegate];
+    }
     [delegate machine:context exitState:previous time:now];
 }
 
@@ -79,11 +85,14 @@ static void pause_state(const struct _fsm_delegate *d,
                         const struct _fsm_state    *s,
                         const         fsm_context  *ctx,
                         const         fsm_time      now) {
-    FSMMachine *machine = d->ctx;
-    id<FSMDelegate> delegate = machine.delegate;
-    id<FSMContext> context = (id<FSMContext>)machine;
+    fsm_machine *m = (fsm_machine *)ctx;
+    id<FSMContext> context = m->ctx;
+    id<FSMDelegate> delegate = d->ctx;
     id<FSMState> current = s->ctx;
-
+    if (!delegate) {
+        FSMMachine *machine = (FSMMachine *)context;
+        delegate = [machine delegate];
+    }
     [delegate machine:context pauseState:current time:now];
 }
 
@@ -91,11 +100,14 @@ static void resume_state(const struct _fsm_delegate *d,
                          const struct _fsm_state    *s,
                          const         fsm_context  *ctx,
                          const         fsm_time      now) {
-    FSMMachine *machine = d->ctx;
-    id<FSMDelegate> delegate = machine.delegate;
-    id<FSMContext> context = (id<FSMContext>)machine;
+    fsm_machine *m = (fsm_machine *)ctx;
+    id<FSMContext> context = m->ctx;
+    id<FSMDelegate> delegate = d->ctx;
     id<FSMState> current = s->ctx;
-
+    if (!delegate) {
+        FSMMachine *machine = (FSMMachine *)context;
+        delegate = [machine delegate];
+    }
     [delegate machine:context resumeState:current time:now];
 }
 
@@ -104,7 +116,6 @@ static void resume_state(const struct _fsm_delegate *d,
 @property(nonatomic, assign) fsm_machine  *innerMachine;
 @property(nonatomic, assign) fsm_delegate *innerDelegate;
 
-@property(nonatomic, retain) NSString *defaultStateName; // default is "default"
 @property(nonatomic, retain) NSMutableArray<id<FSMState>> *states;
 
 @end
@@ -112,28 +123,26 @@ static void resume_state(const struct _fsm_delegate *d,
 @implementation FSMMachine
 
 - (void)dealloc {
-	[_defaultStateName release];
-    _defaultStateName = nil;
 	[_states release];
     _states = nil;
 	
-    fsm_machine *machine = _innerMachine;
-	if (machine != NULL) {
-		fsm_destroy_machine(machine);
-        _innerMachine = NULL;
-	}
     fsm_delegate *delegate = _innerDelegate;
     if (delegate != NULL) {
         fsm_destroy_delegate(delegate);
         _innerDelegate = NULL;
     }
-	
+    fsm_machine *machine = _innerMachine;
+    if (machine != NULL) {
+        fsm_destroy_machine(machine);
+        _innerMachine = NULL;
+    }
+
 	[super dealloc];
 }
 
 + (instancetype)allocWithZone:(struct _NSZone *)zone {
 	id object = [super allocWithZone:zone];
-	fsm_machine *machine = fsm_create_machine(NULL);
+	fsm_machine *machine = fsm_create_machine();
 	if (machine) {
         fsm_delegate *delegate = fsm_create_delegate();
         if (delegate != NULL) {
@@ -141,8 +150,9 @@ static void resume_state(const struct _fsm_delegate *d,
             delegate->exit_state   = exit_state;
             delegate->pause_state  = pause_state;
             delegate->resume_state = resume_state;
-            delegate->ctx = object;
+            //delegate->ctx = object;
         }
+        [object setInnerDelegate:delegate];
         machine->delegate = delegate;
 		machine->ctx = object;
 	}
@@ -151,19 +161,29 @@ static void resume_state(const struct _fsm_delegate *d,
 }
 
 - (instancetype)init {
-	return [self initWithDefaultStateName:@"default" capacity:8];
+	return [self initWithCapacity:8];
 }
 
 /* designated initializer */
-- (instancetype)initWithDefaultStateName:(NSString *)stateName
-                                capacity:(NSUInteger)countOfStates {
+- (instancetype)initWithCapacity:(NSUInteger)countOfStates {
 	if (self = [super init]) {
-		self.defaultStateName = stateName;
 		self.states = [NSMutableArray arrayWithCapacity:countOfStates];
 		
 		self.delegate = nil;
 	}
 	return self;
+}
+
+- (id<FSMDelegate>)delegate {
+    return _innerDelegate->ctx;
+}
+- (void)setDelegate:(id<FSMDelegate>)delegate {
+    _innerDelegate->ctx = delegate;
+}
+
+- (id<FSMContext>)context {
+    NSAssert(false, @"override me!");
+    return nil;
 }
 
 - (void)addState:(FSMState *)state {

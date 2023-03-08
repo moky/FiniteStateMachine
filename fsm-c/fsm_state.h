@@ -12,14 +12,8 @@
 #include "fsm_protocol.h"
 
 
-void fsm_set_name(char *dst, const char *src);
-void fsm_erase_name(char *dst);
-
-
-fsm_state *fsm_create_state(const char *name);
+fsm_state *fsm_create_state(fsm_state_evaluate evaluate);
 void fsm_destroy_state(fsm_state *state);
-
-void fsm_rename_state(fsm_state *state, const char *name);
 
 void fsm_add_transition(fsm_state *state, const fsm_transition *trans);
 

@@ -53,17 +53,17 @@
 //	[super dealloc];
 //}
 
-- (instancetype)initWithTargetStateName:(NSString *)stateName {
-	return [self initWithTargetStateName:stateName
-                                delegate:nil
-                                selector:NULL];
+- (instancetype)initWithTarget:(NSUInteger)stateIndex {
+	return [self initWithTarget:(NSUInteger)stateIndex
+                       delegate:nil
+                       selector:NULL];
 }
 
 /* designated initializer */
-- (instancetype)initWithTargetStateName:(NSString *)stateName
-                               delegate:(id)delegate
-                               selector:(SEL)selector {
-	self = [super initWithTargetStateName:stateName];
+- (instancetype)initWithTarget:(NSUInteger)stateIndex
+                      delegate:(id)delegate
+                      selector:(SEL)selector {
+	self = [super initWithTarget:stateIndex];
 	if (self) {
 		self.delegate = delegate;
 		self.selector = selector;

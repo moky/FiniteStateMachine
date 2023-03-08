@@ -44,8 +44,6 @@
 
 #define FSMNotFound         0xffffffff
 
-#define FSM_MAX_NAME_LENGTH 32
-
 
 typedef int             fsm_bool;
 typedef double          fsm_time;  // seconds, from Jan 1, 1970 UTC
@@ -273,7 +271,7 @@ typedef struct _fsm_state {
     fsm_context *ctx;
     
     // properties
-    char name[FSM_MAX_NAME_LENGTH];  // name of state
+    unsigned int index;  // state index in the machine
     
     fsm_chain_table *transitions;    // transitions of state
     
@@ -295,7 +293,7 @@ typedef struct _fsm_transition {
     fsm_context *ctx;
     
     // property
-    char target[FSM_MAX_NAME_LENGTH];  // target state name
+    unsigned int target;  // target state index
     
     // method
     fsm_transition_evaluate evaluate;
@@ -311,12 +309,11 @@ typedef struct _fsm_machine {
     fsm_context *ctx;
     
     // properties
-    char default_state[FSM_MAX_NAME_LENGTH];  // default state name
-    fsm_chain_table *states;  // finite array for states
-    unsigned int     current;     // index of current state
+    fsm_chain_table *states;    // array of finite states
+    int              current;   // current state index, -1 for null
     
-    enum fsm_status  status;   // machine status
-    fsm_delegate    *delegate;   // machine delegate
+    enum fsm_status  status;    // machine status
+    fsm_delegate    *delegate;  // machine delegate
     
     // methods
     fsm_machine_current current_state;
