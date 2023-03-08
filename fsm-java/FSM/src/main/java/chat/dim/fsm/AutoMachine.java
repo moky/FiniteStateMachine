@@ -32,12 +32,8 @@ package chat.dim.fsm;
 
 import chat.dim.threading.PrimeMetronome;
 
-public abstract class AutoMachine<C extends Context, T extends BaseTransition<C>, S extends State<C, T>>
+public abstract class AutoMachine<C extends Context, T extends BaseTransition<C>, S extends BaseState<C, T>>
         extends BaseMachine<C, T, S> {
-
-    public AutoMachine(String defaultState) {
-        super(defaultState);
-    }
 
     @Override
     public void start() {
@@ -51,5 +47,19 @@ public abstract class AutoMachine<C extends Context, T extends BaseTransition<C>
         PrimeMetronome timer = PrimeMetronome.getInstance();
         timer.removeTicker(this);
         super.stop();
+    }
+
+    @Override
+    public void pause() {
+        PrimeMetronome timer = PrimeMetronome.getInstance();
+        timer.removeTicker(this);
+        super.pause();
+    }
+
+    @Override
+    public void resume() {
+        super.resume();
+        PrimeMetronome timer = PrimeMetronome.getInstance();
+        timer.addTicker(this);
     }
 }

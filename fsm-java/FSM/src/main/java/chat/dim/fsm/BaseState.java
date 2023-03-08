@@ -38,7 +38,13 @@ import java.util.List;
  */
 public abstract class BaseState<C extends Context, T extends Transition<C>> implements State<C, T> {
 
+    public final int index;
     private final List<T> transitionList = new ArrayList<>();
+
+    protected BaseState(int index) {
+        super();
+        this.index = index;
+    }
 
     public void addTransition(T transition) {
         if (transitionList.contains(transition)) {

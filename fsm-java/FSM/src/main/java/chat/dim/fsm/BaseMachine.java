@@ -31,23 +31,21 @@
 package chat.dim.fsm;
 
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
-public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>, S extends State<C, T>>
+public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>, S extends BaseState<C, T>>
         implements Machine<C, T, S> {
 
-    private final Map<String, S> stateMap = new HashMap<>();
-    private final String defaultStateName;
-    private WeakReference<S> currentStateRef;
+    private final List<S> states = new ArrayList<>();
+    private int current;  // current state index
 
     private Status status;
     private WeakReference<Delegate<C, T, S>> delegateRef;
 
-    public BaseMachine(String defaultState) {
+    public BaseMachine() {
         super();
-        defaultStateName = defaultState;
-        currentStateRef = null;
+        current = -1;
         status = Status.Stopped;
         delegateRef = new WeakReference<>(null);
     }
@@ -66,27 +64,48 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
     //
     //  States
     //
-    public void setState(String name, S state) {
-        stateMap.put(name, state);
+    public S addState(S newState) {
+        int index = newState.index;
+        if (index < 0) {
+            throw new IndexOutOfBoundsException("state index error: " + index);
+        } else if (index < states.size()) {
+            // WARNING: return old state that was replaced
+            return states.set(index, newState);
+        }
+        // filling empty spaces
+        int spaces = index - states.size();
+        for (int i = 0; i < spaces; ++i) {
+            states.add(null);
+        }
+        // append the new state to the tail
+        states.add(newState);
+        return null;
     }
-    public S getState(String name) {
-        return stateMap.get(name);
+    public S getState(int index) {
+        return states.get(index);
     }
 
     protected S getDefaultState() {
-        return stateMap.get(defaultStateName);
+        assert states.size() > 0 : "states not set yet";
+        return states.get(0);
     }
     protected S getTargetState(T transition) {
         // Get target state of this transition
-        return stateMap.get(transition.target);
+        return states.get(transition.target);
     }
     @Override
     public S getCurrentState() {
-        WeakReference<S> ref = currentStateRef;
-        return ref == null ? null : ref.get();
+        if (current < 0) {  // -1
+            return null;
+        }
+        return states.get(current);
     }
     private void setCurrentState(S newState) {
-        currentStateRef = newState == null ? null : new WeakReference<>(newState);
+        if (newState == null) {
+            current = -1;
+        } else {
+            current = newState.index;
+        }
     }
 
     /**

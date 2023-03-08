@@ -35,9 +35,9 @@ package chat.dim.fsm;
  */
 public abstract class BaseTransition<C extends Context> implements Transition<C> {
 
-    public final String target; // target state name
+    public final int target; // target state index
 
-    protected BaseTransition(String target) {
+    protected BaseTransition(int target) {
         super();
         this.target = target;
     }

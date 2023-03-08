@@ -40,8 +40,8 @@ import chat.dim.type.WeakSet;
 
 public class Metronome extends Runner {
 
-    // at least wait 0.1 second
-    public static long MIN_INTERVAL = 100;
+    // at least wait 1/60 of a second
+    public static long MIN_INTERVAL = 1000/60;
 
     private final long interval;
     private long lastTime;
@@ -133,6 +133,8 @@ public class Metronome extends Runner {
     public void start() {
         daemon.start();
     }
+
+    @Override
     public void stop() {
         super.stop();
         daemon.stop();
