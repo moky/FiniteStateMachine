@@ -27,5 +27,5 @@ Pod::Spec.new do |s|
     # s.frameworks          = 'Security'
     s.requires_arc          = false
 
-    s.dependency 'ObjectKey', '~> 0.1.1'
+    s.dependency 'ObjectKey', '~> 0.1.2'
 end

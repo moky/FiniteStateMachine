@@ -109,6 +109,7 @@
             [item tick:now elapsed:elapsed];
         } @catch (NSException *exception) {
             NSLog(@"tick error: %@", exception);
+        } @finally {
         }
     }
     // 3. update last time

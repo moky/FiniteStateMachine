@@ -50,7 +50,6 @@ typedef NS_ENUM(UInt8, FSMThreadStatus) {
 }
 
 @property(nonatomic, assign, nullable) id<FSMRunnable> target;
-@property(nonatomic, copy) dispatch_block_t block;
 
 @end
 
@@ -58,8 +57,6 @@ typedef NS_ENUM(UInt8, FSMThreadStatus) {
 
 - (void)dealloc {
     _target = nil;
-    [_block release];
-    _block = NULL;
 
     [super dealloc];
 }
@@ -69,7 +66,6 @@ typedef NS_ENUM(UInt8, FSMThreadStatus) {
     if (self = [super init]) {
         _status = FSMThreadStatusStopped;
         _target = nil;
-        _block = NULL;
     }
     return self;
 }
@@ -79,7 +75,6 @@ typedef NS_ENUM(UInt8, FSMThreadStatus) {
     if (self = [super init]) {
         _status = FSMThreadStatusStopped;
         _target = target;
-        _block = NULL;
     }
     return self;
 }
@@ -111,26 +106,25 @@ typedef NS_ENUM(UInt8, FSMThreadStatus) {
     } else {
         _status = FSMThreadStatusStarted;
     }
-    __block FSMThread *thread = self;
+    /*__weak*/ __block __typeof(self) thread = self;
 
-    dispatch_block_t block = ^{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
         [thread setStatus:FSMThreadStatusRunning];
         @try {
             [thread run];
         } @finally {
             [thread setStatus:FSMThreadStatusStopped];
         }
-    };
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0),
-                   block);
-    self.block = block;
+    });
 }
 
 // Override
 - (void)cancel {
-    if (_status == FSMThreadStatusStarted) {
-        dispatch_block_cancel(_block);
-    }
+    // TODO: cancel the waiting block
+//    if (_status == FSMThreadStatusStarted) {
+//        dispatch_block_cancel(self.block);
+//    }
+//    self.block = NULL;
 }
 
 @end
