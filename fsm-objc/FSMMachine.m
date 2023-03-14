@@ -57,8 +57,8 @@ static void enter_state(const struct _fsm_delegate *d,
                         const         fsm_time      now) {
     fsm_machine *m = (fsm_machine *)ctx;
     id<FSMContext> context = m->ctx;
-    id<FSMDelegate> delegate = d->ctx;
-    id<FSMState> next = s->ctx;
+    id<FSMDelegate> delegate = d == NULL ? nil : d->ctx;
+    id<FSMState> next        = s == NULL ? nil : s->ctx;
     if (!delegate) {
         FSMMachine *machine = (FSMMachine *)context;
         delegate = [machine delegate];
@@ -72,8 +72,8 @@ static void exit_state(const struct _fsm_delegate *d,
                        const         fsm_time      now) {
     fsm_machine *m = (fsm_machine *)ctx;
     id<FSMContext> context = m->ctx;
-    id<FSMDelegate> delegate = d->ctx;
-    id<FSMState> previous = s->ctx;
+    id<FSMDelegate> delegate = d == NULL ? nil : d->ctx;
+    id<FSMState> previous    = s == NULL ? nil : s->ctx;
     if (!delegate) {
         FSMMachine *machine = (FSMMachine *)context;
         delegate = [machine delegate];
@@ -87,8 +87,8 @@ static void pause_state(const struct _fsm_delegate *d,
                         const         fsm_time      now) {
     fsm_machine *m = (fsm_machine *)ctx;
     id<FSMContext> context = m->ctx;
-    id<FSMDelegate> delegate = d->ctx;
-    id<FSMState> current = s->ctx;
+    id<FSMDelegate> delegate = d == NULL ? nil : d->ctx;
+    id<FSMState> current     = s == NULL ? nil : s->ctx;
     if (!delegate) {
         FSMMachine *machine = (FSMMachine *)context;
         delegate = [machine delegate];
@@ -102,8 +102,8 @@ static void resume_state(const struct _fsm_delegate *d,
                          const         fsm_time      now) {
     fsm_machine *m = (fsm_machine *)ctx;
     id<FSMContext> context = m->ctx;
-    id<FSMDelegate> delegate = d->ctx;
-    id<FSMState> current = s->ctx;
+    id<FSMDelegate> delegate = d == NULL ? nil : d->ctx;
+    id<FSMState> current     = s == NULL ? nil : s->ctx;
     if (!delegate) {
         FSMMachine *machine = (FSMMachine *)context;
         delegate = [machine delegate];

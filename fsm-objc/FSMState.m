@@ -52,8 +52,8 @@ static void on_enter(const fsm_state   *s,
                      const fsm_time     now) {
     fsm_machine *m = (fsm_machine *)ctx;
     id<FSMContext> machine = m->ctx;
-    id<FSMState> previous = p->ctx;
-    id<FSMState> state = s->ctx;
+    id<FSMState> previous = p == NULL ? nil : p->ctx;
+    id<FSMState> state    = s == NULL ? nil : s->ctx;
 
     [state onEnter:previous machine:machine time:now];
 }
@@ -64,8 +64,8 @@ static void on_exit(const fsm_state   *s,
                     const fsm_time     now) {
     fsm_machine *m = (fsm_machine *)ctx;
     id<FSMContext> machine = m->ctx;
-    id<FSMState> next = n->ctx;
-    id<FSMState> state = s->ctx;
+    id<FSMState> next  = n == NULL ? nil : n->ctx;
+    id<FSMState> state = s == NULL ? nil : s->ctx;
 
     [state onExit:next machine:machine time:now];
 }
@@ -75,7 +75,7 @@ static void on_pause(const fsm_state   *s,
                      const fsm_time     now) {
     fsm_machine *m = (fsm_machine *)ctx;
     id<FSMContext> machine = m->ctx;
-    id<FSMState> state = s->ctx;
+    id<FSMState> state = s == NULL ? nil : s->ctx;
 
     [state onPaused:machine time:now];
 }
@@ -85,7 +85,7 @@ static void on_resume(const fsm_state   *s,
                       const fsm_time     now) {
     fsm_machine *m = (fsm_machine *)ctx;
     id<FSMContext> machine = m->ctx;
-    id<FSMState> state = s->ctx;
+    id<FSMState> state = s == NULL ? nil : s->ctx;
 
     [state onResume:machine time:now];
 }
