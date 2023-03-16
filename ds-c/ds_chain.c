@@ -197,6 +197,26 @@ void ds_chain_remove(ds_chain_table * chain, ds_chain_node * node)
     _chain_destroy_node(node);
 }
 
+ds_chain_node * ds_chain_shift(ds_chain_table * chain)
+{
+    ds_chain_node * first = chain->head;
+    if (first == NULL) {
+        // empty queue
+        return NULL;
+    }
+    chain->head = first->next;
+    if (chain->head == NULL) {
+        // last node removed
+        chain->tail = NULL;
+    }
+    return first;
+}
+
+void ds_chain_node_destroy(ds_chain_node * node)
+{
+    _chain_destroy_node(node);
+}
+
 #define DS_VALUE(item)     *(item)
 
 #define DS_SWAP(x, y)                                                          \

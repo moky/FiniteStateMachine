@@ -107,6 +107,17 @@ void ds_chain_insert(ds_chain_table * chain, ds_chain_node * node,
 void ds_chain_remove(ds_chain_table * chain, ds_chain_node * node);
 
 /**
+ *  remove head item from the chain and return it,
+ *  this node will no longer retain by the chain, so you should destroy it manually
+ */
+ds_chain_node * ds_chain_shift(ds_chain_table * chain);
+
+/**
+ *  destroy the node (this node must be removed from the chain already)
+ */
+void ds_chain_node_destroy(ds_chain_node * node);
+
+/**
  *  sort the chain
  */
 void ds_chain_sort(ds_chain_table * chain, const ds_size data_size);

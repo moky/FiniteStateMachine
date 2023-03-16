@@ -48,7 +48,7 @@ void ds_chain_queue_push(ds_chain_queue * queue,
                          const ds_data data, const ds_size data_size);
 
 /**
- *  remove head item from the queue and return it
+ *  remove head item from the queue and return it,
  *  this node will no longer retain by the queue, so you should destroy it manually
  */
 ds_chain_queue_node * ds_chain_queue_shift(ds_chain_queue * queue);
@@ -118,7 +118,7 @@ typedef struct _ds_circular_queue {
     } bk;
 } ds_circular_queue;
 
-typedef ds_data ds_circular_queue_node;
+typedef ds_data         ds_circular_queue_node;
 
 /**
  *  create a queue struct with item size and capacity
@@ -181,7 +181,7 @@ ds_queue * ds_queue_create(const ds_size item_size,
 void ds_queue_push(ds_queue * queue,
                    const ds_data data, const ds_size data_size);
 
-ds_queue_node * ds_queue_shift(ds_queue * queue);
+#define ds_queue_shift(queue)   ds_circular_queue_shift(queue)
 
 /**
  *  get data from the node

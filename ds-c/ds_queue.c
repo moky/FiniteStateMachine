@@ -46,22 +46,12 @@ void ds_chain_queue_push(ds_chain_queue * queue,
 
 ds_chain_queue_node * ds_chain_queue_shift(ds_chain_queue * queue)
 {
-    ds_chain_queue_node * first = queue->head;
-    if (first == NULL) {
-        // empty queue
-        return NULL;
-    }
-    queue->head = first->next;
-    if (queue->head == NULL) {
-        // last node removed
-        queue->tail = NULL;
-    }
-    return first;
+    return ds_chain_shift(queue);
 }
 
 void ds_chain_queue_node_destroy(ds_chain_queue_node * node)
 {
-    free(node);
+    ds_chain_node_destroy(node);
 }
 
 ds_chain_queue * ds_chain_queue_copy(const ds_chain_queue * queue,
@@ -232,11 +222,6 @@ void ds_queue_push(ds_queue * queue,
                    const ds_data data, const ds_size data_size)
 {
     ds_circular_queue_push(queue, data);
-}
-
-ds_queue_node * ds_queue_shift(ds_queue * queue)
-{
-    return ds_circular_queue_shift(queue);
 }
 
 ds_data ds_queue_node_data(const ds_queue_node * node)
