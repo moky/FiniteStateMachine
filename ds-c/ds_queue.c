@@ -116,7 +116,7 @@ ds_circular_queue * ds_circular_queue_create(const ds_size item_size,
 {
     ds_circular_queue * queue = (ds_circular_queue *)malloc(sizeof(ds_circular_queue));
     memset(queue, 0, sizeof(ds_circular_queue));
-    queue->capacity = capacity > 0 ? capacity : 16;
+    queue->capacity = capacity > 0 ? capacity : 8;
     queue->item_size = item_size > 0 ? item_size : sizeof(ds_data);
     queue->items = (ds_data *)calloc(queue->capacity, queue->item_size);
     return queue;

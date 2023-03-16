@@ -13,9 +13,9 @@
 
 #define FSM_VALUE(item)    (fsm_list_item)(*item)
 
-#if fsm_list_type == fsm_list_array
+#if fsm_list_type == fsm_array_list
 
-#pragma mark ds_array
+#pragma mark - FSM list base on ds_array
 
 fsm_list * fsm_list_create(unsigned int capacity)
 {
@@ -43,7 +43,7 @@ fsm_list_item fsm_list_get(const fsm_list *list, int index)
 
 void fsm_list_set(fsm_list *list, int index, const fsm_list_item item)
 {
-    ds_array_insert(list, index, (ds_data)item);
+    ds_array_assign(list, index, (ds_data)item);
 }
 
 void fsm_list_add(fsm_list *list, const fsm_list_item item)
@@ -51,9 +51,9 @@ void fsm_list_add(fsm_list *list, const fsm_list_item item)
     ds_array_append(list, (ds_data)item);
 }
 
-#elif fsm_list_type == fsm_list_chain
+#elif fsm_list_type == fsm_chain_list
 
-#pragma mark ds_chain_table
+#pragma mark - FSM list base on ds_chain_table
 
 fsm_list * fsm_list_create(unsigned int capacity)
 {

@@ -1,5 +1,5 @@
 platform :ios, '11.0'
 
 target 'FiniteStateMachine' do
-    pod 'ObjectKey', '~> 0.1.2'
+    pod 'ObjectKey', '~> 0.1.3'
 end

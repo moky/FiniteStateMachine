@@ -40,26 +40,26 @@
 //#include "ds_chain.h"
 
 
-#define FSMTrue             1
-#define FSMFalse            0
+#define FSMNotFound     DSNotFound
 
-#define FSMNotFound         0xffffffff
+#define FSMTrue         DSTrue
+#define FSMFalse        DSFalse
 
-
-typedef int             fsm_bool;
+typedef ds_bool         fsm_bool;
 typedef double          fsm_time;  // seconds, from Jan 1, 1970 UTC
+
 
 //
 //  List
 //
-#define fsm_list_array  1
-#define fsm_list_chain  2
+#define fsm_array_list  1
+#define fsm_chain_list  2
 
-#define fsm_list_type   fsm_list_array
+#define fsm_list_type   fsm_array_list
 
-#if fsm_list_type == fsm_list_array
+#if   fsm_list_type == fsm_array_list
 typedef ds_array        fsm_list;
-#elif fsm_list_type == fsm_list_chain
+#elif fsm_list_type == fsm_chain_list
 typedef ds_chain_table  fsm_list;
 #endif
 

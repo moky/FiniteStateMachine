@@ -71,7 +71,7 @@ ds_array * ds_array_create(const ds_size item_size, const ds_size capacity)
     ds_array * array = (ds_array *)malloc(sizeof(ds_array));
     memset(array, 0, sizeof(ds_array));
     // set capacity & item size
-    array->capacity = capacity > 0 ? capacity : 16;
+    array->capacity = capacity > 0 ? capacity : 8;
     array->item_size = item_size > 0 ? item_size : sizeof(ds_data);
     // 2. create a contiguous buffer for data zone
     array->items = (ds_data *)calloc(array->capacity, array->item_size);
