@@ -12,7 +12,7 @@
 #include "fsm_protocol.h"
 
 
-fsm_machine *fsm_create_machine(void);
+fsm_machine *fsm_create_machine(unsigned int capacity);
 void fsm_destroy_machine(fsm_machine *machine);
 
 // states

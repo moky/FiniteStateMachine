@@ -9,15 +9,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "fsm_chain_table.h"
+#include "fsm_list.h"
 #include "fsm_state.h"
 #include "fsm_machine.h"
 
-fsm_machine *fsm_create_machine(void)
+fsm_machine *fsm_create_machine(unsigned int capacity)
 {
-	fsm_machine * machime = (fsm_machine *)malloc(sizeof(fsm_machine));
-	memset(machime, 0, sizeof(fsm_machine));
-    machime->states = fsm_chain_create();
+    fsm_machine * machime = (fsm_machine *)malloc(sizeof(fsm_machine));
+    memset(machime, 0, sizeof(fsm_machine));
+    machime->states = fsm_list_create(capacity);
     machime->current = FSMNotFound;
     machime->status = fsm_stopped;
     // methods
@@ -27,54 +27,39 @@ fsm_machine *fsm_create_machine(void)
     machime->pause         = fsm_pause_machine;
     machime->resume        = fsm_resume_machine;
     machime->tick          = fsm_tick_machine;
-	return machime;
+    return machime;
 }
 
 void fsm_destroy_machine(fsm_machine *machime)
 {
-	// 1. destroy the chain table for states
-	fsm_chain_destroy(machime->states);
-//	machime->states = NULL;
+    // 1. destroy the chain table for states
+    fsm_list_destroy(machime->states);
+//    machime->states = NULL;
     
-//	machime->delegate = NULL;
-//	machime->current_state = NULL;
+//    machime->delegate = NULL;
+//    machime->current_state = NULL;
 //  machime->start = NULL;
 //  machime->stop = NULL;
 //  machime->pause = NULL;
 //  machime->resume = NULL;
 //  machime->change_state = NULL;
-//	machime->ctx = NULL;
-	
-	// 2. free the machine
-	free(machime);
+//    machime->ctx = NULL;
+    
+    // 2. free the machine
+    free(machime);
 }
 
 static inline fsm_state *fsm_state_at(const fsm_machine *machine, unsigned int index)
 {
-    fsm_chain_node *node = fsm_chain_at(machine->states, index);
-    return fsm_chain_get(node);
+    return fsm_list_get(machine->states, index);
 }
 
 const fsm_state *fsm_add_state(fsm_machine *machine, const fsm_state *state)
 {
     unsigned int index = state->index;
-    unsigned size = fsm_chain_length(machine->states);
-    if (index < size) {
-        // replace
-        fsm_chain_node *node = fsm_chain_at(machine->states, index);
-        fsm_state *old = fsm_chain_get(node);
-        fsm_chain_set(node, state);
-        // WARNING: return old state that was replaced
-        return old == state ? NULL : old;
-    }
-    // filling empty spaces
-    int spaces = index - size;
-    for (int i = 0; i < spaces; ++i) {
-        fsm_chain_add(machine->states, NULL);
-    }
-    // append the new state to the tail
-	fsm_chain_add(machine->states, state);
-    return NULL;
+    fsm_state *old = fsm_list_get(machine->states, index);
+    fsm_list_set(machine->states, index, (fsm_list_item)state);
+    return old == state ? NULL : old;
 }
 
 fsm_state *fsm_get_state(const fsm_machine *machine, unsigned int index)

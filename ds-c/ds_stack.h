@@ -34,17 +34,17 @@ void ds_stack_destroy(ds_stack * stack);
 /**
  *  push item to top of stack
  */
-void ds_stack_push(ds_stack * stack, const ds_type * item);
+void ds_stack_push(ds_stack * stack, const ds_data item);
 
 /**
  *  return top item and remove it (but NOT erase)
  */
-ds_type * ds_stack_pop(ds_stack * stack);
+ds_data * ds_stack_pop(ds_stack * stack);
 
 /**
  *  return top item
  */
-ds_type * ds_stack_top(const ds_stack * stack);
+ds_data * ds_stack_top(const ds_stack * stack);
 
 /**
  *  copy stack, the new_stack->capacity = old_stack->count

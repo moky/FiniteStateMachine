@@ -14,7 +14,7 @@
 #define ds_queue_at(queue, index)                                              \
     ({                                                                         \
         ds_byte * __ptr = (ds_byte *)((queue)->items);                         \
-        (ds_type *)(__ptr + (queue)->item_size *                               \
+        (ds_data *)(__ptr + (queue)->item_size *                               \
             (((queue)->head + (index)) < (queue)->capacity ?                   \
                 (queue)->head + (index) :                                      \
                 (queue)->head + (index) - (queue)->capacity));                 \
@@ -44,24 +44,24 @@
 //         than the 'queue->capacity'
 //
 typedef struct _ds_queue {
-	
-	ds_size capacity; // max length of items (ONE item space never used)
-	
-	ds_size item_size;
-	ds_type * items;
-	
-	ds_size head, tail; // offsets for head/tail pointer
-	
-	// functions
-	struct {
-		ds_assign_func   assign;
-		ds_erase_func    erase;
-	} fn;
-	// blocks
-	struct {
-		ds_assign_block  assign;
-		ds_erase_block   erase;
-	} bk;
+    
+    ds_size capacity; // max length of items (ONE item space never used)
+    
+    ds_size item_size;
+    ds_data * items;
+    
+    ds_size head, tail; // offsets for head/tail pointer
+    
+    // functions
+    struct {
+	    ds_assign_func   assign;
+	    ds_erase_func    erase;
+    } fn;
+    // blocks
+    struct {
+	    ds_assign_block  assign;
+	    ds_erase_block   erase;
+    } bk;
 } ds_queue;
 
 /**
@@ -82,12 +82,12 @@ ds_size ds_queue_length(const ds_queue * queue);
 /**
  *  append item to tail of the queue
  */
-void ds_queue_enqueue(ds_queue * queue, const ds_type * item);
+void ds_queue_enqueue(ds_queue * queue, const ds_data item);
 
 /**
  *  return head item and remove it (but NOT erase)
  */
-ds_type * ds_queue_dequeue(ds_queue * queue);
+ds_data * ds_queue_dequeue(ds_queue * queue);
 
 /**
  *  copy queue, the new_queue->capacity = ds_queue_length(queue) + 1

@@ -55,23 +55,23 @@
 }
 
 - (instancetype)initWithTarget:(NSUInteger)stateIndex {
-	return [self initWithTarget:stateIndex block:NULL];
+    return [self initWithTarget:stateIndex block:NULL];
 }
 
 /* designated initializer */
 - (instancetype)initWithTarget:(NSUInteger)stateIndex
                          block:(FSMBlock)block {
-	self = [super initWithTarget:stateIndex];
-	if (self) {
-		self.block = block;
-	}
-	return self;
+    self = [super initWithTarget:stateIndex];
+    if (self) {
+	    self.block = block;
+    }
+    return self;
 }
 
 // Override
 - (BOOL)evaluate:(id<FSMContext>)machine time:(NSTimeInterval)now {
-	NSAssert(_block, @"block error");
-	return _block(machine, now);
+    NSAssert(_block, @"block error");
+    return _block(machine, now);
 }
 
 @end

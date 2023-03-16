@@ -12,7 +12,7 @@
 #include "fsm_protocol.h"
 
 
-fsm_state *fsm_create_state(fsm_state_evaluate evaluate);
+fsm_state *fsm_create_state(fsm_state_evaluate evaluate, unsigned int capacity);
 void fsm_destroy_state(fsm_state *state);
 
 void fsm_add_transition(fsm_state *state, const fsm_transition *trans);

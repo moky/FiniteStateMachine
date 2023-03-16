@@ -36,7 +36,8 @@
  *
  */
 
-#include "ds_chain.h"
+#include "ds_array.h"
+//#include "ds_chain.h"
 
 
 #define FSMTrue             1
@@ -48,8 +49,21 @@
 typedef int             fsm_bool;
 typedef double          fsm_time;  // seconds, from Jan 1, 1970 UTC
 
-typedef ds_chain_table  fsm_chain_table;
-typedef ds_chain_node   fsm_chain_node;
+//
+//  List
+//
+#define fsm_list_array  1
+#define fsm_list_chain  2
+
+#define fsm_list_type   fsm_list_array
+
+#if fsm_list_type == fsm_list_array
+typedef ds_array        fsm_list;
+#elif fsm_list_type == fsm_list_chain
+typedef ds_chain_table  fsm_list;
+#endif
+
+typedef void *          fsm_list_item;
 
 
 typedef void            fsm_context;
@@ -273,7 +287,7 @@ typedef struct _fsm_state {
     // properties
     unsigned int index;  // state index in the machine
     
-    fsm_chain_table *transitions;    // transitions of state
+    fsm_list *transitions;    // transitions of state
     
     // methods
     fsm_state_enter    on_enter;
@@ -309,7 +323,7 @@ typedef struct _fsm_machine {
     fsm_context *ctx;
     
     // properties
-    fsm_chain_table *states;    // array of finite states
+    fsm_list *states;    // array of finite states
     int              current;   // current state index, -1 for null
     
     enum fsm_status  status;    // machine status

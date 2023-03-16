@@ -123,9 +123,9 @@ static void resume_state(const struct _fsm_delegate *d,
 @implementation FSMMachine
 
 - (void)dealloc {
-	[_states release];
+    [_states release];
     _states = nil;
-	
+    
     fsm_delegate *delegate = _innerDelegate;
     if (delegate != NULL) {
         fsm_destroy_delegate(delegate);
@@ -137,13 +137,13 @@ static void resume_state(const struct _fsm_delegate *d,
         _innerMachine = NULL;
     }
 
-	[super dealloc];
+    [super dealloc];
 }
 
 + (instancetype)allocWithZone:(struct _NSZone *)zone {
-	id object = [super allocWithZone:zone];
-	fsm_machine *machine = fsm_create_machine();
-	if (machine) {
+    id object = [super allocWithZone:zone];
+    fsm_machine *machine = fsm_create_machine(8);
+    if (machine) {
         fsm_delegate *delegate = fsm_create_delegate();
         if (delegate != NULL) {
             delegate->enter_state  = enter_state;
@@ -154,24 +154,24 @@ static void resume_state(const struct _fsm_delegate *d,
         }
         [object setInnerDelegate:delegate];
         machine->delegate = delegate;
-		machine->ctx = object;
-	}
-	[object setInnerMachine:machine];
-	return object;
+	    machine->ctx = object;
+    }
+    [object setInnerMachine:machine];
+    return object;
 }
 
 - (instancetype)init {
-	return [self initWithCapacity:8];
+    return [self initWithCapacity:8];
 }
 
 /* designated initializer */
 - (instancetype)initWithCapacity:(NSUInteger)countOfStates {
-	if (self = [super init]) {
-		self.states = [NSMutableArray arrayWithCapacity:countOfStates];
-		
-		self.delegate = nil;
-	}
-	return self;
+    if (self = [super init]) {
+	    self.states = [NSMutableArray arrayWithCapacity:countOfStates];
+	    
+	    self.delegate = nil;
+    }
+    return self;
 }
 
 - (id<FSMDelegate>)delegate {
@@ -194,11 +194,11 @@ static void resume_state(const struct _fsm_delegate *d,
 
 // Override
 - (id<FSMState>)currentState {
-	const fsm_state *s = fsm_get_current_state(_innerMachine);
-	NSAssert(s, @"failed to get current state: %d", _innerMachine->current);
-	id<FSMState> state = s->ctx;
-	NSAssert([state isKindOfClass:[FSMState class]], @"memory error");
-	return state;
+    const fsm_state *s = fsm_get_current_state(_innerMachine);
+    NSAssert(s, @"failed to get current state: %d", _innerMachine->current);
+    id<FSMState> state = s->ctx;
+    NSAssert([state isKindOfClass:[FSMState class]], @"memory error");
+    return state;
 }
 
 // Override

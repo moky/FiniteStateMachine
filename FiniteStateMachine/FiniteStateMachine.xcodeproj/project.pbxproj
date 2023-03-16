@@ -30,11 +30,11 @@
 		E9AFAAAC223105FC001F95C6 /* FSMTransition.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AFAA96223105FC001F95C6 /* FSMTransition.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9AFAAB722310642001F95C6 /* FiniteStateMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AFAAB622310642001F95C6 /* FiniteStateMachine.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9DD8A7329B607E700010FFE /* fsm_transition.c in Sources */ = {isa = PBXBuildFile; fileRef = E9DD8A6829B607E700010FFE /* fsm_transition.c */; };
-		E9DD8A7429B607E700010FFE /* fsm_chain_table.c in Sources */ = {isa = PBXBuildFile; fileRef = E9DD8A6929B607E700010FFE /* fsm_chain_table.c */; };
+		E9DD8A7429B607E700010FFE /* fsm_list.c in Sources */ = {isa = PBXBuildFile; fileRef = E9DD8A6929B607E700010FFE /* fsm_list.c */; };
 		E9DD8A7529B607E700010FFE /* fsm_machine.h in Headers */ = {isa = PBXBuildFile; fileRef = E9DD8A6A29B607E700010FFE /* fsm_machine.h */; };
 		E9DD8A7629B607E700010FFE /* fsm_state.h in Headers */ = {isa = PBXBuildFile; fileRef = E9DD8A6B29B607E700010FFE /* fsm_state.h */; };
 		E9DD8A7729B607E700010FFE /* fsm_delegate.c in Sources */ = {isa = PBXBuildFile; fileRef = E9DD8A6C29B607E700010FFE /* fsm_delegate.c */; };
-		E9DD8A7829B607E700010FFE /* fsm_chain_table.h in Headers */ = {isa = PBXBuildFile; fileRef = E9DD8A6D29B607E700010FFE /* fsm_chain_table.h */; };
+		E9DD8A7829B607E700010FFE /* fsm_list.h in Headers */ = {isa = PBXBuildFile; fileRef = E9DD8A6D29B607E700010FFE /* fsm_list.h */; };
 		E9DD8A7929B607E700010FFE /* fsm_machine.c in Sources */ = {isa = PBXBuildFile; fileRef = E9DD8A6E29B607E700010FFE /* fsm_machine.c */; };
 		E9DD8A7A29B607E700010FFE /* fsm_transition.h in Headers */ = {isa = PBXBuildFile; fileRef = E9DD8A6F29B607E700010FFE /* fsm_transition.h */; };
 		E9DD8A7B29B607E700010FFE /* fsm_protocol.h in Headers */ = {isa = PBXBuildFile; fileRef = E9DD8A7029B607E700010FFE /* fsm_protocol.h */; };
@@ -89,11 +89,11 @@
 		E9AFAA96223105FC001F95C6 /* FSMTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSMTransition.h; sourceTree = "<group>"; };
 		E9AFAAB622310642001F95C6 /* FiniteStateMachine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FiniteStateMachine.h; sourceTree = "<group>"; };
 		E9DD8A6829B607E700010FFE /* fsm_transition.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fsm_transition.c; sourceTree = "<group>"; };
-		E9DD8A6929B607E700010FFE /* fsm_chain_table.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fsm_chain_table.c; sourceTree = "<group>"; };
+		E9DD8A6929B607E700010FFE /* fsm_list.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fsm_list.c; sourceTree = "<group>"; };
 		E9DD8A6A29B607E700010FFE /* fsm_machine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fsm_machine.h; sourceTree = "<group>"; };
 		E9DD8A6B29B607E700010FFE /* fsm_state.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fsm_state.h; sourceTree = "<group>"; };
 		E9DD8A6C29B607E700010FFE /* fsm_delegate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fsm_delegate.c; sourceTree = "<group>"; };
-		E9DD8A6D29B607E700010FFE /* fsm_chain_table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fsm_chain_table.h; sourceTree = "<group>"; };
+		E9DD8A6D29B607E700010FFE /* fsm_list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fsm_list.h; sourceTree = "<group>"; };
 		E9DD8A6E29B607E700010FFE /* fsm_machine.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fsm_machine.c; sourceTree = "<group>"; };
 		E9DD8A6F29B607E700010FFE /* fsm_transition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fsm_transition.h; sourceTree = "<group>"; };
 		E9DD8A7029B607E700010FFE /* fsm_protocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fsm_protocol.h; sourceTree = "<group>"; };
@@ -208,8 +208,8 @@
 			isa = PBXGroup;
 			children = (
 				E9DD8A7029B607E700010FFE /* fsm_protocol.h */,
-				E9DD8A6D29B607E700010FFE /* fsm_chain_table.h */,
-				E9DD8A6929B607E700010FFE /* fsm_chain_table.c */,
+				E9DD8A6D29B607E700010FFE /* fsm_list.h */,
+				E9DD8A6929B607E700010FFE /* fsm_list.c */,
 				E9DD8A6F29B607E700010FFE /* fsm_transition.h */,
 				E9DD8A6829B607E700010FFE /* fsm_transition.c */,
 				E9DD8A6B29B607E700010FFE /* fsm_state.h */,
@@ -262,7 +262,7 @@
 				E9AFAAA5223105FC001F95C6 /* FSMBlockTransition.h in Headers */,
 				E9AFAAA7223105FC001F95C6 /* FSMState.h in Headers */,
 				E9DD8A7A29B607E700010FFE /* fsm_transition.h in Headers */,
-				E9DD8A7829B607E700010FFE /* fsm_chain_table.h in Headers */,
+				E9DD8A7829B607E700010FFE /* fsm_list.h in Headers */,
 				E9DD8A8D29B607F000010FFE /* ds_stack.h in Headers */,
 				E9DD8A8F29B607F000010FFE /* ds_base.h in Headers */,
 				E9AFAAA2223105FC001F95C6 /* FSMMachine.h in Headers */,
@@ -374,7 +374,7 @@
 				E9AFAAA1223105FC001F95C6 /* FSMState.m in Sources */,
 				E9DD8A7729B607E700010FFE /* fsm_delegate.c in Sources */,
 				E9DD8A7D29B607E700010FFE /* fsm_state.c in Sources */,
-				E9DD8A7429B607E700010FFE /* fsm_chain_table.c in Sources */,
+				E9DD8A7429B607E700010FFE /* fsm_list.c in Sources */,
 				E9DD8A9229B607F000010FFE /* ds_stack.c in Sources */,
 				E9DD8A7929B607E700010FFE /* fsm_machine.c in Sources */,
 				E99F06A929B4F6D7005A2FE9 /* FSMRunner.m in Sources */,

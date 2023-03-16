@@ -47,14 +47,14 @@
 @implementation FSMFunctionTransition
 
 //- (void)dealloc {
-//	_delegate = nil;
-//	_selector = NULL;
+//    _delegate = nil;
+//    _selector = NULL;
 //
-//	[super dealloc];
+//    [super dealloc];
 //}
 
 - (instancetype)initWithTarget:(NSUInteger)stateIndex {
-	return [self initWithTarget:(NSUInteger)stateIndex
+    return [self initWithTarget:(NSUInteger)stateIndex
                        delegate:nil
                        selector:NULL];
 }
@@ -63,17 +63,17 @@
 - (instancetype)initWithTarget:(NSUInteger)stateIndex
                       delegate:(id)delegate
                       selector:(SEL)selector {
-	self = [super initWithTarget:stateIndex];
-	if (self) {
-		self.delegate = delegate;
-		self.selector = selector;
-	}
-	return self;
+    self = [super initWithTarget:stateIndex];
+    if (self) {
+	    self.delegate = delegate;
+	    self.selector = selector;
+    }
+    return self;
 }
 
 // Override
 - (BOOL)evaluate:(id<FSMContext>)machine time:(NSTimeInterval)now {
-	NSAssert(_delegate && _selector, @"delegate or selector error");
+    NSAssert(_delegate && _selector, @"delegate or selector error");
     NSAssert([_delegate respondsToSelector:_selector],
              @"error: %@ does not respond to selector: %@",
              _delegate, NSStringFromSelector(_selector));

@@ -43,7 +43,7 @@
 
 // Override
 - (void)start {
-	[super start];
+    [super start];
     FSMPrimeMetronome *timer = [FSMPrimeMetronome sharedInstance];
     [timer addTicker:self];
 }
@@ -52,19 +52,19 @@
 - (void)stop {
     FSMPrimeMetronome *timer = [FSMPrimeMetronome sharedInstance];
     [timer removeTicker:self];
-	[super stop];
+    [super stop];
 }
 
 // Override
 - (void)pause {
     FSMPrimeMetronome *timer = [FSMPrimeMetronome sharedInstance];
     [timer removeTicker:self];
-	[super pause];
+    [super pause];
 }
 
 // Override
 - (void)resume {
-	[super resume];
+    [super resume];
     FSMPrimeMetronome *timer = [FSMPrimeMetronome sharedInstance];
     [timer addTicker:self];
 }

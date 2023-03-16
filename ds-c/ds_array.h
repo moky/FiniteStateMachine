@@ -26,56 +26,73 @@
                                       /* EOF 'DS_FOR_EACH_ARRAY_ITEM_REVERSE' */
 
 typedef struct _ds_array {
-	
-	ds_size capacity; // max count of items
-	ds_size count;
-	
-	ds_size item_size;
-	ds_type * items;
-	
-	// functions
-	struct {
-		ds_assign_func   assign;
-		ds_erase_func    erase;
-		ds_compare_func  compare;
-	} fn;
-	// blocks
-	struct {
-		ds_assign_block  assign;
-		ds_erase_block   erase;
-		ds_compare_block compare;
-	} bk;
+    
+    ds_size capacity; // max count of items
+    ds_size count;
+    
+    ds_size item_size;
+    ds_data * items;
+    
+    // functions
+    struct {
+	    ds_assign_func   assign;
+	    ds_erase_func    erase;
+	    ds_compare_func  compare;
+    } fn;
+    // blocks
+    struct {
+	    ds_assign_block  assign;
+	    ds_erase_block   erase;
+	    ds_compare_block compare;
+    } bk;
 } ds_array;
 
 /**
- *  create an array struct with item size and capacity
+ *  create an array
  */
-ds_array * ds_array_create(ds_size item_size, ds_size capacity);
+ds_array * ds_array_create(const ds_size item_size, const ds_size capacity);
 
 /**
- *  destroy an array struct and erase all items
+ *  destroy an array
  */
 void ds_array_destroy(ds_array * array);
 
 /**
- *  get item at index of the array
+ *  assign data to the position of array (data should not be NULL)
  */
-ds_type * ds_array_at(const ds_array * array, ds_size index);
+void ds_array_assign(ds_array * array, const ds_size index, const ds_data data);
 
 /**
- *  append an item to the tail of the array
+ *  erase data at the position of array
  */
-void ds_array_add(ds_array * array, const ds_type * item);
+void ds_array_erase(ds_array * array, const ds_size index);
 
 /**
- *  insert an item into the index of the array
+ *  get item at the position of the array
  */
-void ds_array_insert(ds_array * array, const ds_type * item, ds_size index);
+ds_data * ds_array_at(const ds_array * array, const ds_size index);
 
 /**
- *  remove the item at index of the array
+ *  get first position has the same data value
  */
-void ds_array_remove(ds_array * array, ds_size index);
+ds_size ds_array_find(const ds_array * array, const ds_data data);
+
+/**
+ *  append data to the tail of the array
+ */
+void ds_array_append(ds_array * array, const ds_data data);
+
+/**
+ *  inserts data at the specified position in this array,
+ *  shifts the element currently at that position and any subsequent elements to the right.
+ */
+void ds_array_insert(ds_array * array, const ds_size index, const ds_data data);
+
+/**
+ *  remove the item at index of the array,
+ *  shifts any subsequent elements to the left.
+ */
+void ds_array_remove(ds_array * array, const ds_size index);
 
 /**
  *  sort the array with compare function/block if given
@@ -85,7 +102,7 @@ void ds_array_sort(ds_array * array);
 /**
  *  insert the item at the right index of the array to keep it sorted
  */
-void ds_array_sort_insert(ds_array * array, const ds_type * item);
+void ds_array_sort_insert(ds_array * array, const ds_data item);
 
 /**
  *  copy array, the new_array->capacity == old_array->count

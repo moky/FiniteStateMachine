@@ -63,36 +63,36 @@ static fsm_bool trans_eval(const fsm_transition *trans,
 
 - (void)dealloc {
     fsm_transition *trans = _innerTransition;
-	if (trans) {
+    if (trans) {
         fsm_destroy_transition(trans);
         _innerTransition = NULL;
-	}
-	
-	[super dealloc];
+    }
+    
+    [super dealloc];
 }
 
 + (instancetype)allocWithZone:(struct _NSZone *)zone {
-	id object = [super allocWithZone:zone];
-	fsm_transition *trans = fsm_create_transition(trans_eval);
-	if (trans) {
-		trans->ctx = object;
-	}
+    id object = [super allocWithZone:zone];
+    fsm_transition *trans = fsm_create_transition(trans_eval);
+    if (trans) {
+	    trans->ctx = object;
+    }
     [object setInnerTransition:trans];
-	return object;
+    return object;
 }
 
 - (instancetype)init {
     NSAssert(false, @"don't call me!");
-	return [self initWithTarget:-1];
+    return [self initWithTarget:-1];
 }
 
 /* designated initializer */
 - (instancetype)initWithTarget:(NSUInteger)stateIndex {
-	self = [super init];
-	if (self) {
+    self = [super init];
+    if (self) {
         self.target = stateIndex;
-	}
-	return self;
+    }
+    return self;
 }
 
 - (NSUInteger)target {

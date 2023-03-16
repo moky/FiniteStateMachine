@@ -104,35 +104,35 @@ static void on_resume(const fsm_state   *s,
 @implementation FSMState
 
 - (void)dealloc {
-	[_transitions release];
+    [_transitions release];
     _transitions = nil;
-	
+    
     fsm_state *state = _innerState;
-	if (state) {
-		fsm_destroy_state(state);
+    if (state) {
+	    fsm_destroy_state(state);
         _innerState = NULL;
-	}
-	
-	[super dealloc];
+    }
+    
+    [super dealloc];
 }
 
 + (instancetype)allocWithZone:(struct _NSZone *)zone {
-	id object = [super allocWithZone:zone];
-	fsm_state *state = fsm_create_state(NULL);
-	if (state) {
+    id object = [super allocWithZone:zone];
+    fsm_state *state = fsm_create_state(NULL, 2);
+    if (state) {
         state->on_enter = on_enter;
         state->on_exit = on_exit;
         state->on_pause = on_pause;
         state->on_resume = on_resume;
-		state->ctx = object;
-	}
-	[object setInnerState:state];
-	return object;
+	    state->ctx = object;
+    }
+    [object setInnerState:state];
+    return object;
 }
 
 - (instancetype)init {
     NSAssert(false, @"don't call me!");
-	return [self initWithIndex:-1 capacity:4];
+    return [self initWithIndex:-1 capacity:4];
 }
 
 - (instancetype)initWithIndex:(NSUInteger)stateIndex {
@@ -142,12 +142,12 @@ static void on_resume(const fsm_state   *s,
 /* designated initializer */
 - (instancetype)initWithIndex:(NSUInteger)stateIndex
                     capacity:(NSUInteger)countOfTransitions {
-	self = [super init];
-	if (self) {
+    self = [super init];
+    if (self) {
         self.index = stateIndex;
-		self.transitions = [NSMutableArray arrayWithCapacity:countOfTransitions];
-	}
-	return self;
+	    self.transitions = [NSMutableArray arrayWithCapacity:countOfTransitions];
+    }
+    return self;
 }
 
 - (NSUInteger)index {
@@ -160,8 +160,8 @@ static void on_resume(const fsm_state   *s,
 
 - (void)addTransition:(FSMTransition *)transition {
     NSAssert(![_transitions containsObject:transition], @"transition exists");
-	fsm_add_transition(_innerState, [transition innerTransition]);
-	[_transitions addObject:transition];
+    fsm_add_transition(_innerState, [transition innerTransition]);
+    [_transitions addObject:transition];
 }
 
 // abstractmethod
