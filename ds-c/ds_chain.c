@@ -11,7 +11,7 @@
 
 #include "ds_chain.h"
 
-static inline ds_chain_node * _create_node(const ds_size data_size)
+static inline ds_chain_node * _chain_create_node(const ds_size data_size)
 {
     //assert(data_size > 0);
     
@@ -30,11 +30,21 @@ static inline ds_chain_node * _create_node(const ds_size data_size)
     return node;
 }
 
-static inline void _destroy_node(ds_chain_node * node)
+static inline void _chain_destroy_node(ds_chain_node * node)
 {
     // the node->data points to the memory after this node,
     // it will be free at the same time
     free(node);
+}
+
+static inline void _chain_destroy_all_nodes(ds_chain_table * chain)
+{
+    for (ds_chain_node * next; chain->head; chain->head = next) {
+        next = chain->head->next;
+        _chain_destroy_node(chain->head);
+    }
+    // chain->head is NULL already, now clear chain->tail
+    chain->tail = NULL;
 }
 
 #pragma mark -
@@ -50,12 +60,7 @@ ds_chain_table * ds_chain_create(void)
 void ds_chain_destroy(ds_chain_table * chain)
 {
     // 1. free child nodes
-    for (ds_chain_node * next; chain->head; chain->head = next) {
-        next = chain->head->next;
-        _destroy_node(chain->head);
-    }
-    // chain->head is NULL already, now clear chain->tail
-    chain->tail = NULL;
+    _chain_destroy_all_nodes(chain);
     
     // 2. free the chain
     free(chain);
@@ -69,6 +74,16 @@ ds_size ds_chain_length(const ds_chain_table * chain)
         ++len;
     }
     return len;
+}
+
+ds_bool ds_chain_empty(const ds_chain_table * chain)
+{
+    return chain->head == NULL;
+}
+
+void ds_chain_clear(ds_chain_table * chain)
+{
+    _chain_destroy_all_nodes(chain);
 }
 
 void ds_chain_assign(const ds_chain_table * chain,
@@ -98,7 +113,7 @@ void ds_chain_erase(const ds_chain_table * chain, ds_chain_node * node)
 ds_chain_node * ds_chain_at(const ds_chain_table * chain, ds_size index)
 {
     ds_chain_node * node;
-    DS_FOR_EACH_CHAIN_NODE(chain, node) {
+    DS_CHAIN_FOR_EACH_ITEM(chain, node) {
 	    if (index == 0) {
     	    break;
 	    }
@@ -111,13 +126,13 @@ ds_chain_node * ds_chain_find(const ds_chain_table * chain, const ds_data data)
 {
     ds_chain_node * node;
     if (chain->fn.compare) {
-	    DS_FOR_EACH_CHAIN_NODE(chain, node) {
+	    DS_CHAIN_FOR_EACH_ITEM(chain, node) {
     	    if (chain->fn.compare(*(node->data), data) == 0) {
 	    	    return node;
     	    }
 	    }
     } else if (chain->bk.compare) {
-	    DS_FOR_EACH_CHAIN_NODE(chain, node) {
+	    DS_CHAIN_FOR_EACH_ITEM(chain, node) {
     	    if (chain->bk.compare(*(node->data), data) == 0) {
 	    	    return node;
     	    }
@@ -138,7 +153,7 @@ void ds_chain_insert(ds_chain_table * chain, ds_chain_node * node,
                      const ds_data data, const ds_size data_size)
 {
     // 1. create new node and assign value
-    ds_chain_node * guest = _create_node(data_size);
+    ds_chain_node * guest = _chain_create_node(data_size);
     if (data) {
         ds_chain_assign(chain, guest, data, data_size);
     }
@@ -166,7 +181,7 @@ void ds_chain_remove(ds_chain_table * chain, ds_chain_node * node)
         chain->head = node->next;
     } else {
         ds_chain_node * prev;
-        DS_FOR_EACH_CHAIN_NODE(chain, prev) {
+        DS_CHAIN_FOR_EACH_ITEM(chain, prev) {
             if (prev->next == node) {
                 // got it
                 break;
@@ -179,16 +194,16 @@ void ds_chain_remove(ds_chain_table * chain, ds_chain_node * node)
             chain->tail = prev;
         }
     }
-    _destroy_node(node);
+    _chain_destroy_node(node);
 }
 
 #define DS_VALUE(item)     *(item)
 
 #define DS_SWAP(x, y)                                                          \
         do {                                                                   \
-            memcpy(tmp, (x), data_size);                                \
-            memcpy((x), (y), data_size);                                \
-            memcpy((y), tmp, data_size);                                \
+            memcpy(tmp, (x), data_size);                                       \
+            memcpy((x), (y), data_size);                                       \
+            memcpy((y), tmp, data_size);                                       \
         } while(0)
 
 void ds_chain_sort(ds_chain_table * chain, const ds_size data_size)
@@ -240,14 +255,14 @@ void ds_chain_sort_insert(ds_chain_table * chain,
     // 1. seek
     ds_chain_node * node;
     if (chain->fn.compare) {
-	    DS_FOR_EACH_CHAIN_NODE(chain, node) {
+	    DS_CHAIN_FOR_EACH_ITEM(chain, node) {
     	    if (node->next && chain->fn.compare(DS_VALUE(node->next->data),
                                                 data) > 0) {
 	    	    break;
     	    }
 	    }
     } else if (chain->bk.compare) {
-	    DS_FOR_EACH_CHAIN_NODE(chain, node) {
+	    DS_CHAIN_FOR_EACH_ITEM(chain, node) {
     	    if (node->next && chain->bk.compare(DS_VALUE(node->next->data),
                                                 data) > 0) {
 	    	    break;
@@ -296,7 +311,7 @@ ds_chain_table * ds_chain_copy(const ds_chain_table * chain,
     new_chain->bk.compare = chain->bk.compare;
     
     ds_chain_node * node;
-    DS_FOR_EACH_CHAIN_NODE(chain, node) {
+    DS_CHAIN_FOR_EACH_ITEM(chain, node) {
 	    // insert data after the new chain's tail
         ds_chain_append(new_chain, DS_VALUE(node->data), data_size);
     }

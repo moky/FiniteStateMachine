@@ -11,13 +11,14 @@
 
 #include "ds_base.h"
 
-#define DS_FOR_EACH_CHAIN_NODE(chain, node)                                    \
+#define DS_CHAIN_FOR_EACH_ITEM(chain, node)                                    \
     for ((node) = (chain)->head; (node); (node) = (node)->next)                \
-                                              /* EOF 'DS_FOR_EACH_CHAIN_NODE' */
+                                              /* EOF 'DS_CHAIN_FOR_EACH_ITEM' */
 
 typedef struct _ds_chain_node {
-    ds_data * data;
+
     ds_size data_size; // size of the memory 'ds_chain_node->data' pointed to
+    ds_data * data;
     
     struct _ds_chain_node * next;
 } ds_chain_node;
@@ -47,7 +48,7 @@ typedef struct _ds_chain_table {
 ds_chain_table * ds_chain_create(void);
 
 /**
- *  destroy a chain table
+ *  destroy the chain table and its child nodes
  */
 void ds_chain_destroy(ds_chain_table * chain);
 
@@ -55,6 +56,16 @@ void ds_chain_destroy(ds_chain_table * chain);
  *  get length of the chain
  */
 ds_size ds_chain_length(const ds_chain_table * chain);
+
+/**
+ *  check chain->head == NULL
+ */
+ds_bool ds_chain_empty(const ds_chain_table * chain);
+
+/**
+ *  destroy all nodes
+ */
+void ds_chain_clear(ds_chain_table * chain);
 
 /**
  *  assign data to the node (data should not be NULL)

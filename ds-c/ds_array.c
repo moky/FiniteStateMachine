@@ -11,14 +11,14 @@
 
 #include "ds_array.h"
 
-static inline void _expand(ds_array * array)
+static inline void _array_expand(ds_array * array)
 {
     array->capacity *= 2;
     array->items = (ds_data *)realloc(array->items, array->capacity * array->item_size);
 }
 
-static inline void _assign(const ds_array * array,
-                           ds_data * dest, const ds_data src)
+static inline void _array_assign(const ds_array * array,
+                                 ds_data * dest, const ds_data src)
 {
     if (array->fn.assign) {
         array->fn.assign(dest, src, array->item_size);
@@ -29,7 +29,7 @@ static inline void _assign(const ds_array * array,
     }
 }
 
-static inline void _erase(const ds_array * array, ds_data * dest)
+static inline void _array_erase(const ds_array * array, ds_data * dest)
 {
     if (array->fn.erase) {
         array->fn.erase(dest, array->item_size);
@@ -40,7 +40,7 @@ static inline void _erase(const ds_array * array, ds_data * dest)
     }
 }
 
-//static inline void _erase_all(ds_array * array)
+//static inline void _array_erase_all(ds_array * array)
 //{
 //    if (array->count == 0) {
 //        return;
@@ -48,15 +48,15 @@ static inline void _erase(const ds_array * array, ds_data * dest)
 //    ds_data * item;
 //    ds_size index;
 //    if (array->fn.erase) {
-//        DS_FOR_EACH_ARRAY_ITEM(array, item, index) {
+//        DS_ARRAY_FOR_EACH_ITEM(array, item, index) {
 //            array->fn.erase(item);
 //        }
 //    } else if (array->bk.erase) {
-//        DS_FOR_EACH_ARRAY_ITEM(array, item, index) {
+//        DS_ARRAY_FOR_EACH_ITEM(array, item, index) {
 //            array->bk.erase(item);
 //        }
 //    } else {
-//        DS_FOR_EACH_ARRAY_ITEM(array, item, index) {
+//        DS_ARRAY_FOR_EACH_ITEM(array, item, index) {
 //            bzero(item, array->item_size);
 //        }
 //    }
@@ -81,7 +81,7 @@ ds_array * ds_array_create(const ds_size item_size, const ds_size capacity)
 void ds_array_destroy(ds_array * array)
 {
     // 1. free data zone
-    //_erase_all(array);
+    //_array_erase_all(array);
     free(array->items);
     array->items = NULL;
     
@@ -89,12 +89,27 @@ void ds_array_destroy(ds_array * array)
     free(array);
 }
 
+ds_size ds_array_length(const ds_array * array)
+{
+    return array->count;
+}
+
+ds_bool ds_array_empty(const ds_array * array)
+{
+    return array->count == 0;
+}
+
+void ds_array_clear(ds_array * array)
+{
+    array->count = 0;
+}
+
 void ds_array_assign(ds_array * array, const ds_size index, const ds_data data)
 {
     // 1. check capacity
     for (; index >= array->capacity;) {
         // out of memory
-        _expand(array);
+        _array_expand(array);
     }
     // 2. check data range
     if (index >= array->count) {
@@ -103,13 +118,13 @@ void ds_array_assign(ds_array * array, const ds_size index, const ds_data data)
     }
     // 3. set data
     ds_data * dest = ds_array_at(array, index);
-    _assign(array, dest, data);
+    _array_assign(array, dest, data);
 }
 
 void ds_array_erase(ds_array * array, const ds_size index)
 {
     ds_data * dest = ds_array_at(array, index);
-    _erase(array, dest);
+    _array_erase(array, dest);
 }
 
 ds_data * ds_array_at(const ds_array * array, ds_size index)
@@ -125,13 +140,13 @@ ds_size ds_array_find(const ds_array * array, const ds_data data)
     ds_data item;
     ds_size index;
     if (array->fn.compare) {
-        DS_FOR_EACH_ARRAY_ITEM(array, item, index) {
+        DS_ARRAY_FOR_EACH_ITEM(array, item, index) {
             if (array->fn.compare(item, data) == 0) {
                 return index;
             }
         }
     } else if (array->bk.compare) {
-        DS_FOR_EACH_ARRAY_ITEM(array, item, index) {
+        DS_ARRAY_FOR_EACH_ITEM(array, item, index) {
             if (array->bk.compare(item, data) == 0) {
                 return index;
             }
@@ -157,7 +172,7 @@ void ds_array_insert(ds_array * array, const ds_size index, const ds_data data)
     }
     // 1. check capacity
     if (array->count >= array->capacity) {
-        _expand(array);
+        _array_expand(array);
     }
     // 2. move the rest data backwords from index
     ds_byte * src = (ds_byte *)array->items;
@@ -167,7 +182,7 @@ void ds_array_insert(ds_array * array, const ds_size index, const ds_data data)
     memmove(dest, src, len);
 
     // 3. set data at the position
-    _assign(array, (ds_data *)src, data);
+    _array_assign(array, (ds_data *)src, data);
     array->count += 1;
 }
 
@@ -218,13 +233,13 @@ void ds_array_sort_insert(ds_array * array, const ds_data item)
     
     // 1. seek for index
     if (array->fn.compare) {
-	    DS_FOR_EACH_ARRAY_ITEM(array, data, index) {
+	    DS_ARRAY_FOR_EACH_ITEM(array, data, index) {
     	    if (array->fn.compare(data, item) > 0) {
 	    	    break; // got it
     	    }
 	    }
     } else if (array->bk.compare) {
-	    DS_FOR_EACH_ARRAY_ITEM(array, data, index) {
+	    DS_ARRAY_FOR_EACH_ITEM(array, data, index) {
     	    if (array->bk.compare(data, item) > 0) {
 	    	    break; // got it
     	    }
@@ -251,7 +266,7 @@ ds_array * ds_array_copy(const ds_array * array)
     
     ds_data item;
     ds_size index;
-    DS_FOR_EACH_ARRAY_ITEM(array, item, index) {
+    DS_ARRAY_FOR_EACH_ITEM(array, item, index) {
 	    ds_array_append(new_array, item);
     }
     

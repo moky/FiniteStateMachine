@@ -16,6 +16,7 @@ typedef unsigned char ds_byte;
 typedef long ds_data;
 // index/count/length
 typedef int ds_size;
+typedef int ds_bool;
 
 static const ds_size DSNotFound = -1;
 

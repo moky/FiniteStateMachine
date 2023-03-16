@@ -11,19 +11,19 @@
 
 #include "ds_base.h"
 
-#define DS_FOR_EACH_ARRAY_ITEM(array, item, index)                             \
+#define DS_ARRAY_FOR_EACH_ITEM(array, item, index)                             \
     for (ds_byte * __ptr = ((index) = 0, (ds_byte *)(array)->items);           \
          (item) = (__typeof__(item))__ptr, (index) < (array)->count;           \
          __ptr += (array)->item_size, ++(index))                               \
-                                              /* EOF 'DS_FOR_EACH_ARRAY_ITEM' */
+                                              /* EOF 'DS_ARRAY_FOR_EACH_ITEM' */
 
-#define DS_FOR_EACH_ARRAY_ITEM_REVERSE(array, item, index)                     \
+#define DS_ARRAY_FOR_EACH_ITEM_REVERSE(array, item, index)                     \
     for (ds_byte * __ptr = ((index) = (array)->count,                          \
                             (ds_byte *)((array)->items)                        \
                                   + ((index) - 1) * (array)->item_size);       \
          (item) = (__typeof__(item))__ptr, (index)-- > 0;                      \
          __ptr -= (array)->item_size)                                          \
-                                      /* EOF 'DS_FOR_EACH_ARRAY_ITEM_REVERSE' */
+                                      /* EOF 'DS_ARRAY_FOR_EACH_ITEM_REVERSE' */
 
 typedef struct _ds_array {
     
@@ -58,7 +58,22 @@ ds_array * ds_array_create(const ds_size item_size, const ds_size capacity);
 void ds_array_destroy(ds_array * array);
 
 /**
- *  assign data to the position of array (data should not be NULL)
+ *  get array->count
+ */
+ds_size ds_array_length(const ds_array * array);
+
+/**
+ *  check array->count == 0
+ */
+ds_bool ds_array_empty(const ds_array * array);
+
+/**
+ *  set array->count = 0
+ */
+void ds_array_clear(ds_array * array);
+
+/**
+ *  set data to the position of array (data should not be NULL)
  */
 void ds_array_assign(ds_array * array, const ds_size index, const ds_data data);
 
