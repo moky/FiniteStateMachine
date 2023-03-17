@@ -195,9 +195,8 @@ static void resume_state(const struct _fsm_delegate *d,
 // Override
 - (id<FSMState>)currentState {
     const fsm_state *s = fsm_get_current_state(_innerMachine);
-    NSAssert(s, @"failed to get current state: %d", _innerMachine->current);
-    id<FSMState> state = s->ctx;
-    NSAssert([state isKindOfClass:[FSMState class]], @"memory error");
+    id<FSMState> state = s == NULL ? nil : s->ctx;
+    NSAssert(!s || [state isKindOfClass:[FSMState class]], @"memory error");
     return state;
 }
 
