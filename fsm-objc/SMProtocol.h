@@ -28,28 +28,28 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  FSMProtocol.h
+//  SMProtocol.h
 //  FiniteStateMachine
 //
 //  Created by Albert Moky on 2023/3/2.
 //  Copyright © 2023 DIM Group. All rights reserved.
 //
 
-#import <FiniteStateMachine/FSMMetronome.h>
+#import <FiniteStateMachine/SMMetronome.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  State Machine Context
  */
-@protocol FSMContext <NSObject>
+@protocol SMContext <NSObject>
 
 @end
 
 /**
  *  State Transition
  */
-@protocol FSMTransition <NSObject>
+@protocol SMTransition <NSObject>
 
 /**
  *  Evaluate the current state
@@ -58,14 +58,14 @@ NS_ASSUME_NONNULL_BEGIN
  * @param now     - current time (seconds, from Jan 1, 1970 UTC)
  * @return true when current state should be changed
  */
-- (BOOL)evaluate:(__kindof id<FSMContext>)machine time:(NSTimeInterval)now;
+- (BOOL)evaluate:(__kindof id<SMContext>)machine time:(NSTimeInterval)now;
 
 @end
 
 /**
  *  Finite State
  */
-@protocol FSMState <NSObject>
+@protocol SMState <NSObject>
 
 /**
  *  Called after new state entered
@@ -74,8 +74,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @param ctx      - context (machine)
  * @param now      - current time (seconds, from Jan 1, 1970 UTC)
  */
-- (void)onEnter:(nullable __kindof id<FSMState>)previous
-        machine:(__kindof id<FSMContext>)ctx
+- (void)onEnter:(nullable __kindof id<SMState>)previous
+        machine:(__kindof id<SMContext>)ctx
            time:(NSTimeInterval)now;
 
 /**
@@ -85,8 +85,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @param ctx     - context (machine)
  * @param now     - current time (seconds, from Jan 1, 1970 UTC)
  */
-- (void)onExit:(nullable __kindof id<FSMState>)next
-       machine:(__kindof id<FSMContext>)ctx
+- (void)onExit:(nullable __kindof id<SMState>)next
+       machine:(__kindof id<SMContext>)ctx
           time:(NSTimeInterval)now;
 
 //@optional
@@ -96,7 +96,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param ctx - context (machine)
  * @param now - current time (seconds, from Jan 1, 1970 UTC)
  */
-- (void)onPaused:(__kindof id<FSMContext>)ctx
+- (void)onPaused:(__kindof id<SMContext>)ctx
             time:(NSTimeInterval)now;
 
 /**
@@ -105,7 +105,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param ctx - context (machine)
  * @param now - current time (seconds, from Jan 1, 1970 UTC)
  */
-- (void)onResume:(__kindof id<FSMContext>)ctx
+- (void)onResume:(__kindof id<SMContext>)ctx
             time:(NSTimeInterval)now;
 
 @required
@@ -116,7 +116,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param now     - current time (seconds, from Jan 1, 1970 UTC)
  * @return success transition, or null to stay the current state
  */
-- (nullable id<FSMTransition>)evaluate:(__kindof id<FSMContext>)ctx
+- (nullable id<SMTransition>)evaluate:(__kindof id<SMContext>)ctx
                                   time:(NSTimeInterval)now;
 
 @end
@@ -124,9 +124,9 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  State machine
  */
-@protocol FSMMachine <FSMTicker>
+@protocol SMMachine <SMTicker>
 
-@property(nonatomic, readonly, nullable) __kindof id<FSMState> currentState;
+@property(nonatomic, readonly, nullable) __kindof id<SMState> currentState;
 
 /**
  *  Change current state to 'default'
@@ -153,7 +153,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  State Machine Delegate
  */
-@protocol FSMDelegate <NSObject>
+@protocol SMDelegate <NSObject>
 
 /**
  *  Called before new state entered
@@ -163,8 +163,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @param ctx      - context (machine)
  * @param now      - current time (seconds, from Jan 1, 1970 UTC)
  */
-- (void)machine:(__kindof id<FSMContext>)ctx
-     enterState:(nullable __kindof id<FSMState>)next
+- (void)machine:(__kindof id<SMContext>)ctx
+     enterState:(nullable __kindof id<SMState>)next
            time:(NSTimeInterval)now;
 /**
  *  Called after old state exited
@@ -174,8 +174,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @param ctx      - context (machine)
  * @param now      - current time (seconds, from Jan 1, 1970 UTC)
  */
-- (void)machine:(__kindof id<FSMContext>)ctx
-      exitState:(nullable __kindof id<FSMState>)previous
+- (void)machine:(__kindof id<SMContext>)ctx
+      exitState:(nullable __kindof id<SMState>)previous
            time:(NSTimeInterval)now;
 
 //@optional
@@ -186,8 +186,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @param ctx      - context (machine)
  * @param now      - current time (seconds, from Jan 1, 1970 UTC)
  */
-- (void)machine:(__kindof id<FSMContext>)ctx
-     pauseState:(__kindof id<FSMState>)current
+- (void)machine:(__kindof id<SMContext>)ctx
+     pauseState:(__kindof id<SMState>)current
            time:(NSTimeInterval)now;
 /**
  *  Called before current state resumed
@@ -196,8 +196,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @param ctx      - context (machine)
  * @param now      - current time (seconds, from Jan 1, 1970 UTC)
  */
-- (void)machine:(__kindof id<FSMContext>)ctx
-    resumeState:(__kindof id<FSMState>)current
+- (void)machine:(__kindof id<SMContext>)ctx
+    resumeState:(__kindof id<SMState>)current
            time:(NSTimeInterval)now;
 
 @end

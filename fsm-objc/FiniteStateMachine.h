@@ -51,22 +51,22 @@ FOUNDATION_EXPORT const unsigned char FiniteStateMachineVersionString[];
 //
 //  threading
 //
-#import <FiniteStateMachine/FSMThread.h>
-#import <FiniteStateMachine/FSMRunner.h>
-#import <FiniteStateMachine/FSMMetronome.h>
+#import <FiniteStateMachine/SMThread.h>
+#import <FiniteStateMachine/SMRunner.h>
+#import <FiniteStateMachine/SMMetronome.h>
 
 //
-//  FSM
+//  SM
 //
-#import <FiniteStateMachine/FSMProtocol.h>
+#import <FiniteStateMachine/SMProtocol.h>
 
-#import <FiniteStateMachine/FSMTransition.h>
-#import <FiniteStateMachine/FSMFunctionTransition.h>
-#import <FiniteStateMachine/FSMBlockTransition.h>
+#import <FiniteStateMachine/SMTransition.h>
+#import <FiniteStateMachine/SMFunctionTransition.h>
+#import <FiniteStateMachine/SMBlockTransition.h>
 
-#import <FiniteStateMachine/FSMState.h>
+#import <FiniteStateMachine/SMState.h>
 
-#import <FiniteStateMachine/FSMMachine.h>
-#import <FiniteStateMachine/FSMAutoMachine.h>
+#import <FiniteStateMachine/SMMachine.h>
+#import <FiniteStateMachine/SMAutoMachine.h>
 
 #endif /* ! __FINITE_STATE_MACHINE__ */

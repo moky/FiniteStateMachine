@@ -2,12 +2,12 @@
 //
 //  FSM : Finite State Machine
 //
-//                               Written in 2014 by Moky <albert.moky@gmail.com>
+//                               Written in 2015 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2014 Albert Moky
+// Copyright (c) 2015 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,20 +28,45 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  FSMFunctionTransition.h
+//  SMAutoMachine.m
 //  FiniteStateMachine
 //
-//  Created by Moky on 14-12-14.
-//  Copyright (c) 2014 Slanissue.com. All rights reserved.
+//  Created by Moky on 15-1-9.
+//  Copyright (c) 2015 Slanissue.com. All rights reserved.
 //
 
-#import "FSMTransition.h"
+#import "SMMetronome.h"
 
-@interface FSMFunctionTransition : FSMTransition
+#import "SMAutoMachine.h"
 
-- (instancetype)initWithTarget:(NSUInteger)stateIndex
-                      delegate:(id)delegate
-                      selector:(SEL)selector
-NS_DESIGNATED_INITIALIZER;
+@implementation SMAutoMachine
+
+// Override
+- (void)start {
+    [super start];
+    SMPrimeMetronome *timer = [SMPrimeMetronome sharedInstance];
+    [timer addTicker:self];
+}
+
+// Override
+- (void)stop {
+    SMPrimeMetronome *timer = [SMPrimeMetronome sharedInstance];
+    [timer removeTicker:self];
+    [super stop];
+}
+
+// Override
+- (void)pause {
+    SMPrimeMetronome *timer = [SMPrimeMetronome sharedInstance];
+    [timer removeTicker:self];
+    [super pause];
+}
+
+// Override
+- (void)resume {
+    [super resume];
+    SMPrimeMetronome *timer = [SMPrimeMetronome sharedInstance];
+    [timer addTicker:self];
+}
 
 @end

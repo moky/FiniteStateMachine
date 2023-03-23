@@ -28,23 +28,23 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  FSMBlockTransition.h
+//  SMBlockTransition.h
 //  FiniteStateMachine
 //
 //  Created by Moky on 15-1-9.
 //  Copyright (c) 2015 Slanissue.com. All rights reserved.
 //
 
-#import "FSMTransition.h"
+#import "SMTransition.h"
 
 #if NS_BLOCKS_AVAILABLE
 
-typedef BOOL (^FSMBlock)(__kindof id<FSMContext> machine, NSTimeInterval now);
+typedef BOOL (^SMBlock)(__kindof id<SMContext> machine, NSTimeInterval now);
 
-@interface FSMBlockTransition : FSMTransition
+@interface SMBlockTransition : SMTransition
 
 - (instancetype)initWithTarget:(NSUInteger)stateIndex
-                         block:(FSMBlock)block
+                         block:(SMBlock)block
 NS_DESIGNATED_INITIALIZER;
 
 @end

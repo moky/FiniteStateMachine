@@ -2,12 +2,12 @@
 //
 //  FSM : Finite State Machine
 //
-//                               Written in 2015 by Moky <albert.moky@gmail.com>
+//                               Written in 2023 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2015 Albert Moky
+// Copyright (c) 2023 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,18 +28,53 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  FSMAutoMachine.h
+//  SMMetronome.h
 //  FiniteStateMachine
 //
-//  Created by Moky on 15-1-9.
-//  Copyright (c) 2015 Slanissue.com. All rights reserved.
+//  Created by Albert Moky on 2023/3/6.
+//  Copyright © 2023 DIM Group. All rights reserved.
 //
 
-#import "FSMMachine.h"
+#import <FiniteStateMachine/SMRunner.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface FSMAutoMachine : FSMMachine
+@protocol SMTicker <NSObject>
+
+/*
+ *  Drive current thread forward
+ *
+ * @param now   - current time (seconds, from Jan 1, 1970 UTC)
+ * @param delta - elapsed time (seconds, from previous tick)
+ */
+- (void)tick:(NSTimeInterval)now elapsed:(NSTimeInterval)delta;
+
+@end
+
+@protocol SMMetronome <SMRunner>
+
+- (void)addTicker:(id<SMTicker>)ticker;
+- (void)removeTicker:(id<SMTicker>)ticker;
+
+- (void)start;
+
+@end
+
+@interface SMMetronome : SMRunner <SMMetronome>
+
+- (instancetype)initWithInterval:(NSTimeInterval)seconds
+NS_DESIGNATED_INITIALIZER;
+
+@end
+
+#pragma mark - Singleton
+
+@interface SMPrimeMetronome : NSObject
+
++ (instancetype)sharedInstance;
+
+- (void)addTicker:(id<SMTicker>)ticker;
+- (void)removeTicker:(id<SMTicker>)ticker;
 
 @end
 

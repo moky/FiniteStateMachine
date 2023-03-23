@@ -28,59 +28,32 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  FSMFunctionTransition.m
+//  SMState.h
 //  FiniteStateMachine
 //
-//  Created by Moky on 14-12-14.
+//  Created by Moky on 14-12-13.
 //  Copyright (c) 2014 Slanissue.com. All rights reserved.
 //
 
-#import "FSMFunctionTransition.h"
+#import <FiniteStateMachine/SMTransition.h>
 
-@interface FSMFunctionTransition ()
+NS_ASSUME_NONNULL_BEGIN
 
-@property(nonatomic, assign) id delegate;
-@property(nonatomic)        SEL selector;
+/**
+ *  State with transitions
+ */
+@interface SMState : NSObject <SMState>
 
-@end
+@property(nonatomic, readonly) NSUInteger index;
 
-@implementation FSMFunctionTransition
+- (instancetype)initWithIndex:(NSUInteger)stateIndex;
 
-//- (void)dealloc {
-//    _delegate = nil;
-//    _selector = NULL;
-//
-//    [super dealloc];
-//}
+- (instancetype)initWithIndex:(NSUInteger)stateIndex
+                    capacity:(NSUInteger)countOfTransitions
+NS_DESIGNATED_INITIALIZER;
 
-- (instancetype)initWithTarget:(NSUInteger)stateIndex {
-    return [self initWithTarget:(NSUInteger)stateIndex
-                       delegate:nil
-                       selector:NULL];
-}
-
-/* designated initializer */
-- (instancetype)initWithTarget:(NSUInteger)stateIndex
-                      delegate:(id)delegate
-                      selector:(SEL)selector {
-    self = [super initWithTarget:stateIndex];
-    if (self) {
-	    self.delegate = delegate;
-	    self.selector = selector;
-    }
-    return self;
-}
-
-// Override
-- (BOOL)evaluate:(id<FSMContext>)machine time:(NSTimeInterval)now {
-    NSAssert(_delegate && _selector, @"delegate or selector error");
-    NSAssert([_delegate respondsToSelector:_selector],
-             @"error: %@ does not respond to selector: %@",
-             _delegate, NSStringFromSelector(_selector));
-    IMP imp = [_delegate methodForSelector:_selector];
-    BOOL (*sender)(id, SEL, id, double) = (BOOL (*)(id, SEL, id, double))imp;
-    NSAssert(sender, @"method error: %@", NSStringFromSelector(_selector));
-    return sender(_delegate, _selector, machine, now);
-}
+- (void)addTransition:(SMTransition *)transition;
 
 @end
+
+NS_ASSUME_NONNULL_END

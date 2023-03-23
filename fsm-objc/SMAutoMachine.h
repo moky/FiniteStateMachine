@@ -2,12 +2,12 @@
 //
 //  FSM : Finite State Machine
 //
-//                               Written in 2023 by Moky <albert.moky@gmail.com>
+//                               Written in 2015 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2023 Albert Moky
+// Copyright (c) 2015 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,65 +28,18 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  FSMRunner.h
+//  SMAutoMachine.h
 //  FiniteStateMachine
 //
-//  Created by Albert Moky on 2023/3/5.
-//  Copyright © 2023 DIM Group. All rights reserved.
+//  Created by Moky on 15-1-9.
+//  Copyright (c) 2015 Slanissue.com. All rights reserved.
 //
 
-#import <FiniteStateMachine/FSMThread.h>
+#import "SMMachine.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol FSMHandler <NSObject>
-
-/**
- *  Prepare for handling
- */
-- (void)setup;
-
-/**
- *  Handling run loop
- */
-- (void)handle;
-
-/**
- *  Cleanup after handled
- */
-- (void)finish;
-
-@end
-
-@protocol FSMProcessor <NSObject>
-
-/**
- *  Do the job
- *
- * @return false on nothing to do
- */
-- (BOOL)process;
-
-@end
-
-@protocol FSMRunner <FSMRunnable, FSMHandler, FSMProcessor>
-
-@property(nonatomic, readonly, getter=isRunning) BOOL running;
-
-- (void)stop;
-
-@end
-
-@interface FSMRunner : NSObject <FSMRunner>
-
-// protected
-- (void)idle;
-
-@end
-
-@interface FSMRunner (Sleeping)
-
-+ (void)idle:(NSTimeInterval)seconds;
+@interface SMAutoMachine : SMMachine
 
 @end
 

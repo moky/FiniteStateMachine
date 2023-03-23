@@ -28,72 +28,65 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  FSMThread.h
+//  SMRunner.h
 //  FiniteStateMachine
 //
 //  Created by Albert Moky on 2023/3/5.
 //  Copyright © 2023 DIM Group. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <FiniteStateMachine/SMThread.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol FSMRunnable <NSObject>
+@protocol SMHandler <NSObject>
 
 /**
- * When an object implementing interface <code>Runnable</code> is used
- * to create a thread, starting the thread causes the object's
- * <code>run</code> method to be called in that separately executing
- * thread.
- * <p>
- * The general contract of the method <code>run</code> is that it may
- * take any action whatsoever.
+ *  Prepare for handling
  */
-- (void)run;
+- (void)setup;
+
+/**
+ *  Handling run loop
+ */
+- (void)handle;
+
+/**
+ *  Cleanup after handled
+ */
+- (void)finish;
 
 @end
 
-@protocol FSMThread <FSMRunnable>
+@protocol SMProcessor <NSObject>
 
 /**
- * Tests if this thread is alive. A thread is alive if it has
- * been started and has not yet died.
+ *  Do the job
  *
- * @return  <code>true</code> if this thread is alive;
- *          <code>false</code> otherwise.
+ * @return false on nothing to do
  */
-- (BOOL)isAlive;
-
-/**
- *  Append a task to the global background queue
- */
-- (void)start;
-
-/**
- *  Cancel the task that has been appended to a queue but not been started yet,
- *  if the task is runing, it can do nothing but wait for die.
- */
-- (void)cancel;
+- (BOOL)process;
 
 @end
 
-@interface FSMThread : NSObject <FSMThread>
+@protocol SMRunner <SMRunnable, SMHandler, SMProcessor>
 
-- (instancetype)init NS_DESIGNATED_INITIALIZER;
-- (instancetype)initWithTarget:(id<FSMRunnable>)target NS_DESIGNATED_INITIALIZER;
+@property(nonatomic, readonly, getter=isRunning) BOOL running;
 
-@end
-
-@interface FSMThread (Creation)
-
-+ (instancetype)threadWithTarget:(id<FSMRunnable>)target;
+- (void)stop;
 
 @end
 
-@interface FSMThread (Sleeping)
+@interface SMRunner : NSObject <SMRunner>
 
-+ (void)sleep:(NSTimeInterval)seconds;
+// protected
+- (void)idle;
+
+@end
+
+@interface SMRunner (Sleeping)
+
++ (void)idle:(NSTimeInterval)seconds;
 
 @end
 

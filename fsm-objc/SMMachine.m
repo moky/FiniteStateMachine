@@ -28,7 +28,7 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  FSMMachine.m
+//  SMMachine.m
 //  FiniteStateMachine
 //
 //  Created by Moky on 14-12-13.
@@ -37,30 +37,30 @@
 
 #import <ObjectKey/ObjectKey.h>
 
-#import "fsm_delegate.h"
-#import "fsm_machine.h"
-#import "fsm_state.h"
+#import "sm_delegate.h"
+#import "sm_machine.h"
+#import "sm_state.h"
 
-#import "FSMState.h"
+#import "SMState.h"
 
-#import "FSMMachine.h"
+#import "SMMachine.h"
 
-@interface FSMState (Hacking)
+@interface SMState (Hacking)
 
-@property(nonatomic, assign) fsm_state *innerState;
+@property(nonatomic, assign) sm_state *innerState;
 
 @end
 
 static void enter_state(const struct _fsm_delegate *d,
                         const struct _fsm_state    *s,
-                        const         fsm_context  *ctx,
-                        const         fsm_time      now) {
-    fsm_machine *m = (fsm_machine *)ctx;
-    id<FSMContext> context = m->ctx;
-    id<FSMDelegate> delegate = d == NULL ? nil : d->ctx;
-    id<FSMState> next        = s == NULL ? nil : s->ctx;
+                        const         sm_context  *ctx,
+                        const         sm_time      now) {
+    sm_machine *m = (sm_machine *)ctx;
+    id<SMContext> context = m->ctx;
+    id<SMDelegate> delegate = d == NULL ? nil : d->ctx;
+    id<SMState> next        = s == NULL ? nil : s->ctx;
     if (!delegate) {
-        FSMMachine *machine = (FSMMachine *)context;
+        SMMachine *machine = (SMMachine *)context;
         delegate = [machine delegate];
     }
     [delegate machine:context enterState:next time:now];
@@ -68,14 +68,14 @@ static void enter_state(const struct _fsm_delegate *d,
 
 static void exit_state(const struct _fsm_delegate *d,
                        const struct _fsm_state    *s,
-                       const         fsm_context  *ctx,
-                       const         fsm_time      now) {
-    fsm_machine *m = (fsm_machine *)ctx;
-    id<FSMContext> context = m->ctx;
-    id<FSMDelegate> delegate = d == NULL ? nil : d->ctx;
-    id<FSMState> previous    = s == NULL ? nil : s->ctx;
+                       const         sm_context  *ctx,
+                       const         sm_time      now) {
+    sm_machine *m = (sm_machine *)ctx;
+    id<SMContext> context = m->ctx;
+    id<SMDelegate> delegate = d == NULL ? nil : d->ctx;
+    id<SMState> previous    = s == NULL ? nil : s->ctx;
     if (!delegate) {
-        FSMMachine *machine = (FSMMachine *)context;
+        SMMachine *machine = (SMMachine *)context;
         delegate = [machine delegate];
     }
     [delegate machine:context exitState:previous time:now];
@@ -83,14 +83,14 @@ static void exit_state(const struct _fsm_delegate *d,
 
 static void pause_state(const struct _fsm_delegate *d,
                         const struct _fsm_state    *s,
-                        const         fsm_context  *ctx,
-                        const         fsm_time      now) {
-    fsm_machine *m = (fsm_machine *)ctx;
-    id<FSMContext> context = m->ctx;
-    id<FSMDelegate> delegate = d == NULL ? nil : d->ctx;
-    id<FSMState> current     = s == NULL ? nil : s->ctx;
+                        const         sm_context  *ctx,
+                        const         sm_time      now) {
+    sm_machine *m = (sm_machine *)ctx;
+    id<SMContext> context = m->ctx;
+    id<SMDelegate> delegate = d == NULL ? nil : d->ctx;
+    id<SMState> current     = s == NULL ? nil : s->ctx;
     if (!delegate) {
-        FSMMachine *machine = (FSMMachine *)context;
+        SMMachine *machine = (SMMachine *)context;
         delegate = [machine delegate];
     }
     [delegate machine:context pauseState:current time:now];
@@ -98,42 +98,42 @@ static void pause_state(const struct _fsm_delegate *d,
 
 static void resume_state(const struct _fsm_delegate *d,
                          const struct _fsm_state    *s,
-                         const         fsm_context  *ctx,
-                         const         fsm_time      now) {
-    fsm_machine *m = (fsm_machine *)ctx;
-    id<FSMContext> context = m->ctx;
-    id<FSMDelegate> delegate = d == NULL ? nil : d->ctx;
-    id<FSMState> current     = s == NULL ? nil : s->ctx;
+                         const         sm_context  *ctx,
+                         const         sm_time      now) {
+    sm_machine *m = (sm_machine *)ctx;
+    id<SMContext> context = m->ctx;
+    id<SMDelegate> delegate = d == NULL ? nil : d->ctx;
+    id<SMState> current     = s == NULL ? nil : s->ctx;
     if (!delegate) {
-        FSMMachine *machine = (FSMMachine *)context;
+        SMMachine *machine = (SMMachine *)context;
         delegate = [machine delegate];
     }
     [delegate machine:context resumeState:current time:now];
 }
 
-@interface FSMMachine ()
+@interface SMMachine ()
 
-@property(nonatomic, assign) fsm_machine  *innerMachine;
-@property(nonatomic, assign) fsm_delegate *innerDelegate;
+@property(nonatomic, assign) sm_machine  *innerMachine;
+@property(nonatomic, assign) sm_delegate *innerDelegate;
 
-@property(nonatomic, retain) NSMutableArray<id<FSMState>> *states;
+@property(nonatomic, retain) NSMutableArray<id<SMState>> *states;
 
 @end
 
-@implementation FSMMachine
+@implementation SMMachine
 
 - (void)dealloc {
     [_states release];
     _states = nil;
     
-    fsm_delegate *delegate = _innerDelegate;
+    sm_delegate *delegate = _innerDelegate;
     if (delegate != NULL) {
-        fsm_destroy_delegate(delegate);
+        sm_destroy_delegate(delegate);
         _innerDelegate = NULL;
     }
-    fsm_machine *machine = _innerMachine;
+    sm_machine *machine = _innerMachine;
     if (machine != NULL) {
-        fsm_destroy_machine(machine);
+        sm_destroy_machine(machine);
         _innerMachine = NULL;
     }
 
@@ -142,9 +142,9 @@ static void resume_state(const struct _fsm_delegate *d,
 
 + (instancetype)allocWithZone:(struct _NSZone *)zone {
     id object = [super allocWithZone:zone];
-    fsm_machine *machine = fsm_create_machine(8);
+    sm_machine *machine = sm_create_machine(8);
     if (machine) {
-        fsm_delegate *delegate = fsm_create_delegate();
+        sm_delegate *delegate = sm_create_delegate();
         if (delegate != NULL) {
             delegate->enter_state  = enter_state;
             delegate->exit_state   = exit_state;
@@ -174,35 +174,35 @@ static void resume_state(const struct _fsm_delegate *d,
     return self;
 }
 
-- (id<FSMDelegate>)delegate {
+- (id<SMDelegate>)delegate {
     return _innerDelegate->ctx;
 }
-- (void)setDelegate:(id<FSMDelegate>)delegate {
+- (void)setDelegate:(id<SMDelegate>)delegate {
     _innerDelegate->ctx = delegate;
 }
 
-- (id<FSMContext>)context {
+- (id<SMContext>)context {
     NSAssert(false, @"override me!");
     return nil;
 }
 
-- (void)addState:(FSMState *)state {
+- (void)addState:(SMState *)state {
     NSAssert(state, @"state empty");
-    fsm_add_state(_innerMachine, [state innerState]);
+    sm_add_state(_innerMachine, [state innerState]);
     [_states addObject:state];
 }
 
 // Override
-- (id<FSMState>)currentState {
-    const fsm_state *s = fsm_get_current_state(_innerMachine);
-    id<FSMState> state = s == NULL ? nil : s->ctx;
-    NSAssert(!s || [state isKindOfClass:[FSMState class]], @"memory error");
+- (id<SMState>)currentState {
+    const sm_state *s = sm_get_current_state(_innerMachine);
+    id<SMState> state = s == NULL ? nil : s->ctx;
+    NSAssert(!s || [state isKindOfClass:[SMState class]], @"memory error");
     return state;
 }
 
 // Override
 - (void)start {
-    fsm_machine *machine = _innerMachine;
+    sm_machine *machine = _innerMachine;
     if (machine == NULL) {
         return;
     }
@@ -214,7 +214,7 @@ static void resume_state(const struct _fsm_delegate *d,
 
 // Override
 - (void)stop {
-    fsm_machine *machine = _innerMachine;
+    sm_machine *machine = _innerMachine;
     if (machine == NULL) {
         return;
     }
@@ -226,7 +226,7 @@ static void resume_state(const struct _fsm_delegate *d,
 
 // Override
 - (void)pause {
-    fsm_machine *machine = _innerMachine;
+    sm_machine *machine = _innerMachine;
     if (machine == NULL) {
         return;
     }
@@ -238,7 +238,7 @@ static void resume_state(const struct _fsm_delegate *d,
 
 // Override
 - (void)resume {
-    fsm_machine *machine = _innerMachine;
+    sm_machine *machine = _innerMachine;
     if (machine == NULL) {
         return;
     }
@@ -250,7 +250,7 @@ static void resume_state(const struct _fsm_delegate *d,
 
 // Override
 - (void)tick:(NSTimeInterval)now elapsed:(NSTimeInterval)delta {
-    fsm_machine *machine = _innerMachine;
+    sm_machine *machine = _innerMachine;
     if (machine == NULL) {
         return;
     }

@@ -28,32 +28,32 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  FSMThread.m
+//  SMThread.m
 //  FiniteStateMachine
 //
 //  Created by Albert Moky on 2023/3/5.
 //  Copyright © 2023 DIM Group. All rights reserved.
 //
 
-#import "FSMThread.h"
+#import "SMThread.h"
 
-typedef NS_ENUM(UInt8, FSMThreadStatus) {
+typedef NS_ENUM(UInt8, SMThreadStatus) {
     
-    FSMThreadStatusStopped = 0,
-    FSMThreadStatusStarted = 1,
-    FSMThreadStatusRunning = 2,
+    SMThreadStatusStopped = 0,
+    SMThreadStatusStarted = 1,
+    SMThreadStatusRunning = 2,
 };
 
-@interface FSMThread () {
+@interface SMThread () {
     
-    FSMThreadStatus _status;
+    SMThreadStatus _status;
 }
 
-@property(nonatomic, assign, nullable) id<FSMRunnable> target;
+@property(nonatomic, assign, nullable) id<SMRunnable> target;
 
 @end
 
-@implementation FSMThread
+@implementation SMThread
 
 - (void)dealloc {
     _target = nil;
@@ -64,16 +64,16 @@ typedef NS_ENUM(UInt8, FSMThreadStatus) {
 /* designated initializer */
 - (instancetype)init {
     if (self = [super init]) {
-        _status = FSMThreadStatusStopped;
+        _status = SMThreadStatusStopped;
         _target = nil;
     }
     return self;
 }
 
 /* designated initializer */
-- (instancetype)initWithTarget:(id<FSMRunnable>)target {
+- (instancetype)initWithTarget:(id<SMRunnable>)target {
     if (self = [super init]) {
-        _status = FSMThreadStatusStopped;
+        _status = SMThreadStatusStopped;
         _target = target;
     }
     return self;
@@ -81,7 +81,7 @@ typedef NS_ENUM(UInt8, FSMThreadStatus) {
 
 // Override
 - (void)run {
-    id<FSMRunnable> target = [_target retain];
+    id<SMRunnable> target = [_target retain];
     if (target) {
         [target run];
         [target release];
@@ -89,13 +89,13 @@ typedef NS_ENUM(UInt8, FSMThreadStatus) {
 }
 
 // private
-- (void)setStatus:(FSMThreadStatus)flag {
+- (void)setStatus:(SMThreadStatus)flag {
     _status = flag;
 }
 
 // Override
 - (BOOL)isAlive {
-    return _status > FSMThreadStatusStopped;
+    return _status > SMThreadStatusStopped;
 }
 
 // Override
@@ -104,16 +104,16 @@ typedef NS_ENUM(UInt8, FSMThreadStatus) {
         NSAssert(false, @"the thread is running");
         return;
     } else {
-        _status = FSMThreadStatusStarted;
+        _status = SMThreadStatusStarted;
     }
     /*__weak*/ __block __typeof(self) thread = self;
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-        [thread setStatus:FSMThreadStatusRunning];
+        [thread setStatus:SMThreadStatusRunning];
         @try {
             [thread run];
         } @finally {
-            [thread setStatus:FSMThreadStatusStopped];
+            [thread setStatus:SMThreadStatusStopped];
         }
     });
 }
@@ -121,7 +121,7 @@ typedef NS_ENUM(UInt8, FSMThreadStatus) {
 // Override
 - (void)cancel {
     // TODO: cancel the waiting block
-//    if (_status == FSMThreadStatusStarted) {
+//    if (_status == SMThreadStatusStarted) {
 //        dispatch_block_cancel(self.block);
 //    }
 //    self.block = NULL;
@@ -129,16 +129,16 @@ typedef NS_ENUM(UInt8, FSMThreadStatus) {
 
 @end
 
-@implementation FSMThread (Creation)
+@implementation SMThread (Creation)
 
-+ (instancetype)threadWithTarget:(id<FSMRunnable>)target {
-    FSMThread *thread = [[FSMThread alloc] initWithTarget:target];
++ (instancetype)threadWithTarget:(id<SMRunnable>)target {
+    SMThread *thread = [[SMThread alloc] initWithTarget:target];
     return [thread autorelease];
 }
 
 @end
 
-@implementation FSMThread (Sleeping)
+@implementation SMThread (Sleeping)
 
 + (void)sleep:(NSTimeInterval)seconds {
     [NSThread sleepForTimeInterval:seconds];

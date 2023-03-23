@@ -28,53 +28,72 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  FSMMetronome.h
+//  SMThread.h
 //  FiniteStateMachine
 //
-//  Created by Albert Moky on 2023/3/6.
+//  Created by Albert Moky on 2023/3/5.
 //  Copyright © 2023 DIM Group. All rights reserved.
 //
 
-#import <FiniteStateMachine/FSMRunner.h>
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol FSMTicker <NSObject>
+@protocol SMRunnable <NSObject>
 
-/*
- *  Drive current thread forward
- *
- * @param now   - current time (seconds, from Jan 1, 1970 UTC)
- * @param delta - elapsed time (seconds, from previous tick)
+/**
+ * When an object implementing interface <code>Runnable</code> is used
+ * to create a thread, starting the thread causes the object's
+ * <code>run</code> method to be called in that separately executing
+ * thread.
+ * <p>
+ * The general contract of the method <code>run</code> is that it may
+ * take any action whatsoever.
  */
-- (void)tick:(NSTimeInterval)now elapsed:(NSTimeInterval)delta;
+- (void)run;
 
 @end
 
-@protocol FSMMetronome <FSMRunner>
+@protocol SMThread <SMRunnable>
 
-- (void)addTicker:(id<FSMTicker>)ticker;
-- (void)removeTicker:(id<FSMTicker>)ticker;
+/**
+ * Tests if this thread is alive. A thread is alive if it has
+ * been started and has not yet died.
+ *
+ * @return  <code>true</code> if this thread is alive;
+ *          <code>false</code> otherwise.
+ */
+- (BOOL)isAlive;
 
+/**
+ *  Append a task to the global background queue
+ */
 - (void)start;
 
+/**
+ *  Cancel the task that has been appended to a queue but not been started yet,
+ *  if the task is runing, it can do nothing but wait for die.
+ */
+- (void)cancel;
+
 @end
 
-@interface FSMMetronome : FSMRunner <FSMMetronome>
+@interface SMThread : NSObject <SMThread>
 
-- (instancetype)initWithInterval:(NSTimeInterval)seconds
-NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithTarget:(id<SMRunnable>)target NS_DESIGNATED_INITIALIZER;
 
 @end
 
-#pragma mark - Singleton
+@interface SMThread (Creation)
 
-@interface FSMPrimeMetronome : NSObject
++ (instancetype)threadWithTarget:(id<SMRunnable>)target;
 
-+ (instancetype)sharedInstance;
+@end
 
-- (void)addTicker:(id<FSMTicker>)ticker;
-- (void)removeTicker:(id<FSMTicker>)ticker;
+@interface SMThread (Sleeping)
+
++ (void)sleep:(NSTimeInterval)seconds;
 
 @end
 

@@ -28,43 +28,43 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  FSMTransition.m
+//  SMTransition.m
 //  FiniteStateMachine
 //
 //  Created by Moky on 14-12-13.
 //  Copyright (c) 2014 Slanissue.com. All rights reserved.
 //
 
-#import "fsm_transition.h"
+#import "sm_transition.h"
 
-#import "FSMTransition.h"
+#import "SMTransition.h"
 
-static fsm_bool trans_eval(const fsm_transition *trans,
-                           const fsm_context    *ctx,
-                           const fsm_time        now) {
-    fsm_machine *m = (fsm_machine *)ctx;
-    id<FSMContext> machine = m->ctx;
-    id<FSMTransition> transition = trans->ctx;
+static sm_bool trans_eval(const sm_transition *trans,
+                           const sm_context    *ctx,
+                           const sm_time        now) {
+    sm_machine *m = (sm_machine *)ctx;
+    id<SMContext> machine = m->ctx;
+    id<SMTransition> transition = trans->ctx;
     
     BOOL ok = [transition evaluate:machine time:now];
-    return ok ? FSMTrue : FSMFalse;
+    return ok ? SMTrue : SMFalse;
 }
 
-@interface FSMTransition () {
+@interface SMTransition () {
     
     NSUInteger _target;
 }
 
-@property(nonatomic, assign) fsm_transition *innerTransition;
+@property(nonatomic, assign) sm_transition *innerTransition;
 
 @end
 
-@implementation FSMTransition
+@implementation SMTransition
 
 - (void)dealloc {
-    fsm_transition *trans = _innerTransition;
+    sm_transition *trans = _innerTransition;
     if (trans) {
-        fsm_destroy_transition(trans);
+        sm_destroy_transition(trans);
         _innerTransition = NULL;
     }
     
@@ -73,7 +73,7 @@ static fsm_bool trans_eval(const fsm_transition *trans,
 
 + (instancetype)allocWithZone:(struct _NSZone *)zone {
     id object = [super allocWithZone:zone];
-    fsm_transition *trans = fsm_create_transition(trans_eval);
+    sm_transition *trans = sm_create_transition(trans_eval);
     if (trans) {
 	    trans->ctx = object;
     }
@@ -105,7 +105,7 @@ static fsm_bool trans_eval(const fsm_transition *trans,
 }
 
 // abstractmethod
-- (BOOL)evaluate:(id<FSMContext>)machine time:(NSTimeInterval)now {
+- (BOOL)evaluate:(id<SMContext>)machine time:(NSTimeInterval)now {
     NSAssert(false, @"override me!");
     return YES;
 }

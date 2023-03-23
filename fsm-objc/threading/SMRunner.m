@@ -2,12 +2,12 @@
 //
 //  FSM : Finite State Machine
 //
-//                               Written in 2015 by Moky <albert.moky@gmail.com>
+//                               Written in 2023 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2015 Albert Moky
+// Copyright (c) 2023 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,45 +28,84 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  FSMAutoMachine.m
+//  SMRunner.m
 //  FiniteStateMachine
 //
-//  Created by Moky on 15-1-9.
-//  Copyright (c) 2015 Slanissue.com. All rights reserved.
+//  Created by Albert Moky on 2023/3/5.
+//  Copyright © 2023 DIM Group. All rights reserved.
 //
 
-#import "FSMMetronome.h"
+#import "SMRunner.h"
 
-#import "FSMAutoMachine.h"
-
-@implementation FSMAutoMachine
-
-// Override
-- (void)start {
-    [super start];
-    FSMPrimeMetronome *timer = [FSMPrimeMetronome sharedInstance];
-    [timer addTicker:self];
+@interface SMRunner () {
+    
+    BOOL _running;
 }
 
-// Override
+@end
+
+@implementation SMRunner
+
+- (instancetype)init {
+    if (self = [super init]) {
+        _running = NO;
+    }
+    return self;
+}
+
+- (bool)isRunning {
+    return _running;
+}
+
 - (void)stop {
-    FSMPrimeMetronome *timer = [FSMPrimeMetronome sharedInstance];
-    [timer removeTicker:self];
-    [super stop];
+    _running = NO;
 }
 
 // Override
-- (void)pause {
-    FSMPrimeMetronome *timer = [FSMPrimeMetronome sharedInstance];
-    [timer removeTicker:self];
-    [super pause];
+- (void)run {
+    [self setup];
+    @try {
+        [self handle];
+    } @finally {
+        [self finish];
+    }
 }
 
 // Override
-- (void)resume {
-    [super resume];
-    FSMPrimeMetronome *timer = [FSMPrimeMetronome sharedInstance];
-    [timer addTicker:self];
+- (void)setup {
+    _running = YES;
+}
+
+// Override
+- (void)finish {
+    _running = NO;
+}
+
+// Override
+- (void)handle {
+    while ([self isRunning]) {
+        if (![self process]) {
+            [self idle];
+        }
+    }
+}
+
+// abstractmethod
+- (BOOL)process {
+    NSAssert(false, @"override me!");
+    return NO;
+}
+
+- (void)idle {
+    [SMRunner idle:(1.0/60)];
+}
+
+@end
+
+@implementation SMRunner (Sleeping)
+
++ (void)idle:(NSTimeInterval)seconds {
+    [SMThread sleep:seconds];
 }
 
 @end

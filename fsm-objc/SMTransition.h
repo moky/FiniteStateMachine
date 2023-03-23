@@ -2,12 +2,12 @@
 //
 //  FSM : Finite State Machine
 //
-//                               Written in 2015 by Moky <albert.moky@gmail.com>
+//                               Written in 2014 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2015 Albert Moky
+// Copyright (c) 2014 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,52 +28,27 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  FSMBlockTransition.m
+//  SMTransition.h
 //  FiniteStateMachine
 //
-//  Created by Moky on 15-1-9.
-//  Copyright (c) 2015 Slanissue.com. All rights reserved.
+//  Created by Moky on 14-12-13.
+//  Copyright (c) 2014 Slanissue.com. All rights reserved.
 //
 
-#import "FSMBlockTransition.h"
+#import <FiniteStateMachine/SMMachine.h>
 
-#if NS_BLOCKS_AVAILABLE
+NS_ASSUME_NONNULL_BEGIN
 
-@interface FSMBlockTransition ()
+/**
+ *  Transition with the name of target state
+ */
+@interface SMTransition : NSObject <SMTransition>
 
-@property(nonatomic, copy) FSMBlock block;
+@property(nonatomic, readonly) NSUInteger target;  // target state index
 
-@end
-
-@implementation FSMBlockTransition
-
-- (void)dealloc {
-    [_block release];
-    _block = nil;
-
-    [super dealloc];
-}
-
-- (instancetype)initWithTarget:(NSUInteger)stateIndex {
-    return [self initWithTarget:stateIndex block:NULL];
-}
-
-/* designated initializer */
 - (instancetype)initWithTarget:(NSUInteger)stateIndex
-                         block:(FSMBlock)block {
-    self = [super initWithTarget:stateIndex];
-    if (self) {
-	    self.block = block;
-    }
-    return self;
-}
-
-// Override
-- (BOOL)evaluate:(id<FSMContext>)machine time:(NSTimeInterval)now {
-    NSAssert(_block, @"block error");
-    return _block(machine, now);
-}
+NS_DESIGNATED_INITIALIZER;
 
 @end
 
-#endif
+NS_ASSUME_NONNULL_END

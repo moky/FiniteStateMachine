@@ -28,30 +28,30 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  FSMMachine.h
+//  SMMachine.h
 //  FiniteStateMachine
 //
 //  Created by Moky on 14-12-13.
 //  Copyright (c) 2014 Slanissue.com. All rights reserved.
 //
 
-#import <FiniteStateMachine/FSMMetronome.h>
-#import <FiniteStateMachine/FSMProtocol.h>
+#import <FiniteStateMachine/SMMetronome.h>
+#import <FiniteStateMachine/SMProtocol.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class FSMState;
+@class SMState;
 
-@interface FSMMachine : NSObject <FSMMachine>
+@interface SMMachine : NSObject <SMMachine>
 
-@property(nonatomic, assign, nullable) id<FSMDelegate> delegate;
+@property(nonatomic, assign, nullable) id<SMDelegate> delegate;
 
-@property(nonatomic, readonly) id<FSMContext> context;  // the machine itself
+@property(nonatomic, readonly) id<SMContext> context;  // the machine itself
 
 - (instancetype)initWithCapacity:(NSUInteger)countOfStates
 NS_DESIGNATED_INITIALIZER;
 
-- (void)addState:(FSMState *)state; // add state with transition(s)
+- (void)addState:(SMState *)state; // add state with transition(s)
 
 @end
 

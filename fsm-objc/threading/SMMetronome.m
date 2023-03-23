@@ -28,7 +28,7 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  FSMMetronome.m
+//  SMMetronome.m
 //  FiniteStateMachine
 //
 //  Created by Albert Moky on 2023/3/6.
@@ -37,23 +37,23 @@
 
 #import <ObjectKey/ObjectKey.h>
 
-#import "FSMMetronome.h"
+#import "SMMetronome.h"
 
 // at least wait 1/60 of a second
 #define MIN_INTERVAL 1.0/60
 
-@interface FSMMetronome () {
+@interface SMMetronome () {
     
     NSTimeInterval _interval;
     NSTimeInterval _lastTime;
 }
 
-@property(nonatomic, retain) id<FSMThread> daemon;
-@property(nonatomic, retain) OKWeakSet<id<FSMTicker>> *allTickers;
+@property(nonatomic, retain) id<SMThread> daemon;
+@property(nonatomic, retain) OKWeakSet<id<SMTicker>> *allTickers;
 
 @end
 
-@implementation FSMMetronome
+@implementation SMMetronome
 
 - (void)dealloc {
     [_daemon release];
@@ -73,7 +73,7 @@
     if (self = [super init]) {
         _interval = seconds;
         _lastTime = 0;
-        _daemon = [[FSMThread alloc] initWithTarget:self];
+        _daemon = [[SMThread alloc] initWithTarget:self];
         _allTickers = [[OKWeakSet alloc] initWithCapacity:8];
     }
     return self;
@@ -87,7 +87,7 @@
 
 // Override
 - (BOOL)process {
-    NSArray<id<FSMTicker>> *tickers = [self getTickers];
+    NSArray<id<SMTicker>> *tickers = [self getTickers];
     if ([tickers count] == 0) {
         // nothing to do now,
         // return false to have a rest ^_^
@@ -100,11 +100,11 @@
     if (waiting < MIN_INTERVAL) {
         waiting = MIN_INTERVAL;
     }
-    [FSMRunner idle:waiting];
+    [SMRunner idle:waiting];
     now += waiting;
     elapsed += waiting;
     // 2. drive tickers
-    for (id<FSMTicker> item in tickers) {
+    for (id<SMTicker> item in tickers) {
         @try {
             [item tick:now elapsed:elapsed];
         } @catch (NSException *exception) {
@@ -118,19 +118,19 @@
 }
 
 // private
-- (NSArray<id<FSMTicker>> *)getTickers {
+- (NSArray<id<SMTicker>> *)getTickers {
     @synchronized (self) {
         return [_allTickers allObjects];
     }
 }
 
-- (void)addTicker:(id<FSMTicker>)ticker {
+- (void)addTicker:(id<SMTicker>)ticker {
     @synchronized (self) {
         [_allTickers addObject:ticker];
     }
 }
 
-- (void)removeTicker:(id<FSMTicker>)ticker {
+- (void)removeTicker:(id<SMTicker>)ticker {
     @synchronized (self) {
         [_allTickers removeObject:ticker];
     }
@@ -149,15 +149,15 @@
 
 #pragma mark - Singleton
 
-@interface FSMPrimeMetronome ()
+@interface SMPrimeMetronome ()
 
-@property(nonatomic, retain) FSMMetronome *metronome;
+@property(nonatomic, retain) SMMetronome *metronome;
 
 @end
 
-@implementation FSMPrimeMetronome
+@implementation SMPrimeMetronome
 
-OKSingletonImplementations(FSMPrimeMetronome, sharedInstance)
+OKSingletonImplementations(SMPrimeMetronome, sharedInstance)
 
 - (void)dealloc {
     [_metronome release];
@@ -168,7 +168,7 @@ OKSingletonImplementations(FSMPrimeMetronome, sharedInstance)
 
 - (instancetype)init {
     if (self = [super init]) {
-        FSMMetronome *metronome = [[FSMMetronome alloc] initWithInterval:0.2];
+        SMMetronome *metronome = [[SMMetronome alloc] initWithInterval:0.2];
         self.metronome = metronome;
         [metronome start];
         [metronome release];
@@ -176,11 +176,11 @@ OKSingletonImplementations(FSMPrimeMetronome, sharedInstance)
     return self;
 }
 
-- (void)addTicker:(id<FSMTicker>)ticker {
+- (void)addTicker:(id<SMTicker>)ticker {
     [_metronome addTicker:ticker];
 }
 
-- (void)removeTicker:(id<FSMTicker>)ticker {
+- (void)removeTicker:(id<SMTicker>)ticker {
     [_metronome removeTicker:ticker];
 }
 

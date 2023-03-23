@@ -1,5 +1,5 @@
 //
-//  fsm_protocol.h
+//  sm_protocol.h
 //  FiniteStateMachine
 //
 //  Created by Moky on 14-12-12.
@@ -29,8 +29,8 @@
  *  here we should remove all states.
  *
  *
- *      If current state changed, the delegate function "fsm_machine_exit_state"
- *  will be called with the old state, after that, "fsm_enter_state" will be
+ *      If current state changed, the delegate function "sm_machine_exit_state"
+ *  will be called with the old state, after that, "sm_enter_state" will be
  *  called with the new state. This mechanism can let you do something in the
  *  two opportune moments.
  *
@@ -40,33 +40,33 @@
 //#include "ds_chain.h"
 
 
-#define FSMNotFound     DSNotFound
+#define SMNotFound     DSNotFound
 
-#define FSMTrue         DSTrue
-#define FSMFalse        DSFalse
+#define SMTrue         DSTrue
+#define SMFalse        DSFalse
 
-typedef ds_bool         fsm_bool;
-typedef double          fsm_time;  // seconds, from Jan 1, 1970 UTC
+typedef ds_bool         sm_bool;
+typedef double          sm_time;  // seconds, from Jan 1, 1970 UTC
 
 
 //
 //  List
 //
-#define fsm_array_list  1
-#define fsm_chain_list  2
+#define sm_array_list  1
+#define sm_chain_list  2
 
-#define fsm_list_type   fsm_array_list
+#define sm_list_type   sm_array_list
 
-#if   fsm_list_type == fsm_array_list
-typedef ds_array        fsm_list;
-#elif fsm_list_type == fsm_chain_list
-typedef ds_chain_table  fsm_list;
+#if   sm_list_type == sm_array_list
+typedef ds_array        sm_list;
+#elif sm_list_type == sm_chain_list
+typedef ds_chain_table  sm_list;
 #endif
 
-typedef void *          fsm_list_item;
+typedef void *          sm_list_item;
 
 
-typedef void            fsm_context;
+typedef void            sm_context;
 
 
 struct _fsm_delegate;
@@ -81,7 +81,7 @@ struct _fsm_machine;
  * @param now     - current time (milliseconds, from Jan 1, 1970 UTC)
  * @param elapsed - milliseconds from previous tick
  */
-typedef void (*fsm_tick)(struct _fsm_machine *ctx, const fsm_time now, const fsm_time elapsed);
+typedef void (*sm_tick)(struct _fsm_machine *ctx, const sm_time now, const sm_time elapsed);
 
 
 //
@@ -98,10 +98,10 @@ typedef void (*fsm_tick)(struct _fsm_machine *ctx, const fsm_time now, const fsm
  * @param machine - machine with context
  * @param now     - current time (milliseconds, from Jan 1, 1970 UTC)
  */
-typedef void (*fsm_enter_state) (const struct _fsm_delegate *delegate,
+typedef void (*sm_enter_state) (const struct _fsm_delegate *delegate,
                                  const struct _fsm_state    *next,
-                                 const         fsm_context  *machine,
-                                 const         fsm_time      now);
+                                 const         sm_context  *machine,
+                                 const         sm_time      now);
 
 /**
  *  Called after old state exited
@@ -111,10 +111,10 @@ typedef void (*fsm_enter_state) (const struct _fsm_delegate *delegate,
  * @param machine  - machine with context
  * @param now      - current time (milliseconds, from Jan 1, 1970 UTC)
  */
-typedef void (*fsm_exit_state)  (const struct _fsm_delegate *delegate,
+typedef void (*sm_exit_state)  (const struct _fsm_delegate *delegate,
                                  const struct _fsm_state    *previous,
-                                 const         fsm_context  *machine,
-                                 const         fsm_time      now);
+                                 const         sm_context  *machine,
+                                 const         sm_time      now);
 
 /**
  *  Called after current state paused
@@ -123,10 +123,10 @@ typedef void (*fsm_exit_state)  (const struct _fsm_delegate *delegate,
  * @param machine - machine with context
  * @param now     - current time (milliseconds, from Jan 1, 1970 UTC)
  */
-typedef void (*fsm_pause_state) (const struct _fsm_delegate *delegate,
+typedef void (*sm_pause_state) (const struct _fsm_delegate *delegate,
                                  const struct _fsm_state    *current,
-                                 const         fsm_context  *machine,
-                                 const         fsm_time      now);
+                                 const         sm_context  *machine,
+                                 const         sm_time      now);
 
 /**
  *  Called before current state resumed
@@ -135,10 +135,10 @@ typedef void (*fsm_pause_state) (const struct _fsm_delegate *delegate,
  * @param machine - machine with context
  * @param now     - current time (milliseconds, from Jan 1, 1970 UTC)
  */
-typedef void (*fsm_resume_state)(const struct _fsm_delegate *delegate,
+typedef void (*sm_resume_state)(const struct _fsm_delegate *delegate,
                                  const struct _fsm_state    *current,
-                                 const         fsm_context  *machine,
-                                 const         fsm_time      now);
+                                 const         sm_context  *machine,
+                                 const         sm_time      now);
 
 
 //
@@ -154,10 +154,10 @@ typedef void (*fsm_resume_state)(const struct _fsm_delegate *delegate,
  * @param machine  - machine with context
  * @param now      - current time (milliseconds, from Jan 1, 1970 UTC)
  */
-typedef void     (*fsm_state_enter) (const struct _fsm_state   *state,
+typedef void     (*sm_state_enter) (const struct _fsm_state   *state,
                                      const struct _fsm_state   *previous,
-                                     const         fsm_context *machine,
-                                     const         fsm_time     now);
+                                     const         sm_context *machine,
+                                     const         sm_time     now);
 
 /**
  *  Called before old state exited
@@ -166,10 +166,10 @@ typedef void     (*fsm_state_enter) (const struct _fsm_state   *state,
  * @param machine - machine with context
  * @param now     - current time (milliseconds, from Jan 1, 1970 UTC)
  */
-typedef void     (*fsm_state_exit)  (const struct _fsm_state   *state,
+typedef void     (*sm_state_exit)  (const struct _fsm_state   *state,
                                      const struct _fsm_state   *next,
-                                     const         fsm_context *machine,
-                                     const         fsm_time     now);
+                                     const         sm_context *machine,
+                                     const         sm_time     now);
 
 /**
  *  Called before current state paused
@@ -177,9 +177,9 @@ typedef void     (*fsm_state_exit)  (const struct _fsm_state   *state,
  * @param machine - machine with context
  * @param now     - current time (milliseconds, from Jan 1, 1970 UTC)
  */
-typedef void     (*fsm_state_pause) (const struct _fsm_state   *state,
-                                     const         fsm_context *machine,
-                                     const         fsm_time     now);
+typedef void     (*sm_state_pause) (const struct _fsm_state   *state,
+                                     const         sm_context *machine,
+                                     const         sm_time     now);
 
 /**
  *  Called after current state resumed
@@ -187,9 +187,9 @@ typedef void     (*fsm_state_pause) (const struct _fsm_state   *state,
  * @param machine - machine with context
  * @param now     - current time (milliseconds, from Jan 1, 1970 UTC)
  */
-typedef void     (*fsm_state_resume)(const struct _fsm_state   *state,
-                                     const         fsm_context *machine,
-                                     const         fsm_time     now);
+typedef void     (*sm_state_resume)(const struct _fsm_state   *state,
+                                     const         sm_context *machine,
+                                     const         sm_time     now);
 
 /**
  *  Called by machine.tick() to evaluate each transitions
@@ -198,9 +198,9 @@ typedef void     (*fsm_state_resume)(const struct _fsm_state   *state,
  * @param now     - current time (milliseconds, from Jan 1, 1970 UTC)
  * @return success transition, or null to stay the current state
  */
-typedef const struct _fsm_transition *(*fsm_state_evaluate)(const struct _fsm_state   *state,
-                                                            const         fsm_context *machine,
-                                                            const         fsm_time     now);
+typedef const struct _fsm_transition *(*sm_state_evaluate)(const struct _fsm_state   *state,
+                                                            const         sm_context *machine,
+                                                            const         sm_time     now);
 
 
 //
@@ -216,9 +216,9 @@ typedef const struct _fsm_transition *(*fsm_state_evaluate)(const struct _fsm_st
  * @param now     - current time (milliseconds, from Jan 1, 1970 UTC)
  * @return true when current state should be changed
  */
-typedef fsm_bool (*fsm_transition_evaluate)(const struct _fsm_transition *trans,
-                                            const         fsm_context    *machine,
-                                            const         fsm_time        now);
+typedef sm_bool (*sm_transition_evaluate)(const struct _fsm_transition *trans,
+                                            const         sm_context    *machine,
+                                            const         sm_time        now);
 
 
 //
@@ -230,27 +230,27 @@ typedef fsm_bool (*fsm_transition_evaluate)(const struct _fsm_transition *trans,
 /**
  *  Current state
  */
-typedef struct _fsm_state *(*fsm_machine_current)(const struct _fsm_machine *machine);
+typedef struct _fsm_state *(*sm_machine_current)(const struct _fsm_machine *machine);
 
 /**
  *  Change current state to 'default'
  */
-typedef void (*fsm_machine_start) (struct _fsm_machine *machine, const fsm_time now);
+typedef void (*sm_machine_start) (struct _fsm_machine *machine, const sm_time now);
 
 /**
  *  Change current state to null
  */
-typedef void (*fsm_machine_stop)  (struct _fsm_machine *machine, const fsm_time now);
+typedef void (*sm_machine_stop)  (struct _fsm_machine *machine, const sm_time now);
 
 /**
  *  Pause machine, current state not change
  */
-typedef void (*fsm_machine_pause) (struct _fsm_machine *machine, const fsm_time now);
+typedef void (*sm_machine_pause) (struct _fsm_machine *machine, const sm_time now);
 
 /**
  *  Resume machine with current state
  */
-typedef void (*fsm_machine_resume)(struct _fsm_machine *machine, const fsm_time now);
+typedef void (*sm_machine_resume)(struct _fsm_machine *machine, const sm_time now);
 
 
 //
@@ -259,60 +259,60 @@ typedef void (*fsm_machine_resume)(struct _fsm_machine *machine, const fsm_time 
 //  ========================
 //
 
-enum fsm_status {
-    fsm_stopped = 0,
-    fsm_running = 1,
-    fsm_paused  = 2,
+enum sm_status {
+    sm_stopped = 0,
+    sm_running = 1,
+    sm_paused  = 2,
 };
 
 typedef struct _fsm_delegate {
     // self
-    fsm_context *ctx;
+    sm_context *ctx;
     
     // methods
-    fsm_enter_state  enter_state;
-    fsm_exit_state   exit_state;
-    fsm_pause_state  pause_state;
-    fsm_resume_state resume_state;
+    sm_enter_state  enter_state;
+    sm_exit_state   exit_state;
+    sm_pause_state  pause_state;
+    sm_resume_state resume_state;
     
-} fsm_delegate;
+} sm_delegate;
 
 /**
  *  Base State
  */
 typedef struct _fsm_state {
     // self
-    fsm_context *ctx;
+    sm_context *ctx;
     
     // properties
     unsigned int index;  // state index in the machine
     
-    fsm_list *transitions;    // transitions of state
+    sm_list *transitions;    // transitions of state
     
     // methods
-    fsm_state_enter    on_enter;
-    fsm_state_exit     on_exit;
-    fsm_state_pause    on_pause;
-    fsm_state_resume   on_resume;
+    sm_state_enter    on_enter;
+    sm_state_exit     on_exit;
+    sm_state_pause    on_pause;
+    sm_state_resume   on_resume;
     
-    fsm_state_evaluate evaluate;
+    sm_state_evaluate evaluate;
     
-} fsm_state;
+} sm_state;
 
 /**
  *  Base Transition
  */
 typedef struct _fsm_transition {
     // self
-    fsm_context *ctx;
+    sm_context *ctx;
     
     // property
     unsigned int target;  // target state index
     
     // method
-    fsm_transition_evaluate evaluate;
+    sm_transition_evaluate evaluate;
     
-} fsm_transition;
+} sm_transition;
 
 /**
  *  Base Machine
@@ -320,25 +320,25 @@ typedef struct _fsm_transition {
 
 typedef struct _fsm_machine {
     // self
-    fsm_context *ctx;
+    sm_context *ctx;
     
     // properties
-    fsm_list *states;    // array of finite states
+    sm_list *states;    // array of finite states
     int              current;   // current state index, -1 for null
     
-    enum fsm_status  status;    // machine status
-    fsm_delegate    *delegate;  // machine delegate
+    enum sm_status  status;    // machine status
+    sm_delegate    *delegate;  // machine delegate
     
     // methods
-    fsm_machine_current current_state;
+    sm_machine_current current_state;
     
-    fsm_machine_start   start;
-    fsm_machine_stop    stop;
-    fsm_machine_pause   pause;
-    fsm_machine_resume  resume;
+    sm_machine_start   start;
+    sm_machine_stop    stop;
+    sm_machine_pause   pause;
+    sm_machine_resume  resume;
     
-    fsm_tick            tick;
+    sm_tick            tick;
 
-} fsm_machine;
+} sm_machine;
 
 #endif /* defined(__fsm_protocol__) */

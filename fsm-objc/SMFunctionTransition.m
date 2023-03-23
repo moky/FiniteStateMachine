@@ -28,32 +28,59 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  FSMState.h
+//  SMFunctionTransition.m
 //  FiniteStateMachine
 //
-//  Created by Moky on 14-12-13.
+//  Created by Moky on 14-12-14.
 //  Copyright (c) 2014 Slanissue.com. All rights reserved.
 //
 
-#import <FiniteStateMachine/FSMTransition.h>
+#import "SMFunctionTransition.h"
 
-NS_ASSUME_NONNULL_BEGIN
+@interface SMFunctionTransition ()
 
-/**
- *  State with transitions
- */
-@interface FSMState : NSObject <FSMState>
-
-@property(nonatomic, readonly) NSUInteger index;
-
-- (instancetype)initWithIndex:(NSUInteger)stateIndex;
-
-- (instancetype)initWithIndex:(NSUInteger)stateIndex
-                    capacity:(NSUInteger)countOfTransitions
-NS_DESIGNATED_INITIALIZER;
-
-- (void)addTransition:(FSMTransition *)transition;
+@property(nonatomic, assign) id delegate;
+@property(nonatomic)        SEL selector;
 
 @end
 
-NS_ASSUME_NONNULL_END
+@implementation SMFunctionTransition
+
+//- (void)dealloc {
+//    _delegate = nil;
+//    _selector = NULL;
+//
+//    [super dealloc];
+//}
+
+- (instancetype)initWithTarget:(NSUInteger)stateIndex {
+    return [self initWithTarget:(NSUInteger)stateIndex
+                       delegate:nil
+                       selector:NULL];
+}
+
+/* designated initializer */
+- (instancetype)initWithTarget:(NSUInteger)stateIndex
+                      delegate:(id)delegate
+                      selector:(SEL)selector {
+    self = [super initWithTarget:stateIndex];
+    if (self) {
+	    self.delegate = delegate;
+	    self.selector = selector;
+    }
+    return self;
+}
+
+// Override
+- (BOOL)evaluate:(id<SMContext>)machine time:(NSTimeInterval)now {
+    NSAssert(_delegate && _selector, @"delegate or selector error");
+    NSAssert([_delegate respondsToSelector:_selector],
+             @"error: %@ does not respond to selector: %@",
+             _delegate, NSStringFromSelector(_selector));
+    IMP imp = [_delegate methodForSelector:_selector];
+    BOOL (*sender)(id, SEL, id, double) = (BOOL (*)(id, SEL, id, double))imp;
+    NSAssert(sender, @"method error: %@", NSStringFromSelector(_selector));
+    return sender(_delegate, _selector, machine, now);
+}
+
+@end

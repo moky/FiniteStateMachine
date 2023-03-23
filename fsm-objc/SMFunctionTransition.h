@@ -2,12 +2,12 @@
 //
 //  FSM : Finite State Machine
 //
-//                               Written in 2023 by Moky <albert.moky@gmail.com>
+//                               Written in 2014 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2023 Albert Moky
+// Copyright (c) 2014 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,84 +28,20 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  FSMRunner.m
+//  SMFunctionTransition.h
 //  FiniteStateMachine
 //
-//  Created by Albert Moky on 2023/3/5.
-//  Copyright © 2023 DIM Group. All rights reserved.
+//  Created by Moky on 14-12-14.
+//  Copyright (c) 2014 Slanissue.com. All rights reserved.
 //
 
-#import "FSMRunner.h"
+#import "SMTransition.h"
 
-@interface FSMRunner () {
-    
-    BOOL _running;
-}
+@interface SMFunctionTransition : SMTransition
 
-@end
-
-@implementation FSMRunner
-
-- (instancetype)init {
-    if (self = [super init]) {
-        _running = NO;
-    }
-    return self;
-}
-
-- (bool)isRunning {
-    return _running;
-}
-
-- (void)stop {
-    _running = NO;
-}
-
-// Override
-- (void)run {
-    [self setup];
-    @try {
-        [self handle];
-    } @finally {
-        [self finish];
-    }
-}
-
-// Override
-- (void)setup {
-    _running = YES;
-}
-
-// Override
-- (void)finish {
-    _running = NO;
-}
-
-// Override
-- (void)handle {
-    while ([self isRunning]) {
-        if (![self process]) {
-            [self idle];
-        }
-    }
-}
-
-// abstractmethod
-- (BOOL)process {
-    NSAssert(false, @"override me!");
-    return NO;
-}
-
-- (void)idle {
-    [FSMRunner idle:(1.0/60)];
-}
-
-@end
-
-@implementation FSMRunner (Sleeping)
-
-+ (void)idle:(NSTimeInterval)seconds {
-    [FSMThread sleep:seconds];
-}
+- (instancetype)initWithTarget:(NSUInteger)stateIndex
+                      delegate:(id)delegate
+                      selector:(SEL)selector
+NS_DESIGNATED_INITIALIZER;
 
 @end

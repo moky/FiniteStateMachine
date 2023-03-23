@@ -2,12 +2,12 @@
 //
 //  FSM : Finite State Machine
 //
-//                               Written in 2014 by Moky <albert.moky@gmail.com>
+//                               Written in 2015 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2014 Albert Moky
+// Copyright (c) 2015 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,27 +28,52 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  FSMTransition.h
+//  SMBlockTransition.m
 //  FiniteStateMachine
 //
-//  Created by Moky on 14-12-13.
-//  Copyright (c) 2014 Slanissue.com. All rights reserved.
+//  Created by Moky on 15-1-9.
+//  Copyright (c) 2015 Slanissue.com. All rights reserved.
 //
 
-#import <FiniteStateMachine/FSMMachine.h>
+#import "SMBlockTransition.h"
 
-NS_ASSUME_NONNULL_BEGIN
+#if NS_BLOCKS_AVAILABLE
 
-/**
- *  Transition with the name of target state
- */
-@interface FSMTransition : NSObject <FSMTransition>
+@interface SMBlockTransition ()
 
-@property(nonatomic, readonly) NSUInteger target;  // target state index
-
-- (instancetype)initWithTarget:(NSUInteger)stateIndex
-NS_DESIGNATED_INITIALIZER;
+@property(nonatomic, copy) SMBlock block;
 
 @end
 
-NS_ASSUME_NONNULL_END
+@implementation SMBlockTransition
+
+- (void)dealloc {
+    [_block release];
+    _block = nil;
+
+    [super dealloc];
+}
+
+- (instancetype)initWithTarget:(NSUInteger)stateIndex {
+    return [self initWithTarget:stateIndex block:NULL];
+}
+
+/* designated initializer */
+- (instancetype)initWithTarget:(NSUInteger)stateIndex
+                         block:(SMBlock)block {
+    self = [super initWithTarget:stateIndex];
+    if (self) {
+	    self.block = block;
+    }
+    return self;
+}
+
+// Override
+- (BOOL)evaluate:(id<SMContext>)machine time:(NSTimeInterval)now {
+    NSAssert(_block, @"block error");
+    return _block(machine, now);
+}
+
+@end
+
+#endif
