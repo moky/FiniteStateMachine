@@ -51,8 +51,8 @@
 
 @end
 
-static void enter_state(const struct _fsm_delegate *d,
-                        const struct _fsm_state    *s,
+static void enter_state(const struct _sm_delegate *d,
+                        const struct _sm_state    *s,
                         const         sm_context  *ctx,
                         const         sm_time      now) {
     sm_machine *m = (sm_machine *)ctx;
@@ -66,8 +66,8 @@ static void enter_state(const struct _fsm_delegate *d,
     [delegate machine:context enterState:next time:now];
 }
 
-static void exit_state(const struct _fsm_delegate *d,
-                       const struct _fsm_state    *s,
+static void exit_state(const struct _sm_delegate *d,
+                       const struct _sm_state    *s,
                        const         sm_context  *ctx,
                        const         sm_time      now) {
     sm_machine *m = (sm_machine *)ctx;
@@ -81,8 +81,8 @@ static void exit_state(const struct _fsm_delegate *d,
     [delegate machine:context exitState:previous time:now];
 }
 
-static void pause_state(const struct _fsm_delegate *d,
-                        const struct _fsm_state    *s,
+static void pause_state(const struct _sm_delegate *d,
+                        const struct _sm_state    *s,
                         const         sm_context  *ctx,
                         const         sm_time      now) {
     sm_machine *m = (sm_machine *)ctx;
@@ -96,8 +96,8 @@ static void pause_state(const struct _fsm_delegate *d,
     [delegate machine:context pauseState:current time:now];
 }
 
-static void resume_state(const struct _fsm_delegate *d,
-                         const struct _fsm_state    *s,
+static void resume_state(const struct _sm_delegate *d,
+                         const struct _sm_state    *s,
                          const         sm_context  *ctx,
                          const         sm_time      now) {
     sm_machine *m = (sm_machine *)ctx;

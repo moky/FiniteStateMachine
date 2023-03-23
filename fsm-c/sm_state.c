@@ -16,7 +16,7 @@
 
 sm_state * sm_create_state(sm_state_evaluate evaluate, unsigned int capacity)
 {
-    struct _fsm_state *state = (struct _fsm_state *)malloc(sizeof(struct _fsm_state));
+    struct _sm_state *state = (struct _sm_state *)malloc(sizeof(struct _sm_state));
     memset(state, 0, sizeof(sm_state));
     if (evaluate == NULL) {
         evaluate = sm_tick_state;
@@ -44,9 +44,9 @@ void sm_add_transition(sm_state *state, const sm_transition *trans)
 }
 
 // state evaluate
-const struct _fsm_transition *sm_tick_state(const sm_state   *state,
-                                             const sm_context *ctx,
-                                             const sm_time     now)
+const struct _sm_transition *sm_tick_state(const sm_state   *state,
+                                           const sm_context *ctx,
+                                           const sm_time     now)
 {
     sm_transition * trans;
     unsigned int len = sm_list_length(state->transitions);

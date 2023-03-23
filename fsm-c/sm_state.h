@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Slanissue.com. All rights reserved.
 //
 
-#ifndef __fsm_state__
-#define __fsm_state__
+#ifndef __sm_state__
+#define __sm_state__
 
 #include "sm_protocol.h"
 
@@ -18,9 +18,9 @@ void sm_destroy_state(sm_state *state);
 void sm_add_transition(sm_state *state, const sm_transition *trans);
 
 // state evaluate
-const struct _fsm_transition *sm_tick_state(const sm_state   *state,
-                                             const sm_context *machine,
-                                             const sm_time     now);
+const struct _sm_transition *sm_tick_state(const sm_state   *state,
+                                           const sm_context *machine,
+                                           const sm_time     now);
 
 
-#endif /* defined(__fsm_state__) */
+#endif /* defined(__sm_state__) */

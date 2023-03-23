@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Slanissue.com. All rights reserved.
 //
 
-#ifndef __fsm_transition__
-#define __fsm_transition__
+#ifndef __sm_transition__
+#define __sm_transition__
 
 #include "sm_protocol.h"
 
@@ -16,4 +16,4 @@ sm_transition *sm_create_transition(sm_transition_evaluate evaluate);
 void sm_destroy_transition(sm_transition *trans);
 
 
-#endif /* defined(__fsm_transition__) */
+#endif /* defined(__sm_transition__) */

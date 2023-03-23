@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name                  = 'FiniteStateMachine'
-    s.version               = '2.3.0'
+    s.version               = '2.3.1'
     s.summary               = 'FSM'
     s.description           = <<-DESC
             Finite State Machine

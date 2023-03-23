@@ -49,7 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithIndex:(NSUInteger)stateIndex;
 
 - (instancetype)initWithIndex:(NSUInteger)stateIndex
-                    capacity:(NSUInteger)countOfTransitions
+                     capacity:(NSUInteger)countOfTransitions
 NS_DESIGNATED_INITIALIZER;
 
 - (void)addTransition:(SMTransition *)transition;

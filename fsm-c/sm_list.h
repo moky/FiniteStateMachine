@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Slanissue.com. All rights reserved.
 //
 
-#ifndef __fsm_list__
-#define __fsm_list__
+#ifndef __sm_list__
+#define __sm_list__
 
 #include "sm_protocol.h"
 
@@ -26,4 +26,4 @@ void sm_list_set(sm_list *list, int index, const sm_list_item item);
 // append item value to the tail
 void sm_list_add(sm_list *list, const sm_list_item item);
 
-#endif /* defined(__fsm_list__) */
+#endif /* defined(__sm_list__) */

@@ -40,8 +40,8 @@
 #import "SMTransition.h"
 
 static sm_bool trans_eval(const sm_transition *trans,
-                           const sm_context    *ctx,
-                           const sm_time        now) {
+                          const sm_context    *ctx,
+                          const sm_time        now) {
     sm_machine *m = (sm_machine *)ctx;
     id<SMContext> machine = m->ctx;
     id<SMTransition> transition = trans->ctx;

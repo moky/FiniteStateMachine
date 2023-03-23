@@ -141,7 +141,7 @@ static void on_resume(const sm_state   *s,
 
 /* designated initializer */
 - (instancetype)initWithIndex:(NSUInteger)stateIndex
-                    capacity:(NSUInteger)countOfTransitions {
+                     capacity:(NSUInteger)countOfTransitions {
     self = [super init];
     if (self) {
         self.index = stateIndex;
@@ -165,34 +165,27 @@ static void on_resume(const sm_state   *s,
 }
 
 // abstractmethod
-- (void)onEnter:(id<SMState>)previous
-        machine:(id<SMContext>)ctx
-           time:(NSTimeInterval)now {
+- (void)onEnter:(id<SMState>)previous machine:(id<SMContext>)ctx time:(NSTimeInterval)now {
     NSAssert(false, @"override me!");
 }
 
 // abstractmethod
-- (void)onExit:(id<SMState>)next
-       machine:(id<SMContext>)ctx
-          time:(NSTimeInterval)now {
+- (void)onExit:(id<SMState>)next machine:(id<SMContext>)ctx time:(NSTimeInterval)now {
     NSAssert(false, @"override me!");
 }
 
 // abstractmethod
-- (void)onPaused:(id<SMContext>)ctx
-            time:(NSTimeInterval)now {
+- (void)onPaused:(id<SMContext>)ctx time:(NSTimeInterval)now {
     NSAssert(false, @"override me!");
 }
 
 // abstractmethod
-- (void)onResume:(id<SMContext>)ctx
-            time:(NSTimeInterval)now {
+- (void)onResume:(id<SMContext>)ctx time:(NSTimeInterval)now {
     NSAssert(false, @"override me!");
 }
 
 // Override
-- (id<SMTransition>)evaluate:(id<SMContext>)ctx
-                         time:(NSTimeInterval)now {
+- (id<SMTransition>)evaluate:(id<SMContext>)ctx time:(NSTimeInterval)now {
     // NOTICE: actualy we DON'T need to implement this function,
     //         because it's running via 'sm_tick_state()' in C program.
     __block id<SMTransition> trans = nil;
