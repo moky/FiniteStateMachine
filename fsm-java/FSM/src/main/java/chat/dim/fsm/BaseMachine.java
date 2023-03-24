@@ -66,9 +66,8 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
     //
     public S addState(S newState) {
         int index = newState.index;
-        if (index < 0) {
-            throw new IndexOutOfBoundsException("state index error: " + index);
-        } else if (index < states.size()) {
+        assert index >= 0 : "state index error: " + index;
+        if (index < states.size()) {
             // WARNING: return old state that was replaced
             return states.set(index, newState);
         }
