@@ -109,11 +109,13 @@ typedef NS_ENUM(UInt8, SMThreadStatus) {
     /*__weak*/ __block __typeof(self) thread = self;
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        [thread retain];
         [thread setStatus:SMThreadStatusRunning];
         @try {
             [thread run];
         } @finally {
             [thread setStatus:SMThreadStatusStopped];
+            [thread release];
         }
     });
 }
