@@ -31,7 +31,7 @@
 package chat.dim.fsm;
 
 /**
- *  Transition with the name of target state
+ *  Transition with the index of target state
  */
 public abstract class BaseTransition<C extends Context> implements Transition<C> {
 

@@ -30,6 +30,8 @@
  */
 package chat.dim.fsm;
 
+import java.util.Date;
+
 /**
  *  State Transition
  *  ~~~~~~~~~~~~~~~~
@@ -42,8 +44,8 @@ public interface Transition<C extends Context> {
      *  Evaluate the current state
      *
      * @param ctx     - context (machine)
-     * @param now     - current time (milliseconds, from Jan 1, 1970 UTC)
+     * @param now     - current time
      * @return true when current state should be changed
      */
-    boolean evaluate(C ctx, long now);
+    boolean evaluate(C ctx, Date now);
 }

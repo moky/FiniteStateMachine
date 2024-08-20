@@ -30,6 +30,7 @@
  */
 package chat.dim.threading;
 
+import java.util.Date;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -41,61 +42,18 @@ import chat.dim.type.WeakSet;
 public class Metronome extends Runner {
 
     // at least wait 1/60 of a second
-    public static long MIN_INTERVAL = 1000/60;
-
-    private final long interval;
-    private long lastTime;
+    public static long MIN_INTERVAL = MILLIS_PER_SECOND / 60;  //  16 ms
 
     private final Daemon daemon;
+    private long lastTime;
 
-    private final ReadWriteLock lock;
-    private final Set<Ticker> allTickers;
+    private final ReadWriteLock lock = new ReentrantReadWriteLock();
+    private final Set<Ticker> allTickers = new WeakSet<>();
 
     public Metronome(long millis) {
-        super();
-        assert millis > 0 : "interval error: " + millis;
-        interval = millis;
-        lastTime = 0;
+        super(millis);
         daemon = new Daemon(this);
-        lock = new ReentrantReadWriteLock();
-        allTickers = new WeakSet<>();
-    }
-
-    @Override
-    public void setup() {
-        super.setup();
-        lastTime = System.currentTimeMillis();
-    }
-
-    @Override
-    public boolean process() {
-        Ticker[] tickers = getTickers();
-        if (tickers.length == 0) {
-            // nothing to do now,
-            // return false to have a rest ^_^
-            return false;
-        }
-        // 1. check time
-        long now = System.currentTimeMillis();
-        long elapsed = now - lastTime;
-        long waiting = interval - elapsed;
-        if (waiting < MIN_INTERVAL) {
-            waiting = MIN_INTERVAL;
-        }
-        idle(waiting);
-        now += waiting;
-        elapsed += waiting;
-        // 2. drive tickers
-        for (Ticker item : tickers) {
-            try {
-                item.tick(now, elapsed);
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-        }
-        // 3. update last time
-        lastTime = now;
-        return true;
+        lastTime = 0;
     }
 
     private Ticker[] getTickers() {
@@ -131,6 +89,10 @@ public class Metronome extends Runner {
     }
 
     public void start() {
+        if (isRunning()) {
+            stop();
+            idle();
+        }
         daemon.start();
     }
 
@@ -139,4 +101,43 @@ public class Metronome extends Runner {
         super.stop();
         daemon.stop();
     }
+
+    @Override
+    public void setup() {
+        super.setup();
+        lastTime = System.currentTimeMillis();
+    }
+
+    @Override
+    public boolean process() {
+        Ticker[] tickers = getTickers();
+        if (tickers.length == 0) {
+            // nothing to do now,
+            // return false to have a rest ^_^
+            return false;
+        }
+        // 1. check time
+        Date now = new Date();
+        long current = now.getTime();
+        long elapsed = current - lastTime;
+        long waiting = interval - elapsed;
+        if (waiting < MIN_INTERVAL) {
+            waiting = MIN_INTERVAL;
+        }
+        Runner.sleep(waiting);
+        now = new Date(current + waiting);
+        elapsed += waiting;
+        // 2. drive tickers
+        for (Ticker item : tickers) {
+            try {
+                item.tick(now, elapsed);
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        }
+        // 3. update last time
+        lastTime = now.getTime();
+        return true;
+    }
+
 }

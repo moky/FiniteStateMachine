@@ -30,6 +30,8 @@
  */
 package chat.dim.fsm;
 
+import java.util.Date;
+
 /**
  *  Finite State
  *  ~~~~~~~~~~~~
@@ -40,45 +42,48 @@ package chat.dim.fsm;
 public interface State<C extends Context, T extends Transition<C>> {
 
     /**
+     *  Called by machine.tick() to evaluate each transitions
+     *
+     * @param ctx     - context (machine)
+     * @param now     - current time
+     * @return success transition, or null to stay the current state
+     */
+    T evaluate(C ctx, Date now);
+
+    //-------- events
+
+    /**
      *  Called after new state entered
      *
      * @param previous - old state
      * @param ctx      - context (machine)
-     * @param now      - current time (milliseconds, from Jan 1, 1970 UTC)
+     * @param now      - current time
      */
-    void onEnter(State<C, T> previous, C ctx, long now);
+    void onEnter(State<C, T> previous, C ctx, Date now);
 
     /**
      *  Called before old state exited
      *
      * @param next    - new state
      * @param ctx     - context (machine)
-     * @param now     - current time (milliseconds, from Jan 1, 1970 UTC)
+     * @param now     - current time
      */
-    void onExit(State<C, T> next, C ctx, long now);
+    void onExit(State<C, T> next, C ctx, Date now);
 
     /**
      *  Called before current state paused
      *
      * @param ctx - context (machine)
-     * @param now - current time (milliseconds, from Jan 1, 1970 UTC)
+     * @param now - current time
      */
-    void onPause(C ctx, long now);
+    void onPause(C ctx, Date now);
 
     /**
      *  Called after current state resumed
      *
      * @param ctx - context (machine)
-     * @param now - current time (milliseconds, from Jan 1, 1970 UTC)
+     * @param now - current time
      */
-    void onResume(C ctx, long now);
+    void onResume(C ctx, Date now);
 
-    /**
-     *  Called by machine.tick() to evaluate each transitions
-     *
-     * @param ctx     - context (machine)
-     * @param now     - current time (milliseconds, from Jan 1, 1970 UTC)
-     * @return success transition, or null to stay the current state
-     */
-    T evaluate(C ctx, long now);
 }

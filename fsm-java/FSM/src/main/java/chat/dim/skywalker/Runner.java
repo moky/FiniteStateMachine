@@ -32,6 +32,31 @@ package chat.dim.skywalker;
 
 public abstract class Runner implements Runnable, Handler, Processor {
 
+    public static final long MILLIS_PER_SECOND = 1000L;
+
+    /**
+     *  Frames Per Second
+     *  ~~~~~~~~~~~~~~~~~
+     *  (1) The human eye can process 10-12 still images per second,
+     *      and the dynamic compensation function can also deceive us.
+     *  (2) At a frame rate of 12fps or lower, we can quickly distinguish between
+     *      a pile of still images and not animations.
+     *  (3) Once the playback rate (frames per second) of the images reaches 16-24 fps,
+     *      our brain will assume that these images are a continuously moving scene
+     *      and will appear like the effect of a movie.
+     *  (4) At 24fps, there is a feeling of 'motion blur',
+     *      while at 60fps, the image is the smoothest and cleanest.
+     */
+    public static final long INTERVAL_SLOW   = MILLIS_PER_SECOND / 10;  // 100 ms
+    public static final long INTERVAL_NORMAL = MILLIS_PER_SECOND / 25;  //  40 ms
+    public static final long INTERVAL_FAST   = MILLIS_PER_SECOND / 60;  //  16 ms
+
+    protected Runner(long millis) {
+        assert millis > 0 : "interval error: " + millis;
+        interval = millis;
+    }
+
+    public final long interval;
     private boolean running = false;
 
     public boolean isRunning() {
@@ -60,7 +85,13 @@ public abstract class Runner implements Runnable, Handler, Processor {
     @Override
     public void handle() {
         while (isRunning()) {
-            if (!process()) {
+            if (process()) {
+                // process() return true,
+                // means this thread is busy,
+                // so process next task immediately
+            } else {
+                // nothing to do now,
+                // have a rest ^_^
                 idle();
             }
         }
@@ -72,14 +103,15 @@ public abstract class Runner implements Runnable, Handler, Processor {
     }
 
     protected void idle() {
-        idle(1000/60);
+        sleep(interval);
     }
 
-    public static void idle(long millis) {
+    public static void sleep(long millis) {
         try {
             Thread.sleep(millis);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
+
 }

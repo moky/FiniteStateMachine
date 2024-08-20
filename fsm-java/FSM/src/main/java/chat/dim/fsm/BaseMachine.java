@@ -32,23 +32,17 @@ package chat.dim.fsm;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>, S extends BaseState<C, T>>
         implements Machine<C, T, S> {
 
     private final List<S> states = new ArrayList<>();
-    private int current;  // current state index
+    private int current = -1;  // current state index
 
-    private Status status;
-    private WeakReference<Delegate<C, T, S>> delegateRef;
-
-    public BaseMachine() {
-        super();
-        current = -1;
-        status = Status.Stopped;
-        delegateRef = new WeakReference<>(null);
-    }
+    private Status status = Status.Stopped;
+    private WeakReference<Delegate<C, T, S>> delegateRef = null;
 
     public void setDelegate(Delegate<C, T, S> delegate) {
         delegateRef = delegate == null ? null : new WeakReference<>(delegate);
@@ -111,9 +105,9 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
      *  Exit current state, and enter new state
      *
      * @param newState - next state
-     * @param now     - current time (milliseconds, from Jan 1, 1970 UTC)
+     * @param now     - current time
      */
-    private boolean changeState(S newState, long now) {
+    private boolean changeState(S newState, Date now) {
         S oldState = getCurrentState();
         if (oldState == null) {
             if (newState == null) {
@@ -169,7 +163,7 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
      */
     @Override
     public void start() {
-        long now = System.currentTimeMillis();
+        Date now = new Date();
         boolean ok = changeState(getDefaultState(), now);
         assert ok : "failed to change default state";
         status = Status.Running;
@@ -181,7 +175,7 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
     @Override
     public void stop() {
         status = Status.Stopped;
-        long now = System.currentTimeMillis();
+        Date now = new Date();
         changeState(null, now);  // force current state to null
     }
 
@@ -190,7 +184,7 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
      */
     @Override
     public void pause() {
-        long now = System.currentTimeMillis();
+        Date now = new Date();
         C ctx = getContext();
         S current = getCurrentState();
         Delegate<C, T, S> delegate = getDelegate();
@@ -217,7 +211,7 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
      */
     @Override
     public void resume() {
-        long now = System.currentTimeMillis();
+        Date now = new Date();
         C ctx = getContext();
         S current = getCurrentState();
         Delegate<C, T, S> delegate = getDelegate();
@@ -247,7 +241,7 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
      *  Drive the machine running forward
      */
     @Override
-    public void tick(long now, long elapsed) {
+    public void tick(Date now, long elapsed) {
         C ctx = getContext();
         S state = getCurrentState();
         if (state != null && status == Status.Running) {
@@ -259,4 +253,5 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
             }
         }
     }
+
 }

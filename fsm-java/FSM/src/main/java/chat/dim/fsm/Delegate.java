@@ -30,6 +30,8 @@
  */
 package chat.dim.fsm;
 
+import java.util.Date;
+
 /**
  *  State Machine Delegate
  *  ~~~~~~~~~~~~~~~~~~~~~~
@@ -42,9 +44,9 @@ public interface Delegate<C extends Context, T extends Transition<C>, S extends 
      *
      * @param next     - new state
      * @param ctx      - context (machine)
-     * @param now      - current time (milliseconds, from Jan 1, 1970 UTC)
+     * @param now      - current time
      */
-    void enterState(S next, C ctx, long now);
+    void enterState(S next, C ctx, Date now);
 
     /**
      *  Called after old state exited
@@ -52,25 +54,25 @@ public interface Delegate<C extends Context, T extends Transition<C>, S extends 
      *
      * @param previous - old state
      * @param ctx      - context (machine)
-     * @param now      - current time (milliseconds, from Jan 1, 1970 UTC)
+     * @param now      - current time
      */
-    void exitState(S previous, C ctx, long now);
+    void exitState(S previous, C ctx, Date now);
 
     /**
      *  Called after current state paused
      *
      * @param current  - current state
      * @param ctx      - context (machine)
-     * @param now      - current time (milliseconds, from Jan 1, 1970 UTC)
+     * @param now      - current time
      */
-    void pauseState(S current, C ctx, long now);
+    void pauseState(S current, C ctx, Date now);
 
     /**
      *  Called before current state resumed
      *
      * @param current  - current state
      * @param ctx      - context (machine)
-     * @param now      - current time (milliseconds, from Jan 1, 1970 UTC)
+     * @param now      - current time
      */
-    void resumeState(S current, C ctx, long now);
+    void resumeState(S current, C ctx, Date now);
 }

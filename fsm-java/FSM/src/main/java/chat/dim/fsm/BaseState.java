@@ -31,6 +31,7 @@
 package chat.dim.fsm;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -54,7 +55,7 @@ public abstract class BaseState<C extends Context, T extends Transition<C>> impl
     }
 
     @Override
-    public T evaluate(C ctx, long now) {
+    public T evaluate(C ctx, Date now) {
         for (T transition : transitionList) {
             if (transition.evaluate(ctx, now)) {
                 // OK, get target state from this transition

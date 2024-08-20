@@ -30,13 +30,15 @@
  */
 package chat.dim.threading;
 
+import java.util.Date;
+
 public interface Ticker {
 
     /**
      *  Drive current thread forward
      *
-     * @param now     - current time (milliseconds, from Jan 1, 1970 UTC)
+     * @param now     - current time
      * @param elapsed - milliseconds from previous tick
      */
-    void tick(long now, long elapsed);
+    void tick(Date now, long elapsed);
 }

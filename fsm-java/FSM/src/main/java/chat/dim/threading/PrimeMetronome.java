@@ -30,6 +30,8 @@
  */
 package chat.dim.threading;
 
+import chat.dim.skywalker.Runner;
+
 public enum PrimeMetronome {
 
     INSTANCE;
@@ -41,7 +43,7 @@ public enum PrimeMetronome {
     private final Metronome metronome;
 
     PrimeMetronome() {
-        metronome = new Metronome(200);
+        metronome = new Metronome(Runner.INTERVAL_SLOW);
         metronome.start();
     }
 
