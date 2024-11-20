@@ -37,12 +37,10 @@
     /**
      *  Drive current thread forward
      *
-     * @param {number} now     - current time (milliseconds, from Jan 1, 1970 UTC)
+     * @param {Date} now       - current time
      * @param {number} elapsed - milliseconds from previous tick
      */
-    Ticker.prototype.tick = function (now, elapsed) {
-        throw new Error('NotImplemented');
-    };
+    Ticker.prototype.tick = function (now, elapsed) {};
 
     //-------- namespace --------
     ns.threading.Ticker = Ticker;

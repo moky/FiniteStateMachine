@@ -31,28 +31,133 @@
 //
 
 //! require 'machine.js'
-//! require 'delegate.js'
 
 (function (ns, sys) {
     "use strict";
 
-    var Class = sys.type.Class;
+    var Class      = sys.type.Class;
+    var Enum       = sys.type.Enum;
+    var BaseObject = sys.type.BaseObject;
 
-    var Status = ns.Status;
-    var Machine = ns.Machine;
+    var Transition = ns.Transition;
+    var State      = ns.State;
+    var Machine    = ns.Machine;
 
     /**
-     *  Create a State Machine with default state name
+     *  Base Transition
+     *  ~~~~~~~~~~~~~~~
+     *  Transition with the index of target state
      *
-     * @param {String} defaultStateName
+     * @param {int} target
      */
-    var BaseMachine = function (defaultStateName) {
+    var BaseTransition = function (target) {
         Object.call(this);
-        this.__default = defaultStateName ? defaultStateName : 'default';
-        this.__current = null;  // current state
-        this.__status = Status.Stopped;
+        this.__target = target;
+    };
+    Class(BaseTransition, Object, [Transition], null);
+
+    /**
+     *  Get index of target state
+     *
+     * @return {int} target state index
+     */
+    BaseTransition.prototype.getTarget = function () {
+        return this.__target;
+    };
+
+    /**
+     *  Base State
+     *  ~~~~~~~~~~
+     *  State with index & transitions
+     *
+     * @param {uint} index - state index
+     */
+    var BaseState = function (index) {
+        BaseObject.call(this);
+        this.__index = index;
+        this.__transitions = [];
+    };
+    Class(BaseState, BaseObject, [State], null);
+
+    // Override
+    BaseState.prototype.equals = function (other) {
+        if (other instanceof BaseState) {
+            if (other === this) {
+                // same object
+                return true;
+            }
+            other = other.getIndex();
+        } else if (other instanceof Enum) {
+            other = other.valueOf();
+        }
+        return this.getIndex() === other;
+    };
+
+    // Override
+    BaseState.prototype.toString = function () {
+        var clazz = Object.getPrototypeOf(this).constructor.name;
+        var index = this.getIndex();
+        return '<' + clazz + ' index=' + index + ' />'
+    };
+
+    // Override
+    BaseState.prototype.valueOf = function () {
+        return this.__index;
+    };
+
+    /**
+     *  Get state index
+     *
+     * @return {uint} state index
+     */
+    BaseState.prototype.getIndex = function () {
+        return this.__index;
+    };
+
+    /**
+     *  Append a transition for this state
+     *
+     * @param {Transition} transition
+     */
+    BaseState.prototype.addTransition = function (transition) {
+        if (this.__transitions.indexOf(transition) >= 0) {
+            throw new ReferenceError('transition exists: ' + transition);
+        }
+        this.__transitions.push(transition);
+    };
+
+    // Override
+    BaseState.prototype.evaluate = function (ctx, now) {
+        var transition;
+        for (var index = 0; index < this.__transitions.length; ++index) {
+            transition = this.__transitions[index];
+            if (transition.evaluate(ctx, now)) {
+                // OK, get target state from this transition
+                return transition;
+            }
+        }
+    };
+
+    /**
+     *  Machine Status
+     *  ~~~~~~~~~~~~~~
+     */
+    var Status = Enum(null, {
+        STOPPED: 0,
+        RUNNING: 1,
+        PAUSED: 2
+    });
+
+    /**
+     *  Base Machine
+     *  ~~~~~~~~~~~~
+     */
+    var BaseMachine = function () {
+        Object.call(this);
+        this.__states = [];   // List<State>
+        this.__current = -1;  // current state index
+        this.__status = Status.STOPPED;
         this.__delegate = null;
-        this.__states = {};  // String => State
     };
     Class(BaseMachine, Object, [Machine], null);
 
@@ -68,89 +173,104 @@
         return this.__delegate;
     };
 
-    // protected: the machine itself
+    // protected
     BaseMachine.prototype.getContext = function () {
-        throw new Error('NotImplemented');
-        // return this;
+        // return this;  //  the machine itself
     };
 
     //-------- States
 
     /**
-     *  Add state with name
+     *  Add state with index
      *
-     * @param {String} name
-     * @param {State} state
+     * @param {State|BaseState} newState
+     * @return {State} old state
      */
-    BaseMachine.prototype.setState = function (name, state) {
-        this.__states[name] = state;
+    BaseMachine.prototype.addState = function (newState) {
+        var index = newState.getIndex();
+        if (index < this.__states.length) {
+            // WARNING: return old state that was replaced
+            var old = this.__states[index];
+            this.__states[index] = newState;
+            return old;
+        }
+        // filling empty spaces
+        var spaces = index - this.__states.length;
+        for (var i = 0; i < spaces; ++i) {
+            this.__states.push(null);
+        }
+        // append the new state to the tail
+        this.__states.push(newState);
+        return null;
     };
-    BaseMachine.prototype.getState = function (name) {
-        return this.__states[name];
+
+    /**
+     *  Get state with index
+     *
+     * @param {uint} index
+     * @return {State}
+     */
+    BaseMachine.prototype.getState = function (index) {
+        return this.__states[index];
     };
 
     /**
      *  Get default state
      *
-     * @return {State}
+     * @return {State} the first state
      */
+    // protected
     BaseMachine.prototype.getDefaultState = function () {
-        return this.__states[this.__default];
+        if (this.__states.length === 0) {
+            throw new ReferenceError('states empty');
+        }
+        return this.__states[0];
     };
 
     /**
-     *  Get target state of transition
+     *  Get target state of this transition
      *
      * @param {Transition|BaseTransition} transition - success transition
-     * @return {State}
+     * @return {State} target state of this transition
      */
+    // protected
     BaseMachine.prototype.getTargetState = function (transition) {
-        var name = transition.getTarget();
-        return this.__states[name];
+        var index = transition.getTarget();
+        return this.__states[index];
     };
 
     // Override
     BaseMachine.prototype.getCurrentState = function () {
-        return this.__current;
+        var index = this.__current;
+        return index < 0 ? null : this.__states[index];
     };
 
-    /**
-     *  Set current state
-     *
-     * @param {State} state - new state
-     */
+    // private
     BaseMachine.prototype.setCurrentState = function (state) {
-        return this.__current = state;
-    };
-
-    var states_changed = function (oldState, newState) {
-        if (!oldState) {
-            if (!newState) {
-                // state not change
-                return false;
-            }
-        } else if (oldState.equals(newState)) {
-            // state not change
-            return false;
-        }
-        return true;
+        this.__current = !state ? -1 : state.getIndex();
     };
 
     /**
      *  Exit current state, and enter new state
      *
-     * @param {State} newState - next state
-     * @param {number} now     - current time (milliseconds, from Jan 1, 1970 UTC)
+     * @param {State|BaseState} newState - next state
+     * @param {Date} now                 - current time
      * @return {boolean} true on state changed
      */
+    // private
     BaseMachine.prototype.changeState = function (newState, now) {
         var oldState = this.getCurrentState();
-        if (!states_changed(oldState, newState)) {
+        if (!oldState) {
+            if (!newState) {
+                // state not change
+                return false;
+            }
+        } else if (oldState === newState) {
             // state not change
             return false;
         }
 
-        var machine = this.getContext();
+        var ctx = this.getContext();
         var delegate = this.getDelegate();
 
         //
@@ -159,10 +279,10 @@
         if (delegate) {
             // prepare for changing current state to the new one,
             // the delegate can get old state via ctx if need
-            delegate.enterState(newState, machine);
+            delegate.enterState(newState, ctx, now);
         }
         if (oldState) {
-            oldState.onExit(newState, machine, now);
+            oldState.onExit(newState, ctx, now);
         }
 
         //
@@ -174,12 +294,12 @@
         //  Events after state changed
         //
         if (newState) {
-            newState.onEnter(oldState, machine, now);
+            newState.onEnter(oldState, ctx, now);
         }
         if (delegate) {
             // handle after the current state changed,
             // the delegate can get new state via ctx if need
-            delegate.exitState(oldState, machine);
+            delegate.exitState(oldState, ctx, now);
         }
 
         return true;
@@ -192,9 +312,9 @@
      */
     // Override
     BaseMachine.prototype.start = function () {
-        var now = (new Date()).getTime();
+        var now = new Date();
         this.changeState(this.getDefaultState(), now);
-        this.__status = Status.Running;
+        this.__status = Status.RUNNING;
     };
 
     /**
@@ -202,8 +322,8 @@
      */
     // Override
     BaseMachine.prototype.stop = function () {
-        this.__status = Status.Stopped;
-        var now = (new Date()).getTime();
+        this.__status = Status.STOPPED;
+        var now = new Date();
         this.changeState(null, now);  // force current state to null
     };
 
@@ -212,24 +332,25 @@
      */
     // Override
     BaseMachine.prototype.pause = function () {
-        var machine = this.getContext();
+        var now = new Date();
+        var ctx = this.getContext();
         var current = this.getCurrentState();
-        var delegate = this.getDelegate();
         //
         //  Events before state paused
         //
         if (current) {
-            current.onPause(machine);
+            current.onPause(ctx, now);
         }
         //
         //  Pause current state
         //
-        this.__status = Status.Paused;
+        this.__status = Status.PAUSED;
         //
         //  Events after state paused
         //
+        var delegate = this.getDelegate();
         if (delegate) {
-            delegate.pauseState(current, machine);
+            delegate.pauseState(current, ctx, now);
         }
     };
 
@@ -238,23 +359,26 @@
      */
     // Override
     BaseMachine.prototype.resume = function () {
-        var machine = this.getContext();
+        var now = new Date();
+        var ctx = this.getContext();
         var current = this.getCurrentState();
-        var delegate = this.getDelegate();
         //
         //  Events before state resumed
         //
+        var delegate = this.getDelegate();
         if (delegate) {
-            delegate.resumeState(current, machine);
+            delegate.resumeState(current, ctx, now);
         }
         //
         //  Resume current state
         //
-        this.__status = Status.Running;
+        this.__status = Status.RUNNING;
         //
         //  Events after state resumed
         //
-        current.onResume(machine);
+        if (current) {
+            current.onResume(ctx, now);
+        }
     };
 
     //-------- Ticker
@@ -266,7 +390,7 @@
     BaseMachine.prototype.tick = function (now, elapsed) {
         var machine = this.getContext();
         var current = this.getCurrentState();
-        if (current && Status.Running.equals(this.__status)) {
+        if (current && Status.RUNNING.equals(this.__status)) {
             var transition = current.evaluate(machine, now);
             if (transition) {
                 var next = this.getTargetState(transition);
@@ -276,6 +400,8 @@
     };
 
     //-------- namespace --------
-    ns.BaseMachine = BaseMachine;
+    ns.BaseTransition = BaseTransition;
+    ns.BaseState      = BaseState;
+    ns.BaseMachine    = BaseMachine;
 
 })(FiniteStateMachine, MONKEY);

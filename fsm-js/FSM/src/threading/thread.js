@@ -31,7 +31,7 @@
     'use strict';
 
     var Interface = sys.type.Interface;
-    var Class = sys.type.Class;
+    var Class     = sys.type.Class;
 
     var Runnable = ns.skywalker.Runnable;
 

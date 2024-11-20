@@ -39,9 +39,7 @@
      *
      * @return {boolean} false on finished, true on continuous
      */
-    Runnable.prototype.run = function () {
-        throw new Error('NotImplemented');
-    };
+    Runnable.prototype.run = function () {};
 
     //-------- namespace --------
     ns.skywalker.Runnable = Runnable;

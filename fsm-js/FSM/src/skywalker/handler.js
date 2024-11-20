@@ -40,9 +40,7 @@
      *
      * @return {boolean} false on job done
      */
-    Handler.prototype.setup = function () {
-        throw new Error('NotImplemented');
-    };
+    Handler.prototype.setup = function () {};
 
     /**
      *  Handling run loop
@@ -50,9 +48,7 @@
      *
      * @return {boolean} false on job done
      */
-    Handler.prototype.handle = function () {
-        throw new Error('NotImplemented');
-    };
+    Handler.prototype.handle = function () {};
 
     /**
      *  Cleanup after handled
@@ -60,9 +56,7 @@
      *
      * @return {boolean} false on job done
      */
-    Handler.prototype.finish = function () {
-        throw new Error('NotImplemented');
-    };
+    Handler.prototype.finish = function () {};
 
     //-------- namespace --------
     ns.skywalker.Handler = Handler;

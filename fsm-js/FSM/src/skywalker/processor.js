@@ -38,11 +38,9 @@
      *  Do the job
      *  (when return true, means still have work to do, call this again immediately)
      *
-     * @return false to have a rest (nothing to do now)
+     * @return {boolean} false to have a rest (nothing to do now)
      */
-    Processor.prototype.process = function () {
-        throw new Error('NotImplemented');
-    };
+    Processor.prototype.process = function () {};
 
     //-------- namespace --------
     ns.skywalker.Processor = Processor;

@@ -30,7 +30,7 @@
 // =============================================================================
 //
 
-//! require <crypto.js>
+//! require <monkey.js>
 
 if (typeof FiniteStateMachine !== 'object') {
     FiniteStateMachine = {};

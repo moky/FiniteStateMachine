@@ -39,8 +39,7 @@
     var Class = sys.type.Class;
 
     var PrimeMetronome = ns.threading.PrimeMetronome;
-
-    var BaseMachine = ns.BaseMachine;
+    var BaseMachine    = ns.BaseMachine;
 
     /**
      *  Create an Auto State Machine with default state name
@@ -64,6 +63,20 @@
             var timer = PrimeMetronome.getInstance();
             timer.removeTicker(this);
             BaseMachine.prototype.stop.call(this);
+        },
+
+        // Override
+        pause: function () {
+            var timer = PrimeMetronome.getInstance();
+            timer.removeTicker(this);
+            BaseMachine.prototype.pause.call(this);
+        },
+
+        // Override
+        resume: function () {
+            BaseMachine.prototype.resume.call(this);
+            var timer = PrimeMetronome.getInstance();
+            timer.addTicker(this);
         }
     });
 

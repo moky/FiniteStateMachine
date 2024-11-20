@@ -75,8 +75,8 @@
             return false;
         }
         // 1. check time
-        var now = (new Date()).getTime();
-        var elapsed = now - this.__last_time;
+        var now = new Date();
+        var elapsed = now.getTime() - this.__last_time;
         if (elapsed < this.__interval) {
             // idle(waiting);
             return false;
@@ -90,7 +90,7 @@
             }
         }
         // 3. update last time
-        this.__last_time = now;
+        this.__last_time = now.getTime();
         return true;
     };
 
