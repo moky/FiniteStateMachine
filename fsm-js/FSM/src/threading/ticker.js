@@ -31,8 +31,9 @@
     'use strict';
 
     var Interface = sys.type.Interface;
+    var IObject   = sys.type.Object;
 
-    var Ticker = Interface(null, null);
+    var Ticker = Interface(null, [IObject]);
 
     /**
      *  Drive current thread forward

@@ -48,7 +48,7 @@
      *  ~~~~~~~~~~~~~~~
      *  Transition with the index of target state
      *
-     * @param {int} target
+     * @param {uint} target
      */
     var BaseTransition = function (target) {
         Object.call(this);
@@ -59,7 +59,7 @@
     /**
      *  Get index of target state
      *
-     * @return {int} target state index
+     * @return {uint} target state index
      */
     BaseTransition.prototype.getTarget = function () {
         return this.__target;
@@ -87,10 +87,10 @@
                 return true;
             }
             other = other.getIndex();
-        } else if (other instanceof Enum) {
-            other = other.valueOf();
+        } else if (Enum.isEnum(other)) {
+            other = other.getValue();
         }
-        return this.getIndex() === other;
+        return this.__index === other;
     };
 
     // Override
@@ -142,7 +142,7 @@
      *  Machine Status
      *  ~~~~~~~~~~~~~~
      */
-    var Status = Enum(null, {
+    var Status = Enum('MachineStatus', {
         STOPPED: 0,
         RUNNING: 1,
         PAUSED: 2
@@ -153,13 +153,13 @@
      *  ~~~~~~~~~~~~
      */
     var BaseMachine = function () {
-        Object.call(this);
+        BaseObject.call(this);
         this.__states = [];   // List<State>
         this.__current = -1;  // current state index
         this.__status = Status.STOPPED;
         this.__delegate = null;
     };
-    Class(BaseMachine, Object, [Machine], null);
+    Class(BaseMachine, BaseObject, [Machine], null);
 
     /**
      *  Set machine delegate

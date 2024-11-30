@@ -43,11 +43,9 @@
 
     /**
      *  Create an Auto State Machine with default state name
-     *
-     * @param {String} defaultStateName
      */
-    var AutoMachine = function (defaultStateName) {
-        BaseMachine.call(this, defaultStateName);
+    var AutoMachine = function () {
+        BaseMachine.call(this);
     };
     Class(AutoMachine, BaseMachine, null, {
 

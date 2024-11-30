@@ -32,7 +32,8 @@
 (function (ns, sys) {
     'use strict';
 
-    var Class = sys.type.Class;
+    var Class   = sys.type.Class;
+    var HashSet = sys.type.HashSet;
 
     var Runner = ns.skywalker.Runner;
     var Thread = ns.threading.Thread;
@@ -45,7 +46,7 @@
         this.__interval = millis;
         this.__last_time = 0;  // milliseconds
         this.__thread = new Thread(this);
-        this.__tickers = [];   // WeakSet<Ticker>
+        this.__tickers = new HashSet();   // WeakSet<Ticker>
     };
     Class(Metronome, Runner, null, null);
 
@@ -63,7 +64,7 @@
     // Override
     Metronome.prototype.setup = function () {
         this.__last_time = (new Date()).getTime();
-        return false;
+        return Runner.prototype.setup.call(this);
     };
 
     // Override
@@ -95,7 +96,7 @@
     };
 
     Metronome.prototype.getTickers = function () {
-        return this.__tickers.slice();
+        return this.__tickers.toArray();
     };
 
     /**
@@ -105,12 +106,7 @@
      * @return {boolean} false on already exists
      */
     Metronome.prototype.addTicker = function (ticker) {
-        if (this.__tickers.indexOf(ticker) < 0) {
-            this.__tickers.push(ticker);
-            return true;
-        } else {
-            return false;
-        }
+        return this.__tickers.add(ticker);
     };
 
     /**
@@ -120,13 +116,7 @@
      * @return {boolean} false on not exists
      */
     Metronome.prototype.removeTicker = function (ticker) {
-        var index = this.__tickers.indexOf(ticker);
-        if (index < 0) {
-            return false;
-        } else {
-            this.__tickers.splice(index, 1);
-            return true;
-        }
+        return this.__tickers.remove(ticker);
     };
 
     //
