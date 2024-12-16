@@ -30,6 +30,8 @@
  */
 package chat.dim.threading;
 
+import chat.dim.type.Duration;
+
 public class Daemon {
 
     private final Runnable runnable;
@@ -85,4 +87,9 @@ public class Daemon {
             e.printStackTrace();
         }
     }
+
+    public static void join(Thread thr, Duration waiting) {
+        join(thr, waiting.inMilliseconds());
+    }
+
 }

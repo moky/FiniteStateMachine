@@ -30,9 +30,9 @@
  */
 package chat.dim.skywalker;
 
-public abstract class Runner implements Runnable, Handler, Processor {
+import chat.dim.type.Duration;
 
-    public static final long MILLIS_PER_SECOND = 1000L;
+public abstract class Runner implements Runnable, Handler, Processor {
 
     /**
      *  Frames Per Second
@@ -47,16 +47,16 @@ public abstract class Runner implements Runnable, Handler, Processor {
      *  (4) At 24fps, there is a feeling of 'motion blur',
      *      while at 60fps, the image is the smoothest and cleanest.
      */
-    public static final long INTERVAL_SLOW   = MILLIS_PER_SECOND / 10;  // 100 ms
-    public static final long INTERVAL_NORMAL = MILLIS_PER_SECOND / 25;  //  40 ms
-    public static final long INTERVAL_FAST   = MILLIS_PER_SECOND / 60;  //  16 ms
+    public static Duration INTERVAL_SLOW   = Duration.ofMilliseconds(Duration.MILLIS_PER_SECOND / 10);  // 100 ms
+    public static Duration INTERVAL_NORMAL = Duration.ofMilliseconds(Duration.MILLIS_PER_SECOND / 25);  //  40 ms
+    public static Duration INTERVAL_FAST   = Duration.ofMilliseconds(Duration.MILLIS_PER_SECOND / 60);  //  16 ms
 
-    protected Runner(long millis) {
-        assert millis > 0 : "interval error: " + millis;
-        interval = millis;
+    protected Runner(Duration interval) {
+        assert interval.isPositive() : "interval error: " + interval;
+        this.interval = interval;
     }
 
-    public final long interval;
+    public final Duration interval;
     private boolean running = false;
 
     public boolean isRunning() {
@@ -106,9 +106,9 @@ public abstract class Runner implements Runnable, Handler, Processor {
         sleep(interval);
     }
 
-    public static void sleep(long millis) {
+    public static void sleep(Duration interval) {
         try {
-            Thread.sleep(millis);
+            Thread.sleep(interval.inMilliseconds());
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

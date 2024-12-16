@@ -35,6 +35,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import chat.dim.type.Duration;
+
 public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>, S extends BaseState<C, T>>
         implements Machine<C, T, S> {
 
@@ -264,7 +266,7 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
      *  Drive the machine running forward
      */
     @Override
-    public void tick(Date now, long elapsed) {
+    public void tick(Date now, Duration elapsed) {
         if (status != Status.Running) {
             // Paused or Stopped,
             // cannot evaluate the transitions of current state

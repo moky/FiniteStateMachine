@@ -37,23 +37,24 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import chat.dim.skywalker.Runner;
+import chat.dim.type.Duration;
 import chat.dim.type.WeakSet;
 
 public class Metronome extends Runner {
 
     // at least wait 1/60 of a second
-    public static long MIN_INTERVAL = MILLIS_PER_SECOND / 60;  //  16 ms
+    public static Duration MIN_INTERVAL = Duration.ofMilliseconds(Duration.MILLIS_PER_SECOND / 60);  //  16 ms
 
     private final Daemon daemon;
-    private long lastTime;
+    private Date lastTime;
 
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
     private final Set<Ticker> allTickers = new WeakSet<>();
 
-    public Metronome(long millis) {
-        super(millis);
+    public Metronome(Duration interval) {
+        super(interval);
         daemon = new Daemon(this);
-        lastTime = 0;
+        lastTime = null;
     }
 
     private Ticker[] getTickers() {
@@ -105,7 +106,7 @@ public class Metronome extends Runner {
     @Override
     public void setup() {
         super.setup();
-        lastTime = System.currentTimeMillis();
+        lastTime = new Date();
     }
 
     @Override
@@ -118,26 +119,30 @@ public class Metronome extends Runner {
         }
         // 1. check time
         Date now = new Date();
-        long current = now.getTime();
-        long elapsed = current - lastTime;
-        long waiting = interval - elapsed;
-        if (waiting < MIN_INTERVAL) {
+        Duration elapsed = Duration.between(lastTime, now);
+        Duration waiting = interval.minus(elapsed);
+        if (waiting.compareTo(MIN_INTERVAL) < 0) {
             waiting = MIN_INTERVAL;
         }
         Runner.sleep(waiting);
-        now = new Date(current + waiting);
-        elapsed += waiting;
+        now = waiting.addTo(now);
+        elapsed = elapsed.plus(waiting);
         // 2. drive tickers
         for (Ticker item : tickers) {
             try {
                 item.tick(now, elapsed);
             } catch (Throwable e) {
-                e.printStackTrace();
+                onTickerError(e, item);
             }
         }
         // 3. update last time
-        lastTime = now.getTime();
+        lastTime = now;
         return true;
+    }
+
+    protected void onTickerError(Throwable e, Ticker ticker) {
+        e.printStackTrace();
+        assert ticker != null;
     }
 
 }

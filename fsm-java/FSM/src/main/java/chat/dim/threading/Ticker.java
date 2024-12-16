@@ -32,6 +32,8 @@ package chat.dim.threading;
 
 import java.util.Date;
 
+import chat.dim.type.Duration;
+
 public interface Ticker {
 
     /**
@@ -40,5 +42,5 @@ public interface Ticker {
      * @param now     - current time
      * @param elapsed - milliseconds from previous tick
      */
-    void tick(Date now, long elapsed);
+    void tick(Date now, Duration elapsed);
 }
