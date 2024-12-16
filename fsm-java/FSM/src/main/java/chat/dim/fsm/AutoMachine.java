@@ -36,30 +36,32 @@ public abstract class AutoMachine<C extends Context, T extends BaseTransition<C>
         extends BaseMachine<C, T, S> {
 
     @Override
-    public void start() {
-        super.start();
+    public boolean start() {
+        boolean ok = super.start();
         PrimeMetronome timer = PrimeMetronome.getInstance();
         timer.addTicker(this);
+        return ok;
     }
 
     @Override
-    public void stop() {
+    public boolean stop() {
         PrimeMetronome timer = PrimeMetronome.getInstance();
         timer.removeTicker(this);
-        super.stop();
+        return super.stop();
     }
 
     @Override
-    public void pause() {
+    public boolean pause() {
         PrimeMetronome timer = PrimeMetronome.getInstance();
         timer.removeTicker(this);
-        super.pause();
+        return super.pause();
     }
 
     @Override
-    public void resume() {
-        super.resume();
+    public boolean resume() {
+        boolean ok = super.resume();
         PrimeMetronome timer = PrimeMetronome.getInstance();
         timer.addTicker(this);
+        return ok;
     }
 }

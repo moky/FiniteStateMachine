@@ -48,20 +48,20 @@ public interface Machine<C extends Context, T extends Transition<C>, S extends S
     /**
      *  Change current state to 'default'
      */
-    void start();
+    boolean start();
 
     /**
      *  Change current state to null
      */
-    void stop();
+    boolean stop();
 
     /**
      *  Pause machine, current state not change
      */
-    void pause();
+    boolean pause();
 
     /**
      *  Resume machine with current state
      */
-    void resume();
+    boolean resume();
 }

@@ -162,28 +162,44 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
      *  start machine from default state
      */
     @Override
-    public void start() {
+    public boolean start() {
+        if (status != Status.Stopped) {
+            // Running or Paused,
+            // cannot start again
+            return false;
+        }
         Date now = new Date();
         boolean ok = changeState(getDefaultState(), now);
-        assert ok : "failed to change default state";
+        //assert ok : "failed to change default state";
         status = Status.Running;
+        return ok;
     }
 
     /**
      *  stop machine and set current state to null
      */
     @Override
-    public void stop() {
+    public boolean stop() {
+        if (status == Status.Stopped) {
+            // Stopped,
+            // cannot stop again
+            return false;
+        }
         status = Status.Stopped;
         Date now = new Date();
-        changeState(null, now);  // force current state to null
+        return changeState(null, now);  // force current state to null
     }
 
     /**
      *  pause machine, current state not change
      */
     @Override
-    public void pause() {
+    public boolean pause() {
+        if (status != Status.Running) {
+            // Paused or Stopped,
+            // cannot pause now
+            return false;
+        }
         Date now = new Date();
         C ctx = getContext();
         S current = getCurrentState();
@@ -204,13 +220,19 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
         if (delegate != null) {
             delegate.pauseState(current, ctx, now);
         }
+        return true;
     }
 
     /**
      *  resume machine with current state
      */
     @Override
-    public void resume() {
+    public boolean resume() {
+        if (status != Status.Paused) {
+            // Running or Stopped,
+            // cannot resume now
+            return false;
+        }
         Date now = new Date();
         C ctx = getContext();
         S current = getCurrentState();
@@ -231,6 +253,7 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
         if (current != null) {
             current.onResume(ctx, now);
         }
+        return true;
     }
 
     //
@@ -242,9 +265,14 @@ public abstract class BaseMachine<C extends Context, T extends BaseTransition<C>
      */
     @Override
     public void tick(Date now, long elapsed) {
-        C ctx = getContext();
+        if (status != Status.Running) {
+            // Paused or Stopped,
+            // cannot evaluate the transitions of current state
+            return;
+        }
         S state = getCurrentState();
-        if (state != null && status == Status.Running) {
+        if (state != null) {
+            C ctx = getContext();
             T transition = state.evaluate(ctx, now);
             if (transition != null) {
                 state = getTargetState(transition);
