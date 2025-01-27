@@ -107,8 +107,12 @@ public abstract class Runner implements Runnable, Handler, Processor {
     }
 
     public static void sleep(Duration interval) {
+        sleep(interval.inMilliseconds());
+    }
+
+    public static void sleep(long millis) {
         try {
-            Thread.sleep(interval.inMilliseconds());
+            Thread.sleep(millis);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
