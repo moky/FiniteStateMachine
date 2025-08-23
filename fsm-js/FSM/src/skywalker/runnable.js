@@ -1,4 +1,4 @@
-;
+'use strict';
 // license: https://mit-license.org
 // =============================================================================
 // The MIT License (MIT)
@@ -27,12 +27,8 @@
 
 //! require 'namespace.js'
 
-(function (ns, sys) {
-    'use strict';
-
-    var Interface = sys.type.Interface;
-
-    var Runnable = Interface(null, null);
+    fsm.skywalker.Runnable = Interface(null, null);
+    var Runnable = fsm.skywalker.Runnable;
 
     /**
      *  Run
@@ -40,8 +36,3 @@
      * @return {boolean} false on finished, true on continuous
      */
     Runnable.prototype.run = function () {};
-
-    //-------- namespace --------
-    ns.skywalker.Runnable = Runnable;
-
-})(FiniteStateMachine, MONKEY);

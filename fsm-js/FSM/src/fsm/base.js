@@ -1,4 +1,4 @@
-;
+'use strict';
 // license: https://mit-license.org
 //
 //  Finite State Machine
@@ -32,17 +32,6 @@
 
 //! require 'machine.js'
 
-(function (ns, sys) {
-    "use strict";
-
-    var Class      = sys.type.Class;
-    var Enum       = sys.type.Enum;
-    var BaseObject = sys.type.BaseObject;
-
-    var Transition = ns.Transition;
-    var State      = ns.State;
-    var Machine    = ns.Machine;
-
     /**
      *  Base Transition
      *  ~~~~~~~~~~~~~~~
@@ -50,11 +39,13 @@
      *
      * @param {uint} target
      */
-    var BaseTransition = function (target) {
-        Object.call(this);
+    fsm.BaseTransition = function (target) {
+        BaseObject.call(this);
         this.__target = target;
     };
-    Class(BaseTransition, Object, [Transition], null);
+    var BaseTransition = fsm.BaseTransition;
+
+    Class(BaseTransition, BaseObject, [Transition], null);
 
     /**
      *  Get index of target state
@@ -65,6 +56,7 @@
         return this.__target;
     };
 
+
     /**
      *  Base State
      *  ~~~~~~~~~~
@@ -72,38 +64,41 @@
      *
      * @param {uint} index - state index
      */
-    var BaseState = function (index) {
+    fsm.BaseState = function (index) {
         BaseObject.call(this);
         this.__index = index;
         this.__transitions = [];
     };
-    Class(BaseState, BaseObject, [State], null);
+    var BaseState = fsm.BaseState;
 
-    // Override
-    BaseState.prototype.equals = function (other) {
-        if (other instanceof BaseState) {
-            if (other === this) {
-                // same object
-                return true;
+    Class(BaseState, BaseObject, [State], {
+
+        // Override
+        equals: function (other) {
+            if (other instanceof BaseState) {
+                if (other === this) {
+                    // same object
+                    return true;
+                }
+                other = other.getIndex();
+            } else if (Enum.isEnum(other)) {
+                other = other.getValue();
             }
-            other = other.getIndex();
-        } else if (Enum.isEnum(other)) {
-            other = other.getValue();
+            return this.__index === other;
+        },
+
+        // Override
+        toString: function () {
+            var clazz = this.getClassName();
+            var index = this.getIndex();
+            return '<' + clazz + ' index=' + index + ' />';
+        },
+
+        // Override
+        valueOf: function () {
+            return this.__index;
         }
-        return this.__index === other;
-    };
-
-    // Override
-    BaseState.prototype.toString = function () {
-        var clazz = Object.getPrototypeOf(this).constructor.name;
-        var index = this.getIndex();
-        return '<' + clazz + ' index=' + index + ' />'
-    };
-
-    // Override
-    BaseState.prototype.valueOf = function () {
-        return this.__index;
-    };
+    });
 
     /**
      *  Get state index
@@ -138,6 +133,7 @@
         }
     };
 
+
     /**
      *  Machine Status
      *  ~~~~~~~~~~~~~~
@@ -152,13 +148,15 @@
      *  Base Machine
      *  ~~~~~~~~~~~~
      */
-    var BaseMachine = function () {
+    fsm.BaseMachine = function () {
         BaseObject.call(this);
         this.__states = [];   // List<State>
         this.__current = -1;  // current state index
         this.__status = Status.STOPPED;
         this.__delegate = null;
     };
+    var BaseMachine = fsm.BaseMachine;
+
     Class(BaseMachine, BaseObject, [Machine], null);
 
     /**
@@ -183,7 +181,7 @@
     /**
      *  Add state with index
      *
-     * @param {State|BaseState} newState
+     * @param {State|fsm.BaseState} newState
      * @return {State} old state
      */
     BaseMachine.prototype.addState = function (newState) {
@@ -230,7 +228,7 @@
     /**
      *  Get target state of this transition
      *
-     * @param {Transition|BaseTransition} transition - success transition
+     * @param {Transition|fsm.BaseTransition} transition - success transition
      * @return {State} target state of this transition
      */
     // protected
@@ -239,6 +237,11 @@
         return this.__states[index];
     };
 
+    /**
+     *  Get current state
+     *
+     * @return {fsm.State}
+     */
     // Override
     BaseMachine.prototype.getCurrentState = function () {
         var index = this.__current;
@@ -253,7 +256,7 @@
     /**
      *  Exit current state, and enter new state
      *
-     * @param {State|BaseState} newState - next state
+     * @param {fsm.State|BaseState} newState - next state
      * @param {Date} now                 - current time
      * @return {boolean} true on state changed
      */
@@ -312,9 +315,15 @@
      */
     // Override
     BaseMachine.prototype.start = function () {
+        if (this.__status !== State.STOPPED) {
+            // Running or Paused,
+            // cannot start again
+            return false;
+        }
         var now = new Date();
-        this.changeState(this.getDefaultState(), now);
+        var ok = this.changeState(this.getDefaultState(), now);
         this.__status = Status.RUNNING;
+        return ok;
     };
 
     /**
@@ -322,6 +331,11 @@
      */
     // Override
     BaseMachine.prototype.stop = function () {
+        if (this.__status === Status.STOPPED) {
+            // Stopped,
+            // cannot stop again
+            return false;
+        }
         this.__status = Status.STOPPED;
         var now = new Date();
         this.changeState(null, now);  // force current state to null
@@ -332,6 +346,11 @@
      */
     // Override
     BaseMachine.prototype.pause = function () {
+        if (this.__status !== Status.RUNNING) {
+            // Paused or Stopped,
+            // cannot pause now
+            return false;
+        }
         var now = new Date();
         var ctx = this.getContext();
         var current = this.getCurrentState();
@@ -352,6 +371,7 @@
         if (delegate) {
             delegate.pauseState(current, ctx, now);
         }
+        return true;
     };
 
     /**
@@ -359,6 +379,11 @@
      */
     // Override
     BaseMachine.prototype.resume = function () {
+        if (this.__status !== Status.PAUSED) {
+            // Running or Stopped,
+            // cannot resume now
+            return false;
+        }
         var now = new Date();
         var ctx = this.getContext();
         var current = this.getCurrentState();
@@ -379,18 +404,27 @@
         if (current) {
             current.onResume(ctx, now);
         }
+        return true;
     };
 
     //-------- Ticker
 
     /**
      *  Drive the machine running forward
+     *
+     * @param {Date} now
+     * @param {Duration} elapsed
      */
     // Override
     BaseMachine.prototype.tick = function (now, elapsed) {
-        var machine = this.getContext();
+        if (this.__status !== Status.RUNNING) {
+            // Paused or Stopped,
+            // cannot evaluate the transitions of current state
+            return;
+        }
         var current = this.getCurrentState();
-        if (current && Status.RUNNING.equals(this.__status)) {
+        if (current) {
+            var machine = this.getContext();
             var transition = current.evaluate(machine, now);
             if (transition) {
                 var next = this.getTargetState(transition);
@@ -398,10 +432,3 @@
             }
         }
     };
-
-    //-------- namespace --------
-    ns.BaseTransition = BaseTransition;
-    ns.BaseState      = BaseState;
-    ns.BaseMachine    = BaseMachine;
-
-})(FiniteStateMachine, MONKEY);

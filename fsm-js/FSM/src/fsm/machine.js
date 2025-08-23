@@ -1,4 +1,4 @@
-;
+'use strict';
 // license: https://mit-license.org
 //
 //  Finite State Machine
@@ -31,26 +31,22 @@
 //
 
 //! require 'threading/ticker.js'
-//! require 'transition.js'
-//! require 'state.js'
-
-(function (ns, sys) {
-    "use strict";
-
-    var Interface = sys.type.Interface;
-    var Ticker = ns.threading.Ticker;
 
     /**
      *  State Machine Context
      *  ~~~~~~~~~~~~~~~~~~~~~
      */
-    var Context = Interface(null, null);
+    fsm.Context = Interface(null, null);
+    var Context = fsm.Context;
+
 
     /**
      *  State Transition
      *  ~~~~~~~~~~~~~~~~
      */
-    var Transition = Interface(null, null);
+    fsm.Transition = Interface(null, null);
+    var Transition = fsm.Transition;
+
 
     /**
      *  Evaluate the current state
@@ -61,11 +57,13 @@
      */
     Transition.prototype.evaluate = function (ctx, now) {};
 
+
     /**
      *  Finite State
      *  ~~~~~~~~~~~~
      */
-    var State = Interface(null, null);
+    fsm.State = Interface(null, null);
+    var State = fsm.State;
 
     /**
      *  Evaluate all transitions for this state
@@ -113,11 +111,13 @@
      */
     State.prototype.onResume = function (ctx, now) {};
 
+
     /**
      *  State Machine Delegate
      *  ~~~~~~~~~~~~~~~~~~~~~~
      */
-    var Delegate = Interface(null, null);
+    fsm.Delegate = Interface(null, null);
+    var Delegate = fsm.Delegate;
 
     /**
      *  Called before new state entered
@@ -157,11 +157,13 @@
      */
     Delegate.prototype.resumeState = function (current, ctx, now) {};
 
+
     /**
      *  State Machine
      *  ~~~~~~~~~~~~~
      */
-    var Machine = Interface(null, [Ticker]);
+    fsm.Machine = Interface(null, [Ticker]);
+    var Machine = fsm.Machine;
 
     /**
      *  Get current state
@@ -189,12 +191,3 @@
      *  Resume machine with current state
      */
     Machine.prototype.resume = function () {};
-
-    //-------- namespace --------
-    ns.Context    = Context;
-    ns.Transition = Transition;
-    ns.State      = State;
-    ns.Delegate   = Delegate;
-    ns.Machine    = Machine;
-
-})(FiniteStateMachine, MONKEY);

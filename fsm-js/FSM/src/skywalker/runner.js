@@ -1,4 +1,4 @@
-;
+'use strict';
 // license: https://mit-license.org
 // =============================================================================
 // The MIT License (MIT)
@@ -29,26 +29,19 @@
 //! require 'handler.js'
 //! require 'processor.js'
 
-(function (ns, sys) {
-    'use strict';
-
-    var Class = sys.type.Class;
-
-    var Runnable  = ns.skywalker.Runnable;
-    var Handler   = ns.skywalker.Handler;
-    var Processor = ns.skywalker.Processor;
-
     var STAGE_INIT = 0;      // calling setup()
     var STAGE_HANDLING = 1;  // calling handle()
     var STAGE_CLEANING = 2;  // calling finish()
     var STAGE_STOPPED = 3;
 
-    var Runner = function () {
-        Object.call(this);
+    fsm.skywalker.Runner = function () {
+        BaseObject.call(this);
         this.__running = false;
         this.__stage = STAGE_INIT;
     };
-    Class(Runner, Object, [Runnable, Handler, Processor], {
+    var Runner = fsm.skywalker.Runner;
+
+    Class(Runner, BaseObject, [Runnable, Handler, Processor], {
 
         // Override
         run: function () {
@@ -130,8 +123,3 @@
     Runner.prototype.stop = function () {
         this.__running = false;
     };
-
-    //-------- namespace --------
-    ns.skywalker.Runner = Runner;
-
-})(FiniteStateMachine, MONKEY);

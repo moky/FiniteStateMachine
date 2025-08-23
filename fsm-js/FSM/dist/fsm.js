@@ -1,67 +1,152 @@
 /**
- * FSM - Finite State Machine (v1.0.0)
+ * FSM - Finite State Machine (v2.0.0)
  *
  * @author    moKy <albert.moky at gmail.com>
- * @date      Nov. 20, 2024
- * @copyright (c) 2024 Albert Moky
+ * @date      Aug. 24, 2025
+ * @copyright (c) 2020-2025 Albert Moky
  * @license   {@link https://mit-license.org | MIT License}
  */;
 if (typeof FiniteStateMachine !== 'object') {
     FiniteStateMachine = {}
 }
-(function (ns) {
-    'use strict';
-    if (typeof ns.skywalker !== 'object') {
-        ns.skywalker = {}
+(function (fsm, mk) {
+    if (typeof fsm.type !== 'object') {
+        fsm.type = {}
     }
-    if (typeof ns.threading !== 'object') {
-        ns.threading = {}
+    if (typeof fsm.skywalker !== 'object') {
+        fsm.skywalker = {}
     }
-})(FiniteStateMachine);
-(function (ns, sys) {
-    'use strict';
-    var Interface = sys.type.Interface;
-    var Runnable = Interface(null, null);
-    Runnable.prototype.run = function () {
+    if (typeof fsm.threading !== 'object') {
+        fsm.threading = {}
+    }
+    var Interface = mk.type.Interface;
+    var Class = mk.type.Class;
+    var Converter = mk.type.Converter;
+    var BaseObject = mk.type.BaseObject;
+    var HashSet = mk.type.HashSet;
+    var Enum = mk.type.Enum;
+    var MILLISECONDS_PER_SECOND = 1000;
+    var SECONDS_PER_MINUTE = 60;
+    var MINUTES_PER_HOUR = 60;
+    var HOURS_PER_DAY = 24;
+    var MILLISECONDS_PER_MINUTE = MILLISECONDS_PER_SECOND * SECONDS_PER_MINUTE;
+    var MILLISECONDS_PER_HOUR = MILLISECONDS_PER_MINUTE * MINUTES_PER_HOUR;
+    var MILLISECONDS_PER_DAY = MILLISECONDS_PER_HOUR * HOURS_PER_DAY;
+    fsm.type.Duration = function (duration) {
+        var days = Converter.getInt(duration['days'], 0);
+        var hours = Converter.getInt(duration['hours'], 0);
+        var minutes = Converter.getInt(duration['minutes'], 0);
+        var seconds = Converter.getInt(duration['seconds'], 0);
+        var milliseconds = Converter.getInt(duration['milliseconds'], 0);
+        this.__millis = milliseconds + MILLISECONDS_PER_SECOND * seconds + MILLISECONDS_PER_MINUTE * minutes + MILLISECONDS_PER_HOUR * hours + MILLISECONDS_PER_DAY * days
     };
-    ns.skywalker.Runnable = Runnable
-})(FiniteStateMachine, MONKEY);
-(function (ns, sys) {
-    'use strict';
-    var Interface = sys.type.Interface;
-    var Handler = Interface(null, null);
+    var Duration = fsm.type.Duration;
+    Duration.prototype.inMilliseconds = function () {
+        return this.__millis
+    };
+    Duration.prototype.equals = function (other) {
+        return this.__millis === get_millis(other)
+    };
+    Duration.prototype.shorterThan = function (other) {
+        return this.__millis < get_millis(other)
+    };
+    Duration.prototype.longerThan = function (other) {
+        return this.__millis > get_millis(other)
+    };
+    Duration.prototype.shorterOrEqual = function (other) {
+        return this.__millis <= get_millis(other)
+    };
+    Duration.prototype.longerOrEqual = function (other) {
+        return this.__millis >= get_millis(other)
+    };
+    Duration.prototype.abs = function () {
+        return create_duration(Math.abs(this.__millis))
+    };
+    Duration.prototype.negated = function () {
+        return create_duration(0 - this.__millis)
+    };
+    Duration.prototype.isNegative = function () {
+        return this.__millis < 0
+    };
+    Duration.prototype.isPositive = function () {
+        return this.__millis > 0
+    };
+    Duration.prototype.isZero = function () {
+        return this.__millis === 0
+    };
+    Duration.prototype.adds = function (other) {
+        return create_duration(this.__millis + get_millis(other))
+    };
+    Duration.prototype.subtracts = function (other) {
+        return create_duration(this.__millis - get_millis(other))
+    };
+    Duration.prototype.multiplies = function (factor) {
+        return create_duration(Math.round(this.__millis * factor))
+    };
+    Duration.prototype.divides = function (quotient) {
+        return create_duration(Math.floor(this.__millis / quotient))
+    };
+    var get_millis = function (duration) {
+        if (Interface.conforms(duration, Duration)) {
+            return duration.inMilliseconds()
+        } else {
+            return Converter.getInt(duration, 0)
+        }
+    };
+    var create_duration = function (millis) {
+        return new Duration({'milliseconds': millis})
+    };
+    Duration.ofMilliseconds = function (millis) {
+        return create_duration(millis * 1)
+    };
+    Duration.ofSeconds = function (seconds) {
+        return create_duration(MILLISECONDS_PER_SECOND * seconds)
+    };
+    Duration.ofMinutes = function (minutes) {
+        return create_duration(MILLISECONDS_PER_MINUTE * minutes)
+    };
+    Duration.ofHours = function (hours) {
+        return create_duration(MILLISECONDS_PER_HOUR * hours)
+    };
+    Duration.ofDays = function (days) {
+        return create_duration(MILLISECONDS_PER_DAY * days)
+    };
+    Duration.between = function (startTime, endTime) {
+        return create_duration(endTime.getTime() - startTime.getTime())
+    };
+    Duration.prototype.addTo = function (time) {
+        return new Date(time.getTime() + this.__millis)
+    };
+    Duration.prototype.subtractFrom = function (time) {
+        return new Date(time.getTime() - this.__millis)
+    };
+    fsm.skywalker.Handler = Interface(null, null);
+    var Handler = fsm.skywalker.Handler;
     Handler.prototype.setup = function () {
     };
     Handler.prototype.handle = function () {
     };
     Handler.prototype.finish = function () {
     };
-    ns.skywalker.Handler = Handler
-})(FiniteStateMachine, MONKEY);
-(function (ns, sys) {
-    'use strict';
-    var Interface = sys.type.Interface;
-    var Processor = Interface(null, null);
+    fsm.skywalker.Processor = Interface(null, null);
+    var Processor = fsm.skywalker.Processor;
     Processor.prototype.process = function () {
     };
-    ns.skywalker.Processor = Processor
-})(FiniteStateMachine, MONKEY);
-(function (ns, sys) {
-    'use strict';
-    var Class = sys.type.Class;
-    var Runnable = ns.skywalker.Runnable;
-    var Handler = ns.skywalker.Handler;
-    var Processor = ns.skywalker.Processor;
+    fsm.skywalker.Runnable = Interface(null, null);
+    var Runnable = fsm.skywalker.Runnable;
+    Runnable.prototype.run = function () {
+    };
     var STAGE_INIT = 0;
     var STAGE_HANDLING = 1;
     var STAGE_CLEANING = 2;
     var STAGE_STOPPED = 3;
-    var Runner = function () {
-        Object.call(this);
+    fsm.skywalker.Runner = function () {
+        BaseObject.call(this);
         this.__running = false;
         this.__stage = STAGE_INIT
     };
-    Class(Runner, Object, [Runnable, Handler, Processor], {
+    var Runner = fsm.skywalker.Runner;
+    Class(Runner, BaseObject, [Runnable, Handler, Processor], {
         run: function () {
             if (this.__stage === STAGE_INIT) {
                 if (this.setup()) {
@@ -106,15 +191,12 @@ if (typeof FiniteStateMachine !== 'object') {
     Runner.prototype.stop = function () {
         this.__running = false
     };
-    ns.skywalker.Runner = Runner
-})(FiniteStateMachine, MONKEY);
-(function (ns, sys) {
-    'use strict';
-    var Interface = sys.type.Interface;
-    var Class = sys.type.Class;
-    var Runnable = ns.skywalker.Runnable;
-    var Thread = function () {
-        Object.call(this);
+    fsm.threading.Ticker = Interface(null, null);
+    var Ticker = fsm.threading.Ticker;
+    Ticker.prototype.tick = function (now, elapsed) {
+    };
+    fsm.threading.Thread = function () {
+        BaseObject.call(this);
         if (arguments.length === 0) {
             this.__target = null
         } else {
@@ -122,18 +204,20 @@ if (typeof FiniteStateMachine !== 'object') {
         }
         this.__running = false
     };
-    Class(Thread, Object, [Runnable], null);
-    Thread.INTERVAL = 256;
+    var Thread = fsm.threading.Thread;
+    Class(Thread, BaseObject, [Runnable], null);
+    Thread.INTERVAL = Duration.ofMilliseconds(256);
     Thread.prototype.start = function () {
         this.__running = true;
-        run(this)
+        thr_run(this)
     };
-    var run = function (thread) {
+    var thr_run = function (thread) {
         var running = thread.isRunning() && thread.run();
         if (running) {
+            var interval = Thread.INTERVAL.inMilliseconds();
             setTimeout(function () {
-                run(thread)
-            }, Thread.INTERVAL)
+                thr_run(thread)
+            }, interval)
         }
     };
     Thread.prototype.isRunning = function () {
@@ -154,35 +238,19 @@ if (typeof FiniteStateMachine !== 'object') {
     Thread.prototype.stop = function () {
         this.__running = false
     };
-    ns.threading.Thread = Thread
-})(FiniteStateMachine, MONKEY);
-(function (ns, sys) {
-    'use strict';
-    var Interface = sys.type.Interface;
-    var IObject = sys.type.Object;
-    var Ticker = Interface(null, [IObject]);
-    Ticker.prototype.tick = function (now, elapsed) {
-    };
-    ns.threading.Ticker = Ticker
-})(FiniteStateMachine, MONKEY);
-(function (ns, sys) {
-    'use strict';
-    var Class = sys.type.Class;
-    var HashSet = sys.type.HashSet;
-    var Runner = ns.skywalker.Runner;
-    var Thread = ns.threading.Thread;
-    var Metronome = function (millis) {
+    fsm.threading.Metronome = function (interval) {
         Runner.call(this);
-        if (millis < Metronome.MIN_INTERVAL) {
-            millis = Metronome.MIN_INTERVAL
+        if (!interval || interval.shorterThan(Metronome.MIN_INTERVAL)) {
+            interval = Metronome.MIN_INTERVAL
         }
-        this.__interval = millis;
-        this.__last_time = 0;
+        this.__interval = interval;
+        this.__last_time = null;
         this.__thread = new Thread(this);
         this.__tickers = new HashSet()
     };
+    var Metronome = fsm.threading.Metronome;
     Class(Metronome, Runner, null, null);
-    Metronome.MIN_INTERVAL = 100;
+    Metronome.MIN_INTERVAL = Duration.ofMilliseconds(100);
     Metronome.prototype.start = function () {
         this.__thread.start()
     };
@@ -190,7 +258,7 @@ if (typeof FiniteStateMachine !== 'object') {
         this.__thread.stop()
     };
     Metronome.prototype.setup = function () {
-        this.__last_time = (new Date()).getTime();
+        this.__last_time = new Date();
         return Runner.prototype.setup.call(this)
     };
     Metronome.prototype.process = function () {
@@ -199,8 +267,8 @@ if (typeof FiniteStateMachine !== 'object') {
             return false
         }
         var now = new Date();
-        var elapsed = now.getTime() - this.__last_time;
-        if (elapsed < this.__interval) {
+        var elapsed = Duration.between(this.__last_time, now);
+        if (elapsed.shorterThan(this.__interval)) {
             return false
         }
         for (var i = tickers.length - 1; i >= 0; --i) {
@@ -209,7 +277,7 @@ if (typeof FiniteStateMachine !== 'object') {
             } catch (e) {
             }
         }
-        this.__last_time = now.getTime();
+        this.__last_time = now;
         return true
     };
     Metronome.prototype.getTickers = function () {
@@ -221,7 +289,7 @@ if (typeof FiniteStateMachine !== 'object') {
     Metronome.prototype.removeTicker = function (ticker) {
         return this.__tickers.remove(ticker)
     };
-    var PrimeMetronome = {
+    fsm.threading.PrimeMetronome = {
         addTicker: function (ticker) {
             var metronome = this.getInstance();
             return metronome.addTicker(ticker)
@@ -229,27 +297,26 @@ if (typeof FiniteStateMachine !== 'object') {
             var metronome = this.getInstance();
             return metronome.removeTicker(ticker)
         }, getInstance: function () {
-            var metronome = this.__sharedMetronome;
+            var metronome = sharedMetronome;
             if (metronome === null) {
-                metronome = new Metronome(200);
+                var interval = Duration.ofMilliseconds(200);
+                metronome = new Metronome(interval);
                 metronome.start();
-                this.__sharedMetronome = metronome
+                sharedMetronome = metronome
             }
             return metronome
-        }, __sharedMetronome: null
+        }
     };
-    ns.threading.Metronome = Metronome;
-    ns.threading.PrimeMetronome = PrimeMetronome
-})(FiniteStateMachine, MONKEY);
-(function (ns, sys) {
-    "use strict";
-    var Interface = sys.type.Interface;
-    var Ticker = ns.threading.Ticker;
-    var Context = Interface(null, null);
-    var Transition = Interface(null, null);
+    var PrimeMetronome = fsm.threading.PrimeMetronome;
+    var sharedMetronome = null;
+    fsm.Context = Interface(null, null);
+    var Context = fsm.Context;
+    fsm.Transition = Interface(null, null);
+    var Transition = fsm.Transition;
     Transition.prototype.evaluate = function (ctx, now) {
     };
-    var State = Interface(null, null);
+    fsm.State = Interface(null, null);
+    var State = fsm.State;
     State.prototype.evaluate = function (ctx, now) {
     };
     State.prototype.onEnter = function (previous, ctx, now) {
@@ -260,7 +327,8 @@ if (typeof FiniteStateMachine !== 'object') {
     };
     State.prototype.onResume = function (ctx, now) {
     };
-    var Delegate = Interface(null, null);
+    fsm.Delegate = Interface(null, null);
+    var Delegate = fsm.Delegate;
     Delegate.prototype.enterState = function (next, ctx, now) {
     };
     Delegate.prototype.exitState = function (previous, ctx, now) {
@@ -269,7 +337,8 @@ if (typeof FiniteStateMachine !== 'object') {
     };
     Delegate.prototype.resumeState = function (current, ctx, now) {
     };
-    var Machine = Interface(null, [Ticker]);
+    fsm.Machine = Interface(null, [Ticker]);
+    var Machine = fsm.Machine;
     Machine.prototype.getCurrentState = function () {
     };
     Machine.prototype.start = function () {
@@ -280,53 +349,40 @@ if (typeof FiniteStateMachine !== 'object') {
     };
     Machine.prototype.resume = function () {
     };
-    ns.Context = Context;
-    ns.Transition = Transition;
-    ns.State = State;
-    ns.Delegate = Delegate;
-    ns.Machine = Machine
-})(FiniteStateMachine, MONKEY);
-(function (ns, sys) {
-    "use strict";
-    var Class = sys.type.Class;
-    var Enum = sys.type.Enum;
-    var BaseObject = sys.type.BaseObject;
-    var Transition = ns.Transition;
-    var State = ns.State;
-    var Machine = ns.Machine;
-    var BaseTransition = function (target) {
-        Object.call(this);
+    fsm.BaseTransition = function (target) {
+        BaseObject.call(this);
         this.__target = target
     };
-    Class(BaseTransition, Object, [Transition], null);
+    var BaseTransition = fsm.BaseTransition;
+    Class(BaseTransition, BaseObject, [Transition], null);
     BaseTransition.prototype.getTarget = function () {
         return this.__target
     };
-    var BaseState = function (index) {
+    fsm.BaseState = function (index) {
         BaseObject.call(this);
         this.__index = index;
         this.__transitions = []
     };
-    Class(BaseState, BaseObject, [State], null);
-    BaseState.prototype.equals = function (other) {
-        if (other instanceof BaseState) {
-            if (other === this) {
-                return true
+    var BaseState = fsm.BaseState;
+    Class(BaseState, BaseObject, [State], {
+        equals: function (other) {
+            if (other instanceof BaseState) {
+                if (other === this) {
+                    return true
+                }
+                other = other.getIndex()
+            } else if (Enum.isEnum(other)) {
+                other = other.getValue()
             }
-            other = other.getIndex()
-        } else if (Enum.isEnum(other)) {
-            other = other.getValue()
+            return this.__index === other
+        }, toString: function () {
+            var clazz = this.getClassName();
+            var index = this.getIndex();
+            return '<' + clazz + ' index=' + index + ' />'
+        }, valueOf: function () {
+            return this.__index
         }
-        return this.__index === other
-    };
-    BaseState.prototype.toString = function () {
-        var clazz = Object.getPrototypeOf(this).constructor.name;
-        var index = this.getIndex();
-        return '<' + clazz + ' index=' + index + ' />'
-    };
-    BaseState.prototype.valueOf = function () {
-        return this.__index
-    };
+    });
     BaseState.prototype.getIndex = function () {
         return this.__index
     };
@@ -346,13 +402,14 @@ if (typeof FiniteStateMachine !== 'object') {
         }
     };
     var Status = Enum('MachineStatus', {STOPPED: 0, RUNNING: 1, PAUSED: 2});
-    var BaseMachine = function () {
+    fsm.BaseMachine = function () {
         BaseObject.call(this);
         this.__states = [];
         this.__current = -1;
         this.__status = Status.STOPPED;
         this.__delegate = null
     };
+    var BaseMachine = fsm.BaseMachine;
     Class(BaseMachine, BaseObject, [Machine], null);
     BaseMachine.prototype.setDelegate = function (delegate) {
         this.__delegate = delegate
@@ -423,16 +480,26 @@ if (typeof FiniteStateMachine !== 'object') {
         return true
     };
     BaseMachine.prototype.start = function () {
+        if (this.__status !== State.STOPPED) {
+            return false
+        }
         var now = new Date();
-        this.changeState(this.getDefaultState(), now);
-        this.__status = Status.RUNNING
+        var ok = this.changeState(this.getDefaultState(), now);
+        this.__status = Status.RUNNING;
+        return ok
     };
     BaseMachine.prototype.stop = function () {
+        if (this.__status === Status.STOPPED) {
+            return false
+        }
         this.__status = Status.STOPPED;
         var now = new Date();
         this.changeState(null, now)
     };
     BaseMachine.prototype.pause = function () {
+        if (this.__status !== Status.RUNNING) {
+            return false
+        }
         var now = new Date();
         var ctx = this.getContext();
         var current = this.getCurrentState();
@@ -444,8 +511,12 @@ if (typeof FiniteStateMachine !== 'object') {
         if (delegate) {
             delegate.pauseState(current, ctx, now)
         }
+        return true
     };
     BaseMachine.prototype.resume = function () {
+        if (this.__status !== Status.PAUSED) {
+            return false
+        }
         var now = new Date();
         var ctx = this.getContext();
         var current = this.getCurrentState();
@@ -457,11 +528,15 @@ if (typeof FiniteStateMachine !== 'object') {
         if (current) {
             current.onResume(ctx, now)
         }
+        return true
     };
     BaseMachine.prototype.tick = function (now, elapsed) {
-        var machine = this.getContext();
+        if (this.__status !== Status.RUNNING) {
+            return
+        }
         var current = this.getCurrentState();
-        if (current && Status.RUNNING.equals(this.__status)) {
+        if (current) {
+            var machine = this.getContext();
             var transition = current.evaluate(machine, now);
             if (transition) {
                 var next = this.getTargetState(transition);
@@ -469,36 +544,30 @@ if (typeof FiniteStateMachine !== 'object') {
             }
         }
     };
-    ns.BaseTransition = BaseTransition;
-    ns.BaseState = BaseState;
-    ns.BaseMachine = BaseMachine
-})(FiniteStateMachine, MONKEY);
-(function (ns, sys) {
     "use strict";
-    var Class = sys.type.Class;
-    var PrimeMetronome = ns.threading.PrimeMetronome;
-    var BaseMachine = ns.BaseMachine;
-    var AutoMachine = function () {
+    fsm.AutoMachine = function () {
         BaseMachine.call(this)
     };
+    var AutoMachine = fsm.AutoMachine;
     Class(AutoMachine, BaseMachine, null, {
         start: function () {
-            BaseMachine.prototype.start.call(this);
+            var ok = BaseMachine.prototype.start.call(this);
             var timer = PrimeMetronome.getInstance();
-            timer.addTicker(this)
+            timer.addTicker(this);
+            return ok
         }, stop: function () {
             var timer = PrimeMetronome.getInstance();
             timer.removeTicker(this);
-            BaseMachine.prototype.stop.call(this)
+            return BaseMachine.prototype.stop.call(this)
         }, pause: function () {
             var timer = PrimeMetronome.getInstance();
             timer.removeTicker(this);
-            BaseMachine.prototype.pause.call(this)
+            return BaseMachine.prototype.pause.call(this)
         }, resume: function () {
-            BaseMachine.prototype.resume.call(this);
+            var ok = BaseMachine.prototype.resume.call(this);
             var timer = PrimeMetronome.getInstance();
-            timer.addTicker(this)
+            timer.addTicker(this);
+            return ok
         }
-    });
-    ns.AutoMachine = AutoMachine
+    })
 })(FiniteStateMachine, MONKEY);

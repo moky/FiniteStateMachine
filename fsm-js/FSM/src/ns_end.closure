@@ -1,0 +1,6 @@
+
+// (function (fsm, mk) {
+
+    // ...
+
+})(FiniteStateMachine, MONKEY);

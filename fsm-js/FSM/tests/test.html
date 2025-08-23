@@ -12,29 +12,24 @@
 
     <script src="../../Crypto/dist/crypto.js"></script>
 
+    <script src="../src/sources.js"></script>
     <script>
+        var TestRunner = Runner;
+
         !function (ns) {
             var sources = [
-                'src/namespace.js',
-
-                'src/skywalker/runnable.js',
-                'src/skywalker/handler.js',
-                'src/skywalker/processor.js',
-                'src/skywalker/runner.js',
-
-                'src/threading/thread.js',
-                'src/threading/ticker.js',
-                'src/threading/metronome.js',
-
-                'src/fsm/machine.js',
-                'src/fsm/base.js',
-                'src/fsm/auto.js',
-                null
-            ];
+                'src/requires.js'
+            ].concat(fsm_sources);
             var dist = 'dist/fsm.js';
 
             var tests = [
+                '../../Crypto/tests/format/utf8.js',
+                '../../Crypto/tests/format/json.js',
+                '../../Crypto/tests/format/hex.js',
+                '../../Crypto/tests/format/base58.js',
+                '../../Crypto/tests/format/base64.js',
                 '../../Crypto/tests/crypto_tests.js',
+
                 'tests/fsm_tests.js',
                 null
             ];
@@ -42,6 +37,7 @@
             var base = window.location.href;
             base = base.substring(0, base.indexOf('tests/test.html'));
             var loader = new Loader(base);
+            loader.importJS('src/namespace.js');
 
             for (var i = 0; i < sources.length; ++i) {
                 loader.importJS(sources[i]);
@@ -55,12 +51,12 @@
         }(window);
 
         $(function () {
-            var runner = new Runner('crypto_tests');
+            var runner = new TestRunner('crypto_tests');
             runner.run(crypto_tests);
         });
 
         $(function () {
-            var runner = new Runner('fsm_tests');
+            var runner = new TestRunner('fsm_tests');
             runner.run(fsm_tests);
         });
     </script>
@@ -79,16 +75,19 @@
 <p class="console">
     <script>
         !(function () {
-            var text = 'cat';
-            var file;
+            var targets = [
+                'src/ns_begin.closure'
+            ];
             for (var i = 0; i < sources.length; ++i) {
-                file = sources[i];
-                if (!file) {
-                    continue;
+                var file = sources[i];
+                if (file) {
+                    targets.push(file);
                 }
-                text += ' ' + file;
             }
-            text += ' >> ' + dist;
+            targets.push('src/ns_end.closure');
+
+            var text = targets.join(' ');
+            text = 'cat ' + text + ' > ' + dist;
             document.writeln(text);
         }());
     </script>

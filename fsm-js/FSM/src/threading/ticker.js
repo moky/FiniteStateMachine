@@ -1,4 +1,4 @@
-;
+'use strict';
 // license: https://mit-license.org
 // =============================================================================
 // The MIT License (MIT)
@@ -27,23 +27,13 @@
 
 //! require 'namespace.js'
 
-(function (ns, sys) {
-    'use strict';
-
-    var Interface = sys.type.Interface;
-    var IObject   = sys.type.Object;
-
-    var Ticker = Interface(null, [IObject]);
+    fsm.threading.Ticker = Interface(null, null);
+    var Ticker = fsm.threading.Ticker;
 
     /**
      *  Drive current thread forward
      *
-     * @param {Date} now       - current time
-     * @param {number} elapsed - milliseconds from previous tick
+     * @param {Date} now         - current time
+     * @param {Duration} elapsed - milliseconds from previous tick
      */
     Ticker.prototype.tick = function (now, elapsed) {};
-
-    //-------- namespace --------
-    ns.threading.Ticker = Ticker;
-
-})(FiniteStateMachine, MONKEY);

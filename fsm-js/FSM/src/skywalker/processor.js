@@ -1,4 +1,4 @@
-;
+'use strict';
 // license: https://mit-license.org
 // =============================================================================
 // The MIT License (MIT)
@@ -27,12 +27,8 @@
 
 //! require 'namespace.js'
 
-(function (ns, sys) {
-    'use strict';
-
-    var Interface = sys.type.Interface;
-
-    var Processor = Interface(null, null);
+    fsm.skywalker.Processor = Interface(null, null);
+    var Processor = fsm.skywalker.Processor;
 
     /**
      *  Do the job
@@ -41,8 +37,3 @@
      * @return {boolean} false to have a rest (nothing to do now)
      */
     Processor.prototype.process = function () {};
-
-    //-------- namespace --------
-    ns.skywalker.Processor = Processor;
-
-})(FiniteStateMachine, MONKEY);

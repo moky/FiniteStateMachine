@@ -1,4 +1,4 @@
-;
+'use strict';
 // license: https://mit-license.org
 // =============================================================================
 // The MIT License (MIT)
@@ -29,29 +29,22 @@
 //! require 'ticker.js'
 //! require 'thread.js'
 
-(function (ns, sys) {
-    'use strict';
-
-    var Class   = sys.type.Class;
-    var HashSet = sys.type.HashSet;
-
-    var Runner = ns.skywalker.Runner;
-    var Thread = ns.threading.Thread;
-
-    var Metronome = function (millis) {
+    fsm.threading.Metronome = function (interval) {
         Runner.call(this);
-        if (millis < Metronome.MIN_INTERVAL) {
-            millis = Metronome.MIN_INTERVAL;
+        if (!interval || interval.shorterThan(Metronome.MIN_INTERVAL)) {
+            interval = Metronome.MIN_INTERVAL;
         }
-        this.__interval = millis;
-        this.__last_time = 0;  // milliseconds
+        this.__interval = interval;
+        this.__last_time = null;
         this.__thread = new Thread(this);
         this.__tickers = new HashSet();   // WeakSet<Ticker>
     };
+    var Metronome = fsm.threading.Metronome;
+
     Class(Metronome, Runner, null, null);
 
     // at least wait 0.1 second
-    Metronome.MIN_INTERVAL = 100;
+    Metronome.MIN_INTERVAL = Duration.ofMilliseconds(100);
 
     Metronome.prototype.start = function () {
         this.__thread.start();
@@ -63,7 +56,7 @@
 
     // Override
     Metronome.prototype.setup = function () {
-        this.__last_time = (new Date()).getTime();
+        this.__last_time = new Date();
         return Runner.prototype.setup.call(this);
     };
 
@@ -77,8 +70,8 @@
         }
         // 1. check time
         var now = new Date();
-        var elapsed = now.getTime() - this.__last_time;
-        if (elapsed < this.__interval) {
+        var elapsed = Duration.between(this.__last_time, now);
+        if (elapsed.shorterThan(this.__interval)) {
             // idle(waiting);
             return false;
         }
@@ -91,7 +84,7 @@
             }
         }
         // 3. update last time
-        this.__last_time = now.getTime();
+        this.__last_time = now;
         return true;
     };
 
@@ -122,7 +115,7 @@
     //
     //  Singleton
     //
-    var PrimeMetronome = {
+    fsm.threading.PrimeMetronome = {
 
         /**
          *  Append ticker
@@ -147,19 +140,16 @@
         },
 
         getInstance: function () {
-            var metronome = this.__sharedMetronome;
+            var metronome = sharedMetronome;
             if (metronome === null) {
-                metronome = new Metronome(200);
+                var interval = Duration.ofMilliseconds(200);
+                metronome = new Metronome(interval);
                 metronome.start();
-                this.__sharedMetronome = metronome;
+                sharedMetronome = metronome;
             }
             return metronome;
-        },
-        __sharedMetronome: null
+        }
     };
+    var PrimeMetronome = fsm.threading.PrimeMetronome;
 
-    //-------- namespace --------
-    ns.threading.Metronome = Metronome;
-    ns.threading.PrimeMetronome = PrimeMetronome;
-
-})(FiniteStateMachine, MONKEY);
+    var sharedMetronome = null;

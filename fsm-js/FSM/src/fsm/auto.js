@@ -1,4 +1,4 @@
-;
+"use strict";
 // license: https://mit-license.org
 //
 //  Finite State Machine
@@ -33,52 +33,43 @@
 //! require 'threading/metronome.js'
 //! require 'base.js'
 
-(function (ns, sys) {
-    "use strict";
-
-    var Class = sys.type.Class;
-
-    var PrimeMetronome = ns.threading.PrimeMetronome;
-    var BaseMachine    = ns.BaseMachine;
-
     /**
      *  Create an Auto State Machine with default state name
      */
-    var AutoMachine = function () {
+    fsm.AutoMachine = function () {
         BaseMachine.call(this);
     };
+    var AutoMachine = fsm.AutoMachine;
+
     Class(AutoMachine, BaseMachine, null, {
 
         // Override
         start: function () {
-            BaseMachine.prototype.start.call(this);
+            var ok = BaseMachine.prototype.start.call(this);
             var timer = PrimeMetronome.getInstance();
             timer.addTicker(this);
+            return ok;
         },
 
         // Override
         stop: function () {
             var timer = PrimeMetronome.getInstance();
             timer.removeTicker(this);
-            BaseMachine.prototype.stop.call(this);
+            return BaseMachine.prototype.stop.call(this);
         },
 
         // Override
         pause: function () {
             var timer = PrimeMetronome.getInstance();
             timer.removeTicker(this);
-            BaseMachine.prototype.pause.call(this);
+            return BaseMachine.prototype.pause.call(this);
         },
 
         // Override
         resume: function () {
-            BaseMachine.prototype.resume.call(this);
+            var ok = BaseMachine.prototype.resume.call(this);
             var timer = PrimeMetronome.getInstance();
             timer.addTicker(this);
+            return ok;
         }
     });
-
-    //-------- namespace --------
-    ns.AutoMachine = AutoMachine;
-
-})(FiniteStateMachine, MONKEY);

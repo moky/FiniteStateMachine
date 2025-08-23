@@ -1,92 +1,38 @@
 /**
- * JavaScript Library (v1.0.0)
+ * JavaScript Library (v2.0.0)
  *
  * @author    moKy <albert.moky at gmail.com>
- * @date      Nov. 16, 2024
- * @copyright (c) 2024 Albert Moky
+ * @date      Aug. 20, 2025
+ * @copyright (c) 2020-2025 Albert Moky
  * @license   {@link https://mit-license.org | MIT License}
  */;
 if (typeof MONKEY !== 'object') {
     MONKEY = {}
 }
-(function (ns) {
-    'use strict';
-    if (typeof ns.type !== 'object') {
-        ns.type = {}
+(function (mk) {
+    if (typeof mk.type !== 'object') {
+        mk.type = {}
     }
-    if (typeof ns.format !== 'object') {
-        ns.format = {}
+    if (typeof mk.format !== 'object') {
+        mk.format = {}
     }
-    if (typeof ns.digest !== 'object') {
-        ns.digest = {}
+    if (typeof mk.digest !== 'object') {
+        mk.digest = {}
     }
-    if (typeof ns.crypto !== 'object') {
-        ns.crypto = {}
+    if (typeof mk.protocol !== 'object') {
+        mk.protocol = {}
     }
-})(MONKEY);
-(function (ns) {
-    'use strict';
-    var conforms = function (object, protocol) {
-        if (!object) {
-            return false
-        } else if (object instanceof protocol) {
-            return true
-        }
-        return check_class(object.constructor, protocol)
-    };
-    var check_class = function (constructor, protocol) {
-        var interfaces = constructor._mk_interfaces;
-        if (interfaces && check_interfaces(interfaces, protocol)) {
-            return true
-        }
-        var parent = constructor._mk_parent;
-        return parent && check_class(parent, protocol)
-    };
-    var check_interfaces = function (interfaces, protocol) {
-        var child, parents;
-        for (var i = 0; i < interfaces.length; ++i) {
-            child = interfaces[i];
-            if (child === protocol) {
-                return true
-            }
-            parents = child._mk_parents;
-            if (parents && check_interfaces(parents, protocol)) {
-                return true
-            }
-        }
-        return false
-    };
-    var def_methods = function (clazz, methods) {
-        var names = Object.keys(methods);
-        var key, fn;
-        for (var i = 0; i < names.length; ++i) {
-            key = names[i];
-            fn = methods[key];
-            if (typeof fn === 'function') {
-                clazz.prototype[key] = fn
-            }
-        }
-        return clazz
-    };
-    var interfacefy = function (child, parents) {
-        if (!child) {
-            child = function () {
-            }
-        }
-        if (parents) {
-            child._mk_parents = parents
-        }
-        return child
-    };
-    interfacefy.conforms = conforms;
-    var classify = function (child, parent, interfaces, methods) {
+    if (typeof mk.ext !== 'object') {
+        mk.ext = {}
+    }
+    mk.type.Class = function (child, parent, interfaces, methods) {
         if (!child) {
             child = function () {
                 Object.call(this)
             }
         }
         if (parent) {
-            child._mk_parent = parent
+            child._mk_super_class = parent
         } else {
             parent = Object
         }
@@ -96,37 +42,92 @@ if (typeof MONKEY !== 'object') {
             child._mk_interfaces = interfaces
         }
         if (methods) {
-            def_methods(child, methods)
+            override_methods(child, methods)
         }
         return child
     };
-    ns.type.Interface = interfacefy;
-    ns.type.Class = classify
-})(MONKEY);
-(function (ns) {
-    'use strict';
-    var Interface = ns.type.Interface;
-    var Class = ns.type.Class;
-    var is_null = function (object) {
+    var Class = mk.type.Class;
+    var override_methods = function (clazz, methods) {
+        var names = Object.keys(methods);
+        var key, fn;
+        for (var i = 0; i < names.length; ++i) {
+            key = names[i];
+            fn = methods[key];
+            if (typeof fn === 'function') {
+                clazz.prototype[key] = fn
+            }
+        }
+    };
+    mk.type.Interface = function (child, parents) {
+        if (!child) {
+            child = function () {
+            }
+        }
+        if (parents) {
+            child._mk_super_interfaces = parents
+        }
+        return child
+    };
+    var Interface = mk.type.Interface;
+    Interface.conforms = function (object, protocol) {
+        if (!object) {
+            return false
+        } else if (object instanceof protocol) {
+            return true
+        }
+        return check_extends(object.constructor, protocol)
+    };
+    var check_extends = function (constructor, protocol) {
+        var interfaces = constructor._mk_interfaces;
+        if (interfaces && check_implements(interfaces, protocol)) {
+            return true
+        }
+        var parent = constructor._mk_super_class;
+        return parent && check_extends(parent, protocol)
+    };
+    var check_implements = function (interfaces, protocol) {
+        var child, parents;
+        for (var i = 0; i < interfaces.length; ++i) {
+            child = interfaces[i];
+            if (child === protocol) {
+                return true
+            }
+            parents = child._mk_super_interfaces;
+            if (parents && check_implements(parents, protocol)) {
+                return true
+            }
+        }
+        return false
+    };
+    mk.type.Object = Interface(null, null);
+    var IObject = mk.type.Object;
+    IObject.prototype = {
+        getClassName: function () {
+        }, equals: function () {
+        }, valueOf: function () {
+        }, toString: function () {
+        }
+    };
+    IObject.isNull = function (object) {
         if (typeof object === 'undefined') {
             return true
         } else {
             return object === null
         }
     };
-    var is_string = function (object) {
+    IObject.isString = function (object) {
         return typeof object === 'string'
     };
-    var is_number = function (object) {
+    IObject.isNumber = function (object) {
         return typeof object === 'number'
     };
-    var is_boolean = function (object) {
+    IObject.isBoolean = function (object) {
         return typeof object === 'boolean'
     };
-    var is_function = function (object) {
+    IObject.isFunction = function (object) {
         return typeof object === 'function'
     };
-    var is_base_type = function (object) {
+    IObject.isBaseType = function (object) {
         var t = typeof object;
         if (t === 'string' || t === 'number' || t === 'boolean' || t === 'function') {
             return true
@@ -139,137 +140,133 @@ if (typeof MONKEY !== 'object') {
         }
         return object instanceof Error
     };
-    var IObject = Interface(null, null);
-    IObject.prototype.getClassName = function () {
-    };
-    IObject.prototype.equals = function (other) {
-    };
-    IObject.prototype.valueOf = function () {
-    };
-    IObject.prototype.toString = function () {
-    };
-    IObject.isNull = is_null;
-    IObject.isString = is_string;
-    IObject.isNumber = is_number;
-    IObject.isBoolean = is_boolean;
-    IObject.isFunction = is_function;
-    IObject.isBaseType = is_base_type;
-    var BaseObject = function () {
+    mk.type.BaseObject = function () {
         Object.call(this)
     };
-    Class(BaseObject, Object, [IObject], null);
-    BaseObject.prototype.getClassName = function () {
-        return Object.getPrototypeOf(this).constructor.name
-    };
-    BaseObject.prototype.equals = function (other) {
-        return this === other
-    };
-    ns.type.Object = IObject;
-    ns.type.BaseObject = BaseObject
-})(MONKEY);
-(function (ns) {
-    'use strict';
-    var IObject = ns.type.Object;
-    var getString = function (value, defaultValue) {
-        if (IObject.isNull(value)) {
-            return defaultValue
-        } else if (IObject.isString(value)) {
-            return value
-        } else {
-            return value.toString()
+    var BaseObject = mk.type.BaseObject;
+    Class(BaseObject, null, [IObject], {
+        getClassName: function () {
+            return Object.getPrototypeOf(this).constructor.name
+        }, equals: function (other) {
+            return this === other
+        }
+    });
+    mk.type.DataConverter = Interface(null, null);
+    var DataConverter = mk.type.DataConverter;
+    DataConverter.prototype = {
+        getString: function (value, defaultValue) {
+        }, getBoolean: function (value, defaultValue) {
+        }, getInt: function (value, defaultValue) {
+        }, getFloat: function (value, defaultValue) {
+        }, getDateTime: function (value, defaultValue) {
         }
     };
-    var getDateTime = function (value, defaultValue) {
-        if (IObject.isNull(value)) {
-            return defaultValue
-        } else if (value instanceof Date) {
-            return value
-        }
-        var seconds = getFloat(value, 0);
-        var millis = seconds * 1000;
-        return new Date(millis)
+    mk.type.BaseConverter = function () {
+        BaseObject.call(this)
     };
-    var getInt = function (value, defaultValue) {
-        if (IObject.isNull(value)) {
-            return defaultValue
-        } else if (IObject.isNumber(value)) {
-            return value
-        } else if (IObject.isBoolean(value)) {
-            return value ? 1 : 0
-        } else {
-            var str = IObject.isString(value) ? value : value.toString();
-            return parseInt(str)
+    var BaseConverter = mk.type.BaseConverter;
+    Class(BaseConverter, BaseObject, [DataConverter], {
+        getDateTime: function (value, defaultValue) {
+            if (IObject.isNull(value)) {
+                return defaultValue
+            } else if (value instanceof Date) {
+                return value
+            }
+            var seconds = this.getFloat(value, 0);
+            var millis = seconds * 1000;
+            return new Date(millis)
+        }, getFloat: function (value, defaultValue) {
+            if (IObject.isNull(value)) {
+                return defaultValue
+            } else if (IObject.isNumber(value)) {
+                return value
+            } else if (IObject.isBoolean(value)) {
+                return value ? 1.0 : 0.0
+            }
+            var text = this.getStr(value);
+            return parseFloat(text)
+        }, getInt: function (value, defaultValue) {
+            if (IObject.isNull(value)) {
+                return defaultValue
+            } else if (IObject.isNumber(value)) {
+                return value
+            } else if (IObject.isBoolean(value)) {
+                return value ? 1 : 0
+            }
+            var text = this.getStr(value);
+            return parseInt(text)
+        }, getBoolean: function (value, defaultValue) {
+            if (IObject.isNull(value)) {
+                return defaultValue
+            } else if (IObject.isBoolean(value)) {
+                return value
+            } else if (IObject.isNumber(value)) {
+                return value > 0 || value < 0
+            }
+            var text = this.getStr(value);
+            text = text.trim();
+            var size = text.length;
+            if (size === 0) {
+                return false
+            } else if (size > Converter.MAX_BOOLEAN_LEN) {
+                throw new TypeError('Boolean value error: "' + value + '"');
+            } else {
+                text = text.toLowerCase()
+            }
+            var state = Converter.BOOLEAN_STATES[text];
+            if (IObject.isNull(state)) {
+                throw new TypeError('Boolean value error: "' + value + '"');
+            }
+            return state
+        }, getString: function (value, defaultValue) {
+            if (IObject.isNull(value)) {
+                return defaultValue
+            } else if (IObject.isString(value)) {
+                return value
+            } else {
+                return value.toString()
+            }
+        }, getStr: function (value) {
+            if (IObject.isString(value)) {
+                return value
+            } else {
+                return value.toString()
+            }
         }
+    });
+    mk.type.Converter = {
+        getString: function (value, defaultValue) {
+            return this.converter.getString(value, defaultValue)
+        },
+        getBoolean: function (value, defaultValue) {
+            return this.converter.getBoolean(value, defaultValue)
+        },
+        getInt: function (value, defaultValue) {
+            return this.converter.getInt(value, defaultValue)
+        },
+        getFloat: function (value, defaultValue) {
+            return this.converter.getFloat(value, defaultValue)
+        },
+        getDateTime: function (value, defaultValue) {
+            return this.converter.getDateTime(value, defaultValue)
+        },
+        converter: new BaseConverter(),
+        BOOLEAN_STATES: {
+            '1': true,
+            'yes': true,
+            'true': true,
+            'on': true,
+            '0': false,
+            'no': false,
+            'false': false,
+            'off': false,
+            'null': false,
+            'none': false,
+            'undefined': false
+        },
+        MAX_BOOLEAN_LEN: 'undefined'.length
     };
-    var getFloat = function (value, defaultValue) {
-        if (IObject.isNull(value)) {
-            return defaultValue
-        } else if (IObject.isNumber(value)) {
-            return value
-        } else if (IObject.isBoolean(value)) {
-            return value ? 1.0 : 0.0
-        } else {
-            var str = IObject.isString(value) ? value : value.toString();
-            return parseFloat(str)
-        }
-    };
-    var getBoolean = function (value, defaultValue) {
-        if (IObject.isNull(value)) {
-            return defaultValue
-        } else if (IObject.isBoolean(value)) {
-            return value
-        } else if (IObject.isNumber(value)) {
-            return value > 0 || value < 0
-        }
-        var text;
-        if (IObject.isString(value)) {
-            text = value
-        } else {
-            text = value.toString()
-        }
-        text = text.trim();
-        var size = text.length;
-        if (size === 0) {
-            return false
-        } else if (size > ns.type.Converter.kMaxBoolLen) {
-            return true
-        } else {
-            text = text.toLowerCase()
-        }
-        var state = kBoolStates[text];
-        return IObject.isNull(state) || state
-    };
-    var kBoolStates = {
-        '1': true,
-        'yes': true,
-        'true': true,
-        'on': true,
-        '0': false,
-        'no': false,
-        'false': false,
-        'off': false,
-        '+0': false,
-        '-0': false,
-        '+0.0': false,
-        '-0.0': false,
-        'none': false,
-        'null': false,
-        'undefined': false
-    };
-    var kMaxBoolLen = 'undefined'.length;
-    ns.type.Converter = {
-        getString: getString,
-        getDateTime: getDateTime,
-        getInt: getInt,
-        getFloat: getFloat,
-        getBoolean: getBoolean,
-        kBoolStates: kBoolStates,
-        kMaxBoolLen: kMaxBoolLen
-    }
-})(MONKEY);
-(function (ns) {
-    'use strict';
-    var IObject = ns.type.Object;
+    var Converter = mk.type.Converter;
     var is_array = function (obj) {
         return obj instanceof Array || is_number_array(obj)
     };
@@ -428,7 +425,7 @@ if (typeof MONKEY !== 'object') {
         }
         return -1
     };
-    ns.type.Arrays = {
+    mk.type.Arrays = {
         insert: insert_item,
         update: update_item,
         remove: remove_item,
@@ -438,82 +435,64 @@ if (typeof MONKEY !== 'object') {
         },
         copy: copy_items,
         isArray: is_array
-    }
-})(MONKEY);
-(function (ns) {
-    'use strict';
-    var Class = ns.type.Class;
-    var IObject = ns.type.Object;
-    var BaseObject = ns.type.BaseObject;
-    var is_enum = function (obj) {
-        return obj instanceof BaseEnum
     };
-    var get_int = function (obj) {
-        if (obj instanceof BaseEnum) {
-            return obj.getValue()
-        } else if (IObject.isNumber(obj)) {
-            return obj
-        }
-        return obj.valueOf()
-    };
-    var get_alias = function (enumeration, value) {
-        var keys = Object.keys(enumeration);
-        var e;
-        for (var k in keys) {
-            e = enumeration[k];
+    var Arrays = mk.type.Arrays;
+    var get_enum_alias = function (enumeration, value) {
+        var alias = null;
+        Mapper.forEach(enumeration, function (n, e) {
             if (e instanceof BaseEnum && e.equals(value)) {
-                return e.__alias
+                alias = e.__alias;
+                return true
             }
-        }
-        return null
+            return false
+        });
+        return alias
     };
-    var BaseEnum = function (value, alias) {
+    mk.type.BaseEnum = function (value, alias) {
         BaseObject.call(this);
         if (!alias) {
-            alias = get_alias(this, value)
+            alias = get_enum_alias(this, value)
         }
         this.__value = value;
         this.__alias = alias
     };
-    Class(BaseEnum, BaseObject, null, null);
-    BaseEnum.prototype.equals = function (other) {
-        if (other instanceof BaseEnum) {
-            if (this === other) {
-                return true
+    var BaseEnum = mk.type.BaseEnum;
+    Class(BaseEnum, BaseObject, null, {
+        equals: function (other) {
+            if (other instanceof BaseEnum) {
+                if (this === other) {
+                    return true
+                }
+                other = other.valueOf()
             }
-            other = other.valueOf()
+            return this.__value === other
+        }, toString: function () {
+            return '<' + this.getName() + ': ' + this.getValue() + '>'
+        }, valueOf: function () {
+            return this.__value
+        }, getValue: function () {
+            return this.__value
+        }, getName: function () {
+            return this.__alias
         }
-        return this.__value === other
-    };
-    BaseEnum.prototype.toString = function () {
-        return '<' + this.getName() + ': ' + this.getValue() + '>'
-    };
-    BaseEnum.prototype.valueOf = function () {
-        return this.__value
-    };
-    BaseEnum.prototype.getValue = function () {
-        return this.__value
-    };
-    BaseEnum.prototype.getName = function () {
-        return this.__alias
-    };
+    });
     var enum_class = function (type) {
-        var Enum = function (value, alias) {
+        var NamedEnum = function (value, alias) {
             BaseEnum.call(this, value, alias)
         };
-        Class(Enum, BaseEnum, null, {
+        Class(NamedEnum, BaseEnum, null, {
             toString: function () {
-                var clazz = Enum.__type;
+                var clazz = NamedEnum.__type;
                 if (!clazz) {
                     clazz = this.getClassName()
                 }
                 return '<' + clazz + ' ' + this.getName() + ': ' + this.getValue() + '>'
             }
         });
-        Enum.__type = type;
-        return Enum
+        NamedEnum.__type = type;
+        return NamedEnum
     };
-    var enumify = function (enumeration, elements) {
+    mk.type.Enum = function (enumeration, elements) {
         if (IObject.isString(enumeration)) {
             enumeration = enum_class(enumeration)
         } else if (!enumeration) {
@@ -521,111 +500,91 @@ if (typeof MONKEY !== 'object') {
         } else {
             Class(enumeration, BaseEnum, null, null)
         }
-        var keys = Object.keys(elements);
-        var alias, value;
-        for (var i = 0; i < keys.length; ++i) {
-            alias = keys[i];
-            value = elements[alias];
+        Mapper.forEach(elements, function (alias, value) {
             if (value instanceof BaseEnum) {
                 value = value.getValue()
             } else if (typeof value !== 'number') {
                 throw new TypeError('Enum value must be a number!');
             }
-            enumeration[alias] = new enumeration(value, alias)
-        }
+            enumeration[alias] = new enumeration(value, alias);
+            return false
+        });
         return enumeration
     };
-    enumify.isEnum = is_enum;
-    enumify.getInt = get_int;
-    ns.type.Enum = enumify
-})(MONKEY);
-(function (ns) {
-    'use strict';
-    var Interface = ns.type.Interface;
-    var Class = ns.type.Class;
-    var IObject = ns.type.Object;
-    var BaseObject = ns.type.BaseObject;
-    var Arrays = ns.type.Arrays;
-    var Set = Interface(null, [IObject]);
-    Set.prototype.isEmpty = function () {
+    var Enum = mk.type.Enum;
+    Enum.isEnum = function (obj) {
+        return obj instanceof BaseEnum
     };
-    Set.prototype.getLength = function () {
+    Enum.getInt = function (obj) {
+        if (obj instanceof BaseEnum) {
+            return obj.getValue()
+        } else if (IObject.isNumber(obj)) {
+            return obj
+        }
+        return obj.valueOf()
     };
-    Set.prototype.contains = function (element) {
+    mk.type.Set = Interface(null, [IObject]);
+    var Set = mk.type.Set;
+    Set.prototype = {
+        isEmpty: function () {
+        }, getLength: function () {
+        }, contains: function (element) {
+        }, add: function (element) {
+        }, remove: function (element) {
+        }, clear: function () {
+        }, toArray: function () {
+        }
     };
-    Set.prototype.add = function (element) {
-    };
-    Set.prototype.remove = function (element) {
-    };
-    Set.prototype.clear = function () {
-    };
-    Set.prototype.toArray = function () {
-    };
-    var HashSet = function () {
+    mk.type.HashSet = function () {
         BaseObject.call(this);
         this.__array = []
     };
-    Class(HashSet, BaseObject, [Set], null);
-    HashSet.prototype.equals = function (other) {
-        if (Interface.conforms(other, Set)) {
-            if (this === other) {
-                return true
+    var HashSet = mk.type.HashSet;
+    Class(HashSet, BaseObject, [Set], {
+        equals: function (other) {
+            if (Interface.conforms(other, Set)) {
+                if (this === other) {
+                    return true
+                }
+                other = other.valueOf()
             }
-            other = other.valueOf()
+            return Arrays.equals(this.__array, other)
+        }, valueOf: function () {
+            return this.__array
+        }, toString: function () {
+            return this.__array.toString()
+        }, isEmpty: function () {
+            return this.__array.length === 0
+        }, getLength: function () {
+            return this.__array.length
+        }, contains: function (item) {
+            var pos = Arrays.find(this.__array, item);
+            return pos >= 0
+        }, add: function (item) {
+            var pos = Arrays.find(this.__array, item);
+            if (pos < 0) {
+                this.__array.push(item);
+                return true
+            } else {
+                return false
+            }
+        }, remove: function (item) {
+            return Arrays.remove(this.__array, item)
+        }, clear: function () {
+            this.__array = []
+        }, toArray: function () {
+            return this.__array.slice()
         }
-        return Arrays.equals(this.__array, other)
-    };
-    HashSet.prototype.valueOf = function () {
-        return this.__array
-    };
-    HashSet.prototype.toString = function () {
-        return this.__array.toString()
-    };
-    HashSet.prototype.isEmpty = function () {
-        return this.__array.length === 0
-    };
-    HashSet.prototype.getLength = function () {
-        return this.__array.length
-    };
-    HashSet.prototype.contains = function (item) {
-        var pos = Arrays.find(this.__array, item);
-        return pos >= 0
-    };
-    HashSet.prototype.add = function (item) {
-        var pos = Arrays.find(this.__array, item);
-        if (pos < 0) {
-            this.__array.push(item);
-            return true
-        } else {
-            return false
+    });
+    mk.type.Stringer = Interface(null, [IObject]);
+    var Stringer = mk.type.Stringer;
+    Stringer.prototype = {
+        isEmpty: function () {
+        }, getLength: function () {
+        }, equalsIgnoreCase: function (other) {
         }
     };
-    HashSet.prototype.remove = function (item) {
-        return Arrays.remove(this.__array, item)
-    };
-    HashSet.prototype.clear = function () {
-        this.__array = []
-    };
-    HashSet.prototype.toArray = function () {
-        return this.__array.slice()
-    };
-    ns.type.Set = Set;
-    ns.type.HashSet = HashSet
-})(MONKEY);
-(function (ns) {
-    'use strict';
-    var Interface = ns.type.Interface;
-    var Class = ns.type.Class;
-    var IObject = ns.type.Object;
-    var BaseObject = ns.type.BaseObject;
-    var Stringer = Interface(null, [IObject]);
-    Stringer.prototype.isEmpty = function () {
-    };
-    Stringer.prototype.getLength = function () {
-    };
-    Stringer.prototype.equalsIgnoreCase = function (other) {
-    };
-    var ConstantString = function (str) {
+    mk.type.ConstantString = function (str) {
         BaseObject.call(this);
         if (!str) {
             str = ''
@@ -634,39 +593,36 @@ if (typeof MONKEY !== 'object') {
         }
         this.__string = str
     };
-    Class(ConstantString, BaseObject, [Stringer], null);
-    ConstantString.prototype.equals = function (other) {
-        if (Interface.conforms(other, Stringer)) {
+    var ConstantString = mk.type.ConstantString;
+    Class(ConstantString, BaseObject, [Stringer], {
+        equals: function (other) {
+            if (Interface.conforms(other, Stringer)) {
+                if (this === other) {
+                    return true
+                }
+                other = other.valueOf()
+            }
+            return this.__string === other
+        }, valueOf: function () {
+            return this.__string
+        }, toString: function () {
+            return this.__string
+        }, isEmpty: function () {
+            return this.__string.length === 0
+        }, getLength: function () {
+            return this.__string.length
+        }, equalsIgnoreCase: function (other) {
             if (this === other) {
                 return true
+            } else if (!other) {
+                return !this.__string
+            } else if (Interface.conforms(other, Stringer)) {
+                return equalsIgnoreCase(this.__string, other.toString())
+            } else {
+                return equalsIgnoreCase(this.__string, other)
             }
-            other = other.valueOf()
         }
-        return this.__string === other
-    };
-    ConstantString.prototype.valueOf = function () {
-        return this.__string
-    };
-    ConstantString.prototype.toString = function () {
-        return this.__string
-    };
-    ConstantString.prototype.isEmpty = function () {
-        return this.__string.length === 0
-    };
-    ConstantString.prototype.getLength = function () {
-        return this.__string.length
-    };
-    ConstantString.prototype.equalsIgnoreCase = function (other) {
-        if (this === other) {
-            return true
-        } else if (!other) {
-            return !this.__string
-        } else if (Interface.conforms(other, Stringer)) {
-            return equalsIgnoreCase(this.__string, other.toString())
-        } else {
-            return equalsIgnoreCase(this.__string, other)
-        }
-    };
+    });
     var equalsIgnoreCase = function (str1, str2) {
         if (str1.length !== str2.length) {
             return false
@@ -675,6 +631,446 @@ if (typeof MONKEY !== 'object') {
         var low2 = str2.toLowerCase();
         return low1 === low2
     };
-    ns.type.Stringer = Stringer;
-    ns.type.ConstantString = ConstantString
+    mk.type.Mapper = Interface(null, [IObject]);
+    var Mapper = mk.type.Mapper;
+    Mapper.prototype = {
+        toMap: function () {
+        }, copyMap: function (deepCopy) {
+        }, isEmpty: function () {
+        }, getLength: function () {
+        }, allKeys: function () {
+        }, getValue: function (key) {
+        }, setValue: function (key, value) {
+        }, removeValue: function (key) {
+        }, getString: function (key, defaultValue) {
+        }, getBoolean: function (key, defaultValue) {
+        }, getInt: function (key, defaultValue) {
+        }, getFloat: function (key, defaultValue) {
+        }, getDateTime: function (key, defaultValue) {
+        }, setDateTime: function (key, time) {
+        }, setString: function (key, stringer) {
+        }, setMap: function (key, mapper) {
+        }
+    };
+    Mapper.count = function (dict) {
+        if (!dict) {
+            return 0
+        } else if (Interface.conforms(dict, Mapper)) {
+            dict = dict.toMap()
+        } else if (typeof dict !== 'object') {
+            throw TypeError('not a map: ' + dict);
+        }
+        return Object.keys(dict).length
+    };
+    Mapper.isEmpty = function (dict) {
+        return Mapper.count(dict) === 0
+    };
+    Mapper.keys = function (dict) {
+        if (!dict) {
+            return null
+        } else if (Interface.conforms(dict, Mapper)) {
+            dict = dict.toMap()
+        } else if (typeof dict !== 'object') {
+            throw TypeError('not a map: ' + dict);
+        }
+        return Object.keys(dict)
+    };
+    Mapper.removeKey = function (dict, key) {
+        if (!dict) {
+            return null
+        } else if (Interface.conforms(dict, Mapper)) {
+            dict = dict.toMap()
+        } else if (typeof dict !== 'object') {
+            throw TypeError('not a map: ' + dict);
+        }
+        var value = dict[key];
+        delete dict[key];
+        return value
+    };
+    Mapper.forEach = function (dict, handleKeyValue) {
+        if (!dict) {
+            return -1
+        } else if (Interface.conforms(dict, Mapper)) {
+            dict = dict.toMap()
+        } else if (typeof dict !== 'object') {
+            throw TypeError('not a map: ' + dict);
+        }
+        var keys = Object.keys(dict);
+        var cnt = keys.length;
+        var stop;
+        var i = 0, k, v;
+        for (; i < cnt; ++i) {
+            k = keys[i];
+            v = dict[k];
+            stop = handleKeyValue(k, v);
+            if (stop) {
+                break
+            }
+        }
+        return i
+    };
+    Mapper.addAll = function (dict, fromDict) {
+        if (!dict) {
+            return -1
+        } else if (Interface.conforms(dict, Mapper)) {
+            dict = dict.toMap()
+        } else if (typeof dict !== 'object') {
+            throw TypeError('not a map: ' + dict);
+        }
+        return Mapper.forEach(fromDict, function (key, value) {
+            dict[key] = value;
+            return false
+        })
+    };
+    mk.type.Dictionary = function (dict) {
+        BaseObject.call(this);
+        if (!dict) {
+            dict = {}
+        } else if (Interface.conforms(dict, Mapper)) {
+            dict = dict.toMap()
+        }
+        this.__dictionary = dict
+    };
+    var Dictionary = mk.type.Dictionary;
+    Class(Dictionary, BaseObject, [Mapper], {
+        equals: function (other) {
+            if (Interface.conforms(other, Mapper)) {
+                if (this === other) {
+                    return true
+                }
+                other = other.valueOf()
+            }
+            return Arrays.equals(this.__dictionary, other)
+        }, valueOf: function () {
+            return this.__dictionary
+        }, toString: function () {
+            return mk.format.JSON.encode(this.__dictionary)
+        }, toMap: function () {
+            return this.__dictionary
+        }, copyMap: function (deepCopy) {
+            if (deepCopy) {
+                return Copier.deepCopyMap(this.__dictionary)
+            } else {
+                return Copier.copyMap(this.__dictionary)
+            }
+        }, isEmpty: function () {
+            var keys = Object.keys(this.__dictionary);
+            return keys.length === 0
+        }, getLength: function () {
+            var keys = Object.keys(this.__dictionary);
+            return keys.length
+        }, allKeys: function () {
+            return Object.keys(this.__dictionary)
+        }, getValue: function (key) {
+            return this.__dictionary[key]
+        }, setValue: function (key, value) {
+            if (value) {
+                this.__dictionary[key] = value
+            } else if (this.__dictionary.hasOwnProperty(key)) {
+                delete this.__dictionary[key]
+            }
+        }, removeValue: function (key) {
+            var value;
+            if (this.__dictionary.hasOwnProperty(key)) {
+                value = this.__dictionary[key];
+                delete this.__dictionary[key]
+            } else {
+                value = null
+            }
+            return value
+        }, getString: function (key, defaultValue) {
+            var value = this.__dictionary[key];
+            return Converter.getString(value, defaultValue)
+        }, getBoolean: function (key, defaultValue) {
+            var value = this.__dictionary[key];
+            return Converter.getBoolean(value, defaultValue)
+        }, getInt: function (key, defaultValue) {
+            var value = this.__dictionary[key];
+            return Converter.getInt(value, defaultValue)
+        }, getFloat: function (key, defaultValue) {
+            var value = this.__dictionary[key];
+            return Converter.getFloat(value, defaultValue)
+        }, getDateTime: function (key, defaultValue) {
+            var value = this.__dictionary[key];
+            return Converter.getDateTime(value, defaultValue)
+        }, setDateTime: function (key, time) {
+            if (!time) {
+                this.removeValue(key)
+            } else if (time instanceof Date) {
+                time = time.getTime() / 1000.0;
+                this.__dictionary[key] = time
+            } else {
+                time = Converter.getFloat(time, 0);
+                this.__dictionary[key] = time
+            }
+        }, setString: function (key, string) {
+            if (!string) {
+                this.removeValue(key)
+            } else {
+                this.__dictionary[key] = string.toString()
+            }
+        }, setMap: function (key, map) {
+            if (!map) {
+                this.removeValue(key)
+            } else {
+                this.__dictionary[key] = map.toMap()
+            }
+        }
+    });
+    mk.type.Wrapper = {
+        fetchString: function (str) {
+            if (Interface.conforms(str, Stringer)) {
+                return str.toString()
+            } else if (typeof str === 'string') {
+                return str
+            } else {
+                return null
+            }
+        }, fetchMap: function (dict) {
+            if (Interface.conforms(dict, Mapper)) {
+                return dict.toMap()
+            } else if (typeof dict === 'object') {
+                return dict
+            } else {
+                return null
+            }
+        }, unwrap: function (object) {
+            if (IObject.isNull(object)) {
+                return null
+            } else if (IObject.isBaseType(object)) {
+                return object
+            } else if (Enum.isEnum(object)) {
+                return object.getValue()
+            } else if (Interface.conforms(object, Stringer)) {
+                return object.toString()
+            } else if (Interface.conforms(object, Mapper)) {
+                return this.unwrapMap(object.toMap())
+            } else if (!Arrays.isArray(object)) {
+                return this.unwrapMap(object)
+            } else if (object instanceof Array) {
+                return this.unwrapList(object)
+            } else {
+                return object
+            }
+        }, unwrapMap: function (dict) {
+            var result = {};
+            Mapper.forEach(dict, function (key, value) {
+                result[key] = Wrapper.unwrap(value);
+                return false
+            });
+            return result
+        }, unwrapList: function (array) {
+            var result = [];
+            var count = array.length;
+            for (var i = 0; i < count; ++i) {
+                result[i] = this.unwrap(array[i])
+            }
+            return result
+        }
+    };
+    var Wrapper = mk.type.Wrapper;
+    mk.type.Copier = {
+        copy: function (object) {
+            if (IObject.isNull(object)) {
+                return null
+            } else if (IObject.isBaseType(object)) {
+                return object
+            } else if (Enum.isEnum(object)) {
+                return object.getValue()
+            } else if (Interface.conforms(object, Stringer)) {
+                return object.toString()
+            } else if (Interface.conforms(object, Mapper)) {
+                return this.copyMap(object.toMap())
+            } else if (!Arrays.isArray(object)) {
+                return this.copyMap(object)
+            } else if (object instanceof Array) {
+                return this.copyList(object)
+            } else {
+                return object
+            }
+        }, copyMap: function (dict) {
+            var clone = {};
+            Mapper.forEach(dict, function (key, value) {
+                clone[key] = value;
+                return false
+            });
+            return clone
+        }, copyList: function (array) {
+            var clone = [];
+            var count = array.length;
+            for (var i = 0; i < count; ++i) {
+                clone.push(array[i])
+            }
+            return clone
+        }, deepCopy: function (object) {
+            if (IObject.isNull(object)) {
+                return null
+            } else if (IObject.isBaseType(object)) {
+                return object
+            } else if (Enum.isEnum(object)) {
+                return object.getValue()
+            } else if (Interface.conforms(object, Stringer)) {
+                return object.toString()
+            } else if (Interface.conforms(object, Mapper)) {
+                return this.deepCopyMap(object.toMap())
+            } else if (!Arrays.isArray(object)) {
+                return this.deepCopyMap(object)
+            } else if (object instanceof Array) {
+                return this.deepCopyList(object)
+            } else {
+                return object
+            }
+        }, deepCopyMap: function (dict) {
+            var clone = {};
+            Mapper.forEach(dict, function (key, value) {
+                clone[key] = Copier.deepCopy(value);
+                return false
+            });
+            return clone
+        }, deepCopyList: function (array) {
+            var clone = [];
+            var count = array.length;
+            for (var i = 0; i < count; ++i) {
+                clone.push(this.deepCopy(array[i]))
+            }
+            return clone
+        }
+    };
+    var Copier = mk.type.Copier;
+    mk.digest.MessageDigester = Interface(null, null);
+    var MessageDigester = mk.digest.MessageDigester;
+    MessageDigester.prototype = {
+        digest: function (data) {
+        }
+    };
+    mk.digest.SHA256 = {
+        digest: function (data) {
+            return this.getDigester().digest(data)
+        }, getDigester: function () {
+            return sha256Digester
+        }, setDigester: function (digester) {
+            sha256Digester = digester
+        }
+    };
+    var SHA256 = mk.digest.SHA256;
+    var sha256Digester = null;
+    mk.digest.RIPEMD160 = {
+        digest: function (data) {
+            return this.getDigester().digest(data)
+        }, getDigester: function () {
+            return ripemd160Digester
+        }, setDigester: function (digester) {
+            ripemd160Digester = digester
+        }
+    };
+    var RIPEMD160 = mk.digest.RIPEMD160;
+    var ripemd160Digester = null;
+    mk.digest.KECCAK256 = {
+        digest: function (data) {
+            return this.getDigester().digest(data)
+        }, getDigester: function () {
+            return keccak256Digester
+        }, setDigester: function (digester) {
+            keccak256Digester = digester
+        }
+    };
+    var KECCAK256 = mk.digest.KECCAK256;
+    var keccak256Digester = null;
+    mk.format.DataCoder = Interface(null, null);
+    var DataCoder = mk.format.DataCoder;
+    DataCoder.prototype = {
+        encode: function (data) {
+        }, decode: function (string) {
+        }
+    };
+    mk.format.ObjectCoder = Interface(null, null);
+    var ObjectCoder = mk.format.ObjectCoder;
+    ObjectCoder.prototype = {
+        encode: function (object) {
+        }, decode: function (string) {
+        }
+    };
+    mk.format.StringCoder = Interface(null, null);
+    var StringCoder = mk.format.StringCoder;
+    StringCoder.prototype = {
+        encode: function (string) {
+        }, decode: function (data) {
+        }
+    };
+    mk.format.Hex = {
+        encode: function (data) {
+            return this.getCoder().encode(data)
+        }, decode: function (string) {
+            return this.getCoder().decode(string)
+        }, getCoder: function () {
+            return hexCoder
+        }, setCoder: function (coder) {
+            hexCoder = coder
+        }
+    };
+    var Hex = mk.format.Hex;
+    var hexCoder = null;
+    mk.format.Base58 = {
+        encode: function (data) {
+            return this.getCoder().encode(data)
+        }, decode: function (string) {
+            return this.getCoder().decode(string)
+        }, getCoder: function () {
+            return base58Coder
+        }, setCoder: function (coder) {
+            base58Coder = coder
+        }
+    };
+    var Base58 = mk.format.Base58;
+    var base58Coder = null;
+    mk.format.Base64 = {
+        encode: function (data) {
+            return this.getCoder().encode(data)
+        }, decode: function (string) {
+            return this.getCoder().decode(string)
+        }, getCoder: function () {
+            return base64Coder
+        }, setCoder: function (coder) {
+            base64Coder = coder
+        }
+    };
+    var Base64 = mk.format.Base64;
+    var base64Coder = null;
+    mk.format.UTF8 = {
+        encode: function (string) {
+            return this.getCoder().encode(string)
+        }, decode: function (data) {
+            return this.getCoder().decode(data)
+        }, getCoder: function () {
+            return utf8Coder
+        }, setCoder: function (coder) {
+            utf8Coder = coder
+        }
+    };
+    var UTF8 = mk.format.UTF8;
+    var utf8Coder = null;
+    mk.format.JSON = {
+        encode: function (object) {
+            return this.getCoder().encode(object)
+        }, decode: function (string) {
+            return this.getCoder().decode(string)
+        }, getCoder: function () {
+            return jsonCoder
+        }, setCoder: function (coder) {
+            jsonCoder = coder
+        }
+    };
+    var jsonCoder = null;
+    mk.format.JSONMap = {
+        encode: function (dictionary) {
+            return this.getCoder().encode(dictionary)
+        }, decode: function (string) {
+            return this.getCoder().decode(string)
+        }, getCoder: function () {
+            return jsonCoder
+        }, setCoder: function (coder) {
+            jsonCoder = coder
+        }
+    };
+    var JSONMap = mk.format.JSONMap
 })(MONKEY);

@@ -1,4 +1,4 @@
-;
+'use strict';
 // license: https://mit-license.org
 // =============================================================================
 // The MIT License (MIT)
@@ -27,12 +27,8 @@
 
 //! require 'namespace.js'
 
-(function (ns, sys) {
-    'use strict';
-
-    var Interface = sys.type.Interface;
-
-    var Handler = Interface(null, null);
+    fsm.skywalker.Handler = Interface(null, null);
+    var Handler = fsm.skywalker.Handler;
 
     /**
      *  Prepare for handling
@@ -57,8 +53,3 @@
      * @return {boolean} false on job done
      */
     Handler.prototype.finish = function () {};
-
-    //-------- namespace --------
-    ns.skywalker.Handler = Handler;
-
-})(FiniteStateMachine, MONKEY);

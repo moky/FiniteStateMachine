@@ -1,9 +1,9 @@
-;
+'use strict';
 
 //
 //  Test Cases
 //
-fsm_tests = [];
+var fsm_tests = [];
 
 !(function (ns) {
     'use strict';

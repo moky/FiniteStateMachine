@@ -1,4 +1,4 @@
-;
+'use strict';
 // license: https://mit-license.org
 // =============================================================================
 // The MIT License (MIT)
@@ -27,14 +27,6 @@
 
 //! require 'runnable.js'
 
-(function (ns, sys) {
-    'use strict';
-
-    var Interface = sys.type.Interface;
-    var Class     = sys.type.Class;
-
-    var Runnable = ns.skywalker.Runnable;
-
     /**
      *  Create Thread for runnable target
      *
@@ -42,8 +34,8 @@
      *      1. new Thread();
      *      2. new Thread(runnable);
      */
-    var Thread = function () {
-        Object.call(this);
+    fsm.threading.Thread = function () {
+        BaseObject.call(this);
         if (arguments.length === 0) {
             // new Thread();
             this.__target = null;
@@ -53,22 +45,25 @@
         }
         this.__running = false;
     };
-    Class(Thread, Object, [Runnable], null);
+    var Thread = fsm.threading.Thread;
 
-    Thread.INTERVAL = 256;  // milliseconds
+    Class(Thread, BaseObject, [Runnable], null);
+
+    Thread.INTERVAL = Duration.ofMilliseconds(256);
 
     /**
      *  Start running
      */
     Thread.prototype.start = function () {
         this.__running = true;
-        run(this);
+        thr_run(this);
     };
-    var run = function (thread) {
+    var thr_run = function (thread) {
         var running = thread.isRunning() && thread.run();
         if (running) {
             // next step
-            setTimeout(function () { run(thread); }, Thread.INTERVAL);
+            var interval = Thread.INTERVAL.inMilliseconds();
+            setTimeout(function () { thr_run(thread); }, interval);
         }
     };
 
@@ -102,8 +97,3 @@
     Thread.prototype.stop = function () {
         this.__running = false;
     };
-
-    //-------- namespace --------
-    ns.threading.Thread = Thread;
-
-})(FiniteStateMachine, MONKEY);
