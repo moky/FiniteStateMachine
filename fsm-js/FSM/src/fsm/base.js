@@ -45,7 +45,7 @@
     };
     var BaseTransition = fsm.BaseTransition;
 
-    Class(BaseTransition, BaseObject, [Transition], null);
+    Class(BaseTransition, BaseObject, [Transition]);
 
     /**
      *  Get index of target state
@@ -71,7 +71,9 @@
     };
     var BaseState = fsm.BaseState;
 
-    Class(BaseState, BaseObject, [State], {
+    Class(BaseState, BaseObject, [State]);
+
+    Implementation(BaseState, {
 
         // Override
         equals: function (other) {
@@ -157,7 +159,7 @@
     };
     var BaseMachine = fsm.BaseMachine;
 
-    Class(BaseMachine, BaseObject, [Machine], null);
+    Class(BaseMachine, BaseObject, [Machine]);
 
     /**
      *  Set machine delegate
@@ -315,7 +317,7 @@
      */
     // Override
     BaseMachine.prototype.start = function () {
-        if (this.__status !== State.STOPPED) {
+        if (this.__status !== Status.STOPPED) {
             // Running or Paused,
             // cannot start again
             return false;

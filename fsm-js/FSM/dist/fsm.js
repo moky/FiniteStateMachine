@@ -21,6 +21,7 @@ if (typeof FiniteStateMachine !== 'object') {
     }
     var Interface = mk.type.Interface;
     var Class = mk.type.Class;
+    var Implementation = mk.type.Implementation;
     var Converter = mk.type.Converter;
     var BaseObject = mk.type.BaseObject;
     var HashSet = mk.type.HashSet;
@@ -146,7 +147,8 @@ if (typeof FiniteStateMachine !== 'object') {
         this.__stage = STAGE_INIT
     };
     var Runner = fsm.skywalker.Runner;
-    Class(Runner, BaseObject, [Runnable, Handler, Processor], {
+    Class(Runner, BaseObject, [Runnable, Handler, Processor]);
+    Implementation(Runner, {
         run: function () {
             if (this.__stage === STAGE_INIT) {
                 if (this.setup()) {
@@ -205,7 +207,7 @@ if (typeof FiniteStateMachine !== 'object') {
         this.__running = false
     };
     var Thread = fsm.threading.Thread;
-    Class(Thread, BaseObject, [Runnable], null);
+    Class(Thread, BaseObject, [Runnable]);
     Thread.INTERVAL = Duration.ofMilliseconds(256);
     Thread.prototype.start = function () {
         this.__running = true;
@@ -249,7 +251,7 @@ if (typeof FiniteStateMachine !== 'object') {
         this.__tickers = new HashSet()
     };
     var Metronome = fsm.threading.Metronome;
-    Class(Metronome, Runner, null, null);
+    Class(Metronome, Runner, null);
     Metronome.MIN_INTERVAL = Duration.ofMilliseconds(100);
     Metronome.prototype.start = function () {
         this.__thread.start()
@@ -354,7 +356,7 @@ if (typeof FiniteStateMachine !== 'object') {
         this.__target = target
     };
     var BaseTransition = fsm.BaseTransition;
-    Class(BaseTransition, BaseObject, [Transition], null);
+    Class(BaseTransition, BaseObject, [Transition]);
     BaseTransition.prototype.getTarget = function () {
         return this.__target
     };
@@ -364,7 +366,8 @@ if (typeof FiniteStateMachine !== 'object') {
         this.__transitions = []
     };
     var BaseState = fsm.BaseState;
-    Class(BaseState, BaseObject, [State], {
+    Class(BaseState, BaseObject, [State]);
+    Implementation(BaseState, {
         equals: function (other) {
             if (other instanceof BaseState) {
                 if (other === this) {
@@ -410,7 +413,7 @@ if (typeof FiniteStateMachine !== 'object') {
         this.__delegate = null
     };
     var BaseMachine = fsm.BaseMachine;
-    Class(BaseMachine, BaseObject, [Machine], null);
+    Class(BaseMachine, BaseObject, [Machine]);
     BaseMachine.prototype.setDelegate = function (delegate) {
         this.__delegate = delegate
     };
@@ -480,7 +483,7 @@ if (typeof FiniteStateMachine !== 'object') {
         return true
     };
     BaseMachine.prototype.start = function () {
-        if (this.__status !== State.STOPPED) {
+        if (this.__status !== Status.STOPPED) {
             return false
         }
         var now = new Date();
@@ -544,12 +547,12 @@ if (typeof FiniteStateMachine !== 'object') {
             }
         }
     };
-    "use strict";
     fsm.AutoMachine = function () {
         BaseMachine.call(this)
     };
     var AutoMachine = fsm.AutoMachine;
-    Class(AutoMachine, BaseMachine, null, {
+    Class(AutoMachine, BaseMachine, null);
+    Implementation(AutoMachine, {
         start: function () {
             var ok = BaseMachine.prototype.start.call(this);
             var timer = PrimeMetronome.getInstance();

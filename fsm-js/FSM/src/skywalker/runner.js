@@ -41,7 +41,9 @@
     };
     var Runner = fsm.skywalker.Runner;
 
-    Class(Runner, BaseObject, [Runnable, Handler, Processor], {
+    Class(Runner, BaseObject, [Runnable, Handler, Processor]);
+
+    Implementation(Runner, {
 
         // Override
         run: function () {

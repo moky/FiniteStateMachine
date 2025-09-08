@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 // license: https://mit-license.org
 //
 //  Finite State Machine
@@ -41,7 +41,9 @@
     };
     var AutoMachine = fsm.AutoMachine;
 
-    Class(AutoMachine, BaseMachine, null, {
+    Class(AutoMachine, BaseMachine, null);
+
+    Implementation(AutoMachine, {
 
         // Override
         start: function () {

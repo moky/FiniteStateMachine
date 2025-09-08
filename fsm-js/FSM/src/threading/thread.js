@@ -47,7 +47,7 @@
     };
     var Thread = fsm.threading.Thread;
 
-    Class(Thread, BaseObject, [Runnable], null);
+    Class(Thread, BaseObject, [Runnable]);
 
     Thread.INTERVAL = Duration.ofMilliseconds(256);
 

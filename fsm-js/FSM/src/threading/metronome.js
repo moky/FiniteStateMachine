@@ -41,7 +41,7 @@
     };
     var Metronome = fsm.threading.Metronome;
 
-    Class(Metronome, Runner, null, null);
+    Class(Metronome, Runner, null);
 
     // at least wait 0.1 second
     Metronome.MIN_INTERVAL = Duration.ofMilliseconds(100);

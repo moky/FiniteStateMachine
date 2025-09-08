@@ -14,6 +14,7 @@ if (typeof fsm.threading !== 'object') {
 //-------- requires --------
 var Interface      = mk.type.Interface;
 var Class          = mk.type.Class;
+var Implementation = mk.type.Implementation;
 var Converter      = mk.type.Converter;
 var BaseObject     = mk.type.BaseObject;
 var HashSet        = mk.type.HashSet;
