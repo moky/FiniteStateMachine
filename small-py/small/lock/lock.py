@@ -31,16 +31,59 @@
 import asyncio
 import multiprocessing
 import threading
+from concurrent.futures.thread import ThreadPoolExecutor
+from types import TracebackType
+from typing import Optional, Type
 
 from ..utils import final
+
+
+class _ThreadingLock(threading.Lock):
+    """ Threading.Lock wrapped for 'async with' (loop-agnostic) """
+
+    # dedicated executor for waiting on the OS lock; shared by all
+    # instances, so that waiting never starves the default thread pool
+    # that the actual file IO runs in
+    _executor = ThreadPoolExecutor(max_workers=32)
+
+    def __init__(self):
+        super().__init__()
+        self.__lock = threading.Lock()
+
+    async def acquire(self, blocking: bool = True, timeout: float = -1) -> bool:
+        if not blocking:
+            # non-blocking: no need to go through the executor
+            return self.__lock.acquire(False)
+        loop = asyncio.get_event_loop()
+        # wait for the OS lock in a dedicated executor, never blocking
+        # the default pool that the actual file IO runs in
+        return await loop.run_in_executor(_ThreadingLock._executor,
+                                          self.__lock.acquire, True, timeout)
+
+    def release(self):
+        self.__lock.release()
+
+    def locked(self) -> bool:
+        return self.__lock.locked()
+
+    async def __aenter__(self):
+        await self.acquire()
+        return self
+
+    async def __aexit__(self, exc_type: Optional[Type[BaseException]],
+                        exc_val: Optional[BaseException],
+                        exc_tb: Optional[TracebackType]):
+        self.release()
 
 
 class LockFactory:
     """ Lock Creator """
 
     # noinspection PyMethodMayBeStatic
-    def create_lock(self, name: str):
-        if name == 'asyncio':
+    def create_lock(self, name: str):  # -> Optional[Lock]:
+        if name == 'async-threading':
+            return _ThreadingLock()
+        elif name == 'asyncio':
             return asyncio.Lock()
         elif name == 'threading':
             return threading.Lock()
@@ -58,7 +101,7 @@ class AsyncLock:
     factory = LockFactory()
 
     @classmethod
-    def create(cls, name: str = 'asyncio'):
+    def create(cls, name: str = 'async-threading'):  # -> Optional[Lock]:
         return cls.factory.create_lock(name=name)
 
 
@@ -69,5 +112,5 @@ class SyncLock:
     factory = LockFactory()
 
     @classmethod
-    def create(cls, name: str = 'threading'):
+    def create(cls, name: str = 'threading'):  # -> Optional[Lock]:
         return cls.factory.create_lock(name=name)
