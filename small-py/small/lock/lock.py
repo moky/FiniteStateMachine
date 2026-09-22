@@ -38,7 +38,7 @@ from typing import Optional, Type
 from ..utils import final
 
 
-class _ThreadingLock(threading.Lock):
+class _ThreadingLock:
     """ Threading.Lock wrapped for 'async with' (loop-agnostic) """
 
     # dedicated executor for waiting on the OS lock; shared by all

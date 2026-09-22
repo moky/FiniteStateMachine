@@ -29,6 +29,7 @@ from weakref import WeakSet
 from abc import ABC, abstractmethod
 from typing import Set
 
+from ..utils import Singleton
 from ..utils import Timestamp, Duration
 from ..log import Logging
 from ..lock import SyncLock
@@ -123,30 +124,6 @@ class Metronome(Runner, Logging):
         # 3. update last time
         self.__last_time = now
         return True
-
-
-#
-#   Singleton for Prime Metronome
-#
-
-
-class Singleton(object):
-
-    __instances = {}
-
-    def __init__(self, cls):
-        self.__cls = cls
-
-    def __call__(self, *args, **kwargs):
-        cls = self.__cls
-        instance = self.__instances.get(cls, None)
-        if instance is None:
-            instance = cls(*args, **kwargs)
-            self.__instances[cls] = instance
-        return instance
-
-    def __getattr__(self, key):
-        return getattr(self.__cls, key, None)
 
 
 @Singleton

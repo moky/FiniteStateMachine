@@ -39,6 +39,7 @@ class Singleton(object):
     __instances = {}
 
     def __init__(self, cls):
+        super().__init__()
         self.__cls = cls
 
     def __call__(self, *args, **kwargs):
