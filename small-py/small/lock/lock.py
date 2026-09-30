@@ -54,7 +54,7 @@ class _ThreadingLock:
         if not blocking:
             # non-blocking: no need to go through the executor
             return self.__lock.acquire(False)
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
         # wait for the OS lock in a dedicated executor, never blocking
         # the default pool that the actual file IO runs in
         return await loop.run_in_executor(_ThreadingLock._executor,
@@ -67,7 +67,10 @@ class _ThreadingLock:
         return self.__lock.locked()
 
     async def __aenter__(self):
-        await self.acquire()
+        ok = await self.acquire()
+        if not ok:
+            # e.g. acquire(blocking=False) failed, or timeout expired
+            raise RuntimeError(f'failed to acquire lock: {self.__class__.__name__}')
         return self
 
     async def __aexit__(self, exc_type: Optional[Type[BaseException]],
